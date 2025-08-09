@@ -55,19 +55,67 @@ const prompt = ai.definePrompt({
 
 Para CADA UNA de estas opciones principales, debes ADEMÁS buscar entre 1 y 3 productos complementarios que generen una solución más completa y atractiva.
 
-Al analizar los resultados, sigue estas reglas estrictamente para TODOS los productos (principales y complementarios):
-1. **Precios Reales y Finales:** El precio DEBE ser el que aparece en la página del producto. No inventes ni aproximes precios. Debe estar en pesos argentinos (ARS) o dólares (USD). Si no encuentras el precio final, no incluyas el producto.
-2. **Enlaces Directos y Válidos:** La \`productUrl\` DEBE ser el enlace directo a la página específica del producto donde se puede comprar. NO puede ser un enlace a una búsqueda de Google, una categoría general, una página de inicio o un enlace roto. Si no encuentras un enlace de compra directo y funcional, no incluyas el producto.
-3. **Disponibilidad en Argentina:** Asegúrate de que el producto esté disponible en tiendas argentinas o en tiendas que realicen envíos a Argentina.
-4. **Justificación Detallada:** Para el producto principal, explica por qué es una buena recomendación. Para los productos complementarios, justifica por qué complementan la compra principal y mejoran la experiencia del usuario.
+**PROCESO DE BÚSQUEDA OBLIGATORIO:**
+1. Realiza búsquedas exhaustivas en Google para cada producto
+2. Visita las páginas de productos específicas para obtener información real
+3. Extrae ÚNICAMENTE datos que puedas verificar directamente de las páginas web
 
-Utiliza la herramienta de búsqueda de Google para encontrar toda la información necesaria.
+**REGLAS ESTRICTAS - CUMPLIMIENTO OBLIGATORIO PARA TODOS LOS PRODUCTOS:**
+
+1. **PRECIOS REALES Y VERIFICADOS:**
+   - El precio DEBE ser el precio exacto que aparece en la página del producto
+   - DEBE estar en ARS (pesos argentinos) o USD (dólares)
+   - Si la página muestra el precio en otra moneda, conviértelo a ARS
+   - **PROHIBIDO:** Inventar, aproximar o suponer precios
+   - **SI NO ENCUENTRAS EL PRECIO REAL:** Descarta ese producto y busca otro
+
+2. **ENLACES DIRECTOS DE COMPRA:**
+   - La productUrl DEBE llevar directamente a la página específica del producto
+   - El enlace debe permitir agregar el producto al carrito o comprarlo
+   - **ENLACES PROHIBIDOS:**
+     * Enlaces de búsqueda de Google
+     * Enlaces a categorías generales
+     * Enlaces a páginas de inicio
+     * Enlaces rotos o inválidos
+   - **SI NO ENCUENTRAS UN ENLACE DIRECTO:** Descarta ese producto y busca otro
+
+3. **IMÁGENES REALES DEL PRODUCTO:**
+   - La imageUrl DEBE ser la URL de la imagen real del producto
+   - Extrae la imagen principal que aparece en la página del producto
+   - La imagen debe ser de alta calidad y mostrar claramente el producto
+   - **PROHIBIDO:** Usar imágenes de marcador de posición o placeholder
+   - **SI NO ENCUENTRAS LA IMAGEN REAL:** Descarta ese producto y busca otro
+
+4. **DISPONIBILIDAD EN ARGENTINA:**
+   - Verifica que el producto esté disponible en:
+     * Tiendas argentinas (MercadoLibre, Fravega, Garbarino, etc.)
+     * O tiendas internacionales que envíen a Argentina
+   - Confirma el stock o disponibilidad actual
+   - **SI NO ESTÁ DISPONIBLE EN ARGENTINA:** Descarta ese producto y busca otro
+
+5. **INFORMACIÓN COMPLETA Y VERIFICADA:**
+   - productName: Nombre exacto del producto como aparece en la tienda
+   - productDescription: Descripción real basada en la información de la página
+   - qualityScore: Calificación basada en reviews reales (0-100)
+   - availability: Estado real del stock ("En stock", "Últimas unidades", etc.)
+   - justification: Explicación detallada de por qué recomiendas este producto
+
+**CRITERIO DE DESCARTE:**
+Si un producto NO cumple con TODOS los requisitos anteriores (precio real, enlace directo, imagen real, disponibilidad en Argentina), NO lo incluyas en los resultados. Es mejor devolver menos productos pero con información 100% verificada que inventar datos.
+
+**VALIDACIÓN FINAL:**
+Antes de devolver los resultados, verifica que:
+- Cada URL funcione y lleve al producto específico
+- Cada precio sea el real y actual
+- Cada imagen sea la real del producto
+- Todo esté disponible para compra en Argentina
 
 Consulta de Búsqueda: {{{searchQuery}}}
 Datos del Perfil de Usuario: {{{userProfileData}}}
 
 La salida debe ser un array JSON donde cada elemento representa una opción de compra. Cada opción debe contener un 'mainProduct' y una lista de 'complementaryProducts'.
-Cada producto debe tener productName, productDescription, price, qualityScore (0-100), availability, justification, imageUrl y un productUrl real y funcional. Para imageUrl, usa un marcador de posición de https://placehold.co/600x400.png.
+
+**IMPORTANTE:** Solo incluye productos que cumplan con TODAS las reglas. Si no puedes verificar algún dato, NO incluyas ese producto.
 `,
 });
 
