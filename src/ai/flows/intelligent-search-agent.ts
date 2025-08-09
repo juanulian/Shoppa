@@ -1,7 +1,7 @@
 'use server';
 
 /**
- * @fileOverview An intelligent search agent that finds the best product options based on the search query and user profile data.
+ * @fileOverview An intelligent search agent that finds the best product options based on the search query and user profile data by searching the web.
  *
  * - intelligentSearchAgent - A function that handles the product search process.
  * - IntelligentSearchAgentInput - The input type for the intelligentSearchAgent function.
@@ -30,14 +30,28 @@ export async function intelligentSearchAgent(input: IntelligentSearchAgentInput)
   return intelligentSearchAgentFlow(input);
 }
 
+const googleSearchTool = ai.defineTool(
+    {
+      name: 'googleSearch',
+      description:
+        'Performs a Google search. Use this to find products that match the user\'s query.',
+      inputSchema: z.any(),
+      outputSchema: z.any(),
+    },
+    async (input: any) => input
+  );
+
 const prompt = ai.definePrompt({
   name: 'intelligentSearchAgentPrompt',
   input: {schema: IntelligentSearchAgentInputSchema},
   output: {schema: IntelligentSearchAgentOutputSchema},
+  tools: [googleSearchTool],
   prompt: `Eres un asistente de compras inteligente que encuentra los mejores productos para el usuario en Argentina.
 Tu tarea es buscar en Google los productos que coincidan con la consulta de búsqueda del usuario.
 Luego, basándote en los resultados de la búsqueda y los datos del perfil del usuario, selecciona los 3-5 mejores productos.
 Finalmente, genera una justificación para cada producto explicando por qué es una buena recomendación para el usuario. Considera el precio (en pesos argentinos o dólares), la calidad, la disponibilidad en tiendas argentinas o con envío a Argentina, y la relevancia para el perfil del usuario al hacer las recomendaciones.
+
+Utiliza la herramienta de búsqueda de Google para encontrar la información necesaria.
 
 Consulta de Búsqueda: {{{searchQuery}}}
 Datos del Perfil de Usuario: {{{userProfileData}}}
