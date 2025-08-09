@@ -26,7 +26,7 @@ const GenerateFollowUpQuestionsInputSchema = z.object({
 export type GenerateFollowUpQuestionsInput = z.infer<typeof GenerateFollowUpQuestionsInputSchema>;
 
 const GenerateFollowUpQuestionsOutputSchema = z.object({
-  questions: z.array(z.string()).describe('A list of 3-5 follow-up questions.'),
+  questions: z.array(z.string()).describe('A list of 1 to 3 follow-up questions.'),
 });
 export type GenerateFollowUpQuestionsOutput = z.infer<typeof GenerateFollowUpQuestionsOutputSchema>;
 
@@ -41,19 +41,21 @@ const prompt = ai.definePrompt({
   input: {schema: GenerateFollowUpQuestionsInputSchema},
   output: {schema: GenerateFollowUpQuestionsOutputSchema},
   prompt: `You are an AI assistant helping to onboard new users to a shopping application.
-  Your goal is to generate 3-5 follow-up questions to better understand the user's purchase needs based on their initial answer and prior questions.
+Your goal is to generate 1 to 3 follow-up questions to better understand the user's purchase needs based on their prior answers.
+Keep the questions conversational and engaging. Avoid being repetitive.
 
-  Initial Answer: {{{initialAnswer}}}
+Initial Answer to "What are you shopping for today?": {{{initialAnswer}}}
 
-  {{#if priorQuestionsAndAnswers}}
-  Prior Questions and Answers:
-  {{#each priorQuestionsAndAnswers}}
-  Question: {{{this.question}}}
-  Answer: {{{this.answer}}}
-  {{/each}}
-  {{/if}}
+{{#if priorQuestionsAndAnswers}}
+Conversation History:
+{{#each priorQuestionsAndAnswers}}
+Q: {{{this.question}}}
+A: {{{this.answer}}}
+{{/each}}
+{{/if}}
 
-  Please generate a list of 3-5 follow-up questions that will help to determine the user's specific needs and preferences. Return the questions as a JSON array of strings.
+Please generate a list of 1-3 follow-up questions that will help to determine the user's specific needs and preferences. Return the questions as a JSON array of strings.
+Do not ask questions that have already been answered.
   `,
 });
 
