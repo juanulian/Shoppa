@@ -74,10 +74,19 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData }) => {
   }
 
   const handleConfirmPurchase = () => {
+    if (cart.length === 0) return;
+    
     toast({
-        title: "¡Compra Confirmada!",
-        description: "Gracias por tu compra. Tu pedido está siendo procesado.",
+        title: "Redirigiendo para la compra...",
+        description: "Se abrirán nuevas pestañas para cada producto.",
     });
+
+    cart.forEach(item => {
+        if (item.productUrl) {
+            window.open(item.productUrl, '_blank');
+        }
+    });
+
     setCart([]);
   }
 

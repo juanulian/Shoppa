@@ -57,7 +57,7 @@ Consulta de Búsqueda: {{{searchQuery}}}
 Datos del Perfil de Usuario: {{{userProfileData}}}
 
 La salida debe ser un array JSON de recomendaciones de productos.
-Cada producto debe tener un productName, productDescription, price, qualityScore (0-100), availability, un campo de justificación explicando por qué es una buena recomendación, y un imageUrl. Para imageUrl, usa un marcador de posición de https://placehold.co/600x400.png.
+Cada producto debe tener un productName, productDescription, price, qualityScore (0-100), availability, un campo de justificación explicando por qué es una buena recomendación, un imageUrl y un productUrl. Para imageUrl, usa un marcador de posición de https://placehold.co/600x400.png. Para productUrl, busca una URL de compra real.
 `,
 });
 
