@@ -31,6 +31,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
   useEffect(() => {
     if (nextQuestions.length > 0) {
+      // This logic now runs only on the client-side, preventing hydration errors.
       const nextQuestion = nextQuestions[Math.floor(Math.random() * nextQuestions.length)];
       setCurrentQuestion(nextQuestion);
       setNextQuestions([]);
