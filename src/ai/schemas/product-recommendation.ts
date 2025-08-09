@@ -10,7 +10,7 @@ export const ProductRecommendationSchema = z.object({
   qualityScore: z.number().describe('A score representing the quality of the product (0-100).'),
   availability: z.string().describe('The availability of the product.'),
   justification: z.string().describe('Justification for recommending this product based on user profile and search query.'),
-  imageUrl: z.string().url().describe('A URL for an image of the product.'),
+  imageUrl: z.string().describe('A URL for an image of the product.'),
 });
 
 export type ProductRecommendation = z.infer<typeof ProductRecommendationSchema>;
