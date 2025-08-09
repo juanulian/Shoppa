@@ -46,18 +46,22 @@ const prompt = ai.definePrompt({
   input: {schema: IntelligentSearchAgentInputSchema},
   output: {schema: IntelligentSearchAgentOutputSchema},
   tools: [googleSearchTool],
-  prompt: `Eres un asistente de compras inteligente que encuentra los mejores productos para el usuario en Argentina.
-Tu tarea es buscar en Google los productos que coincidan con la consulta de búsqueda del usuario.
-Luego, basándote en los resultados de la búsqueda y los datos del perfil del usuario, selecciona los 3-5 mejores productos.
-Finalmente, genera una justificación para cada producto explicando por qué es una buena recomendación para el usuario. Considera el precio (en pesos argentinos o dólares), la calidad, la disponibilidad en tiendas argentinas o con envío a Argentina, y la relevancia para el perfil del usuario al hacer las recomendaciones.
+  prompt: `Eres un asistente de compras experto y tu misión es encontrar las mejores ofertas REALES para un usuario en Argentina.
+Tu tarea es buscar en Google los productos que coincidan con la consulta del usuario. Es crucial que utilices la herramienta de búsqueda para obtener información actualizada.
+
+Al analizar los resultados, sigue estas reglas estrictamente:
+1. **Precios Reales:** El precio DEBE ser el que aparece en la página del producto. No inventes precios. Debe estar en pesos argentinos (ARS) o dólares (USD). Si no encuentras el precio, no incluyas el producto.
+2. **Enlaces Reales:** La \`productUrl\` DEBE ser el enlace directo a la página del producto donde se puede comprar, no un enlace a una búsqueda de Google o a una categoría general. Si no encuentras un enlace de compra directo, no incluyas el producto.
+3. **Disponibilidad en Argentina:** Asegúrate de que el producto esté disponible en tiendas argentinas o en tiendas que realicen envíos a Argentina.
+4. **Justificación Detallada:** Explica por qué cada producto es una buena recomendación, basándote en la información que encontraste y en el perfil del usuario.
 
 Utiliza la herramienta de búsqueda de Google para encontrar la información necesaria.
 
 Consulta de Búsqueda: {{{searchQuery}}}
 Datos del Perfil de Usuario: {{{userProfileData}}}
 
-La salida debe ser un array JSON de recomendaciones de productos.
-Cada producto debe tener un productName, productDescription, price, qualityScore (0-100), availability, un campo de justificación explicando por qué es una buena recomendación, un imageUrl y un productUrl. Para imageUrl, usa un marcador de posición de https://placehold.co/600x400.png. Para productUrl, busca una URL de compra real.
+La salida debe ser un array JSON de 3 a 5 recomendaciones de productos.
+Cada producto debe tener productName, productDescription, price, qualityScore (0-100), availability, justification, imageUrl y un productUrl real. Para imageUrl, usa un marcador de posición de https://placehold.co/600x400.png.
 `,
 });
 
