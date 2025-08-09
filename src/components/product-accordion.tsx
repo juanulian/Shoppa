@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, HelpCircle, Star, ShoppingCart, Plus } from "lucide-react";
-import Image from "next/image";
+import ProductImage from "@/components/product-image";
 import type { ProductRecommendation } from "@/ai/schemas/product-recommendation";
 
 type ProductAccordionProps = {
@@ -30,7 +30,7 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
         <AccordionTrigger className="p-4 hover:no-underline">
           <div className="flex gap-4 items-center w-full">
             <div className="relative h-24 w-24 flex-shrink-0">
-                <Image src={product.imageUrl} alt={product.productName} fill className="rounded-md object-cover" data-ai-hint="product image" />
+                <ProductImage src={product.imageUrl} alt={product.productName} fill className="rounded-md object-cover" />
             </div>
             <div className="flex-grow text-left">
                 <h3 className="font-headline font-bold text-lg">{product.productName}</h3>
@@ -77,7 +77,7 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
                                 <Card key={index} className="bg-white/30 dark:bg-card/60 backdrop-blur-lg overflow-hidden border-white/20">
                                     <CardContent className="p-3 flex flex-col h-full">
                                         <div className="relative h-24 w-full mb-2">
-                                            <Image src={compProduct.imageUrl} alt={compProduct.productName} fill className="rounded-md object-cover" data-ai-hint="product image" />
+                                            <ProductImage src={compProduct.imageUrl} alt={compProduct.productName} fill className="rounded-md object-cover" />
                                         </div>
                                         <h5 className="font-bold text-sm flex-grow">{compProduct.productName}</h5>
                                         <p className="text-xs text-muted-foreground mt-1">{compProduct.justification}</p>

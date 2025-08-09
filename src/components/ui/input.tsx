@@ -4,6 +4,12 @@ import { cn } from "@/lib/utils"
 
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ className, type, ...props }, ref) => {
+    // Filtramos props que pueden causar problemas de hidratación
+    const cleanProps = React.useMemo(() => {
+      const { fdprocessedid, ...rest } = props as any;
+      return rest;
+    }, [props]);
+
     return (
       <input
         type={type}
@@ -12,7 +18,7 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
           className
         )}
         ref={ref}
-        {...props}
+        {...cleanProps}
       />
     )
   }

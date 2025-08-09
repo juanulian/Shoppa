@@ -19,7 +19,7 @@ import {
   SheetTrigger,
   SheetFooter,
 } from '@/components/ui/sheet';
-import Image from 'next/image';
+import ProductImage from '@/components/product-image';
 
 interface MainAppProps {
   userProfileData: string;
@@ -158,7 +158,9 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery =
                     <div className="space-y-4">
                     {cart.map((item, index) => (
                         <div key={index} className="flex items-center gap-4">
-                            <Image src={item.imageUrl} alt={item.productName} width={64} height={64} className="rounded-md object-cover" data-ai-hint="product image" />
+                            <div className="relative h-16 w-16 flex-shrink-0">
+                              <ProductImage src={item.imageUrl} alt={item.productName} fill className="rounded-md object-cover" />
+                            </div>
                             <div className="flex-grow">
                                 <h4 className="font-semibold">{item.productName}</h4>
                                 <p className="text-sm text-muted-foreground">${item.price.toFixed(2)}</p>
