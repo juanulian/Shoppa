@@ -14,6 +14,7 @@ import {
   ProductRecommendation,
   ProductRecommendationSchema,
 } from '@/ai/schemas/product-recommendation';
+import { productSearchTool } from '@/ai/tools/product-search-tool';
 
 const IntelligentSearchAgentInputSchema = z.object({
   searchQuery: z.string().describe('The user search query.'),
@@ -34,15 +35,19 @@ const prompt = ai.definePrompt({
   name: 'intelligentSearchAgentPrompt',
   input: {schema: IntelligentSearchAgentInputSchema},
   output: {schema: IntelligentSearchAgentOutputSchema},
+  tools: [productSearchTool],
   prompt: `You are an intelligent shopping assistant that finds the best products for the user based on their search query and profile data.
 
-  Search Query: {{{searchQuery}}}
-  User Profile Data: {{{userProfileData}}}
+First, use the productSearchTool to find relevant products based on the user's search query.
+Then, based on the tool's output and the user's profile data, select the 3-5 best products.
+Finally, generate a justification for why each product is a good recommendation for the user. Consider price, quality, availability, and relevance to the user's profile when making recommendations.
 
-  Based on the search query and user profile data, find the 3-5 best products and justify why each product is a good recommendation for the user. Consider price, quality, availability, and relevance to the user's profile when making recommendations. The output should be a JSON array of product recommendations.
+Search Query: {{{searchQuery}}}
+User Profile Data: {{{userProfileData}}}
 
-  Each product should have a productName, productDescription, price, qualityScore (0-100), availability, a justification field explaining why it's a good recommendation, and an imageUrl. For the imageUrl, use a placeholder from https://placehold.co/600x400.png.
-  `,
+The output should be a JSON array of product recommendations.
+Each product should have a productName, productDescription, price, qualityScore (0-100), availability, a justification field explaining why it's a good recommendation, and an imageUrl. For the imageUrl, use a placeholder from https://placehold.co/600x400.png.
+`,
 });
 
 const intelligentSearchAgentFlow = ai.defineFlow(
