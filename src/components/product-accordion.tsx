@@ -10,8 +10,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, HelpCircle, Star, ShoppingCart, Plus } from "lucide-react";
-import ProductImage from "@/components/product-image";
 import type { ProductRecommendation } from "@/ai/schemas/product-recommendation";
+import SmartProductImage from "./smart-product-image";
+import VerifiedProductLink from "./verified-product-link";
 
 type ProductAccordionProps = {
   product: ProductRecommendation;
@@ -30,7 +31,14 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
         <AccordionTrigger className="p-4 hover:no-underline">
           <div className="flex gap-4 items-center w-full">
             <div className="relative h-24 w-24 flex-shrink-0">
-                <ProductImage src={product.imageUrl} alt={product.productName} fill className="rounded-md object-cover" />
+                <SmartProductImage 
+                    src={product.imageUrl} 
+                    alt={product.productName}
+                    productName={product.productName}
+                    className="rounded-md object-cover"
+                    width={96}
+                    height={96}
+                />
             </div>
             <div className="flex-grow text-left">
                 <h3 className="font-headline font-bold text-lg">{product.productName}</h3>
@@ -64,10 +72,17 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
                     </div>
                     <p className="text-sm text-muted-foreground">{product.justification}</p>
                 </div>
-                <Button className="w-full mt-4" onClick={() => onAddToCart(product)}>
-                    <ShoppingCart className="mr-2 h-4 w-4" />
-                    Añadir al carrito
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-2">
+                    <Button className="w-full sm:w-auto flex-grow" onClick={() => onAddToCart(product)} suppressHydrationWarning>
+                        <ShoppingCart className="mr-2 h-4 w-4" />
+                        Añadir al carrito
+                    </Button>
+                    <VerifiedProductLink 
+                        url={product.productUrl}
+                        productName={product.productName}
+                        className="w-full sm:w-auto"
+                    />
+                </div>
 
                 {complementaryProducts.length > 0 && (
                     <div className="space-y-4 pt-4 border-t border-white/20">
@@ -77,7 +92,14 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
                                 <Card key={index} className="bg-white/30 dark:bg-card/60 backdrop-blur-lg overflow-hidden border-white/20">
                                     <CardContent className="p-3 flex flex-col h-full">
                                         <div className="relative h-24 w-full mb-2">
-                                            <ProductImage src={compProduct.imageUrl} alt={compProduct.productName} fill className="rounded-md object-cover" />
+                                            <SmartProductImage 
+                                                src={compProduct.imageUrl} 
+                                                alt={compProduct.productName}
+                                                productName={compProduct.productName}
+                                                className="rounded-md object-cover" 
+                                                width={150}
+                                                height={96}
+                                            />
                                         </div>
                                         <h5 className="font-bold text-sm flex-grow">{compProduct.productName}</h5>
                                         <p className="text-xs text-muted-foreground mt-1">{compProduct.justification}</p>
@@ -85,7 +107,7 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
                                             <Badge variant="secondary" className="text-sm font-bold">
                                                 ${compProduct.price.toFixed(2)}
                                             </Badge>
-                                            <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full" onClick={() => onAddToCart(compProduct)}>
+                                            <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full" onClick={() => onAddToCart(compProduct)} suppressHydrationWarning>
                                                 <Plus className="h-4 w-4" />
                                             </Button>
                                         </div>

@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ProductAccordion from '@/components/product-accordion';
 import ProductCardSkeleton from '@/components/product-card-skeleton';
-import { Search, ShoppingCart, X } from 'lucide-react';
+import { Search, ShoppingCart, X, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   Sheet,
@@ -20,13 +20,15 @@ import {
   SheetFooter,
 } from '@/components/ui/sheet';
 import ProductImage from '@/components/product-image';
+import Logo from './icons/logo';
 
 interface MainAppProps {
   userProfileData: string;
   initialSearchQuery?: string;
+  onNewSearch: () => void;
 }
 
-const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery = '' }) => {
+const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery = '', onNewSearch }) => {
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
   const [results, setResults] = useState<IntelligentSearchAgentOutput>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -105,13 +107,19 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery =
 
   return (
     <div className="w-full max-w-5xl mx-auto flex flex-col gap-8">
-      <header className="text-center">
-        <h2 className="text-3xl md:text-4xl font-bold font-headline tracking-tight">
-          ¿Qué estás buscando?
-        </h2>
-        <p className="text-muted-foreground mt-2">
-          Nuestra IA encontrará las mejores opciones según tus necesidades.
-        </p>
+      <header className="flex justify-between items-center">
+        <div>
+          <h2 className="text-3xl md:text-4xl font-bold font-headline tracking-tight">
+            ¿Qué estás buscando?
+          </h2>
+          <p className="text-muted-foreground mt-2">
+            Nuestra IA encontrará las mejores opciones según tus necesidades.
+          </p>
+        </div>
+        <Button onClick={onNewSearch} variant="outline">
+          <RefreshCw className="mr-2 h-4 w-4" />
+          Nueva Búsqueda
+        </Button>
       </header>
       <div className="sticky top-4 z-20 w-full flex gap-2">
         <form onSubmit={onSearchSubmit} className="relative flex-grow bg-white/30 dark:bg-card/60 backdrop-blur-2xl rounded-full border border-white/20 p-1 shadow-md">
@@ -122,12 +130,14 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery =
             placeholder="Ej: 'Un nuevo portátil para programar'"
             className="w-full pr-20 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 h-12 text-base pl-6 rounded-full"
             disabled={isLoading}
+            suppressHydrationWarning
           />
           <Button
             type="submit"
             size="icon"
             className="absolute top-2 right-2 h-10 w-10 rounded-full bg-accent hover:bg-accent/90 transition-all duration-300 transform active:scale-95 disabled:scale-100"
             disabled={isLoading}
+            suppressHydrationWarning
           >
             <Search className="h-5 w-5" />
             <span className="sr-only">Buscar</span>
@@ -135,7 +145,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery =
         </form>
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="h-14 w-14 rounded-full relative bg-white/30 dark:bg-card/60 backdrop-blur-2xl border-white/20 shadow-md">
+            <Button variant="outline" size="icon" className="h-14 w-14 rounded-full relative bg-white/30 dark:bg-card/60 backdrop-blur-2xl border-white/20 shadow-md" suppressHydrationWarning>
               <ShoppingCart className="h-6 w-6" />
               {cart.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full h-6 w-6 flex items-center justify-center text-xs font-bold">
@@ -165,7 +175,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery =
                                 <h4 className="font-semibold">{item.productName}</h4>
                                 <p className="text-sm text-muted-foreground">${item.price.toFixed(2)}</p>
                             </div>
-                            <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.productName)}>
+                            <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.productName)} suppressHydrationWarning>
                                 <X className="h-4 w-4" />
                             </Button>
                         </div>
@@ -180,7 +190,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery =
                             <span>Total:</span>
                             <span>${getTotalPrice()}</span>
                         </div>
-                        <Button className="w-full" size="lg" onClick={handleConfirmPurchase}>Confirmar Compra</Button>
+                        <Button className="w-full" size="lg" onClick={handleConfirmPurchase} suppressHydrationWarning>Confirmar Compra</Button>
                     </div>
                 </SheetFooter>
               )}

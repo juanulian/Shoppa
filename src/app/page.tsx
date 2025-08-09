@@ -19,6 +19,12 @@ export default function Home() {
     }
     setAppState('search');
   };
+  
+  const handleNewSearch = () => {
+    setAppState('onboarding');
+    setUserProfile(null);
+    setInitialSearch(undefined);
+  }
 
   return (
     <div className="relative min-h-screen w-full bg-gradient-to-br from-purple-200 via-blue-200 to-teal-200 dark:from-purple-900 dark:via-blue-950 dark:to-teal-950 overflow-hidden">
@@ -36,7 +42,7 @@ export default function Home() {
           )}
           {appState === 'search' && userProfile !== null && (
             <div className="animate-in fade-in-0 zoom-in-95 duration-500 w-full">
-              <MainApp userProfileData={userProfile} initialSearchQuery={initialSearch} />
+              <MainApp userProfileData={userProfile} initialSearchQuery={initialSearch} onNewSearch={handleNewSearch} />
             </div>
           )}
         </div>

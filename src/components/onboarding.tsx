@@ -31,9 +31,8 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
   useEffect(() => {
     if (nextQuestions.length > 0) {
-      // This logic now runs only on the client-side, preventing hydration errors.
-      const nextQuestion = nextQuestions[Math.floor(Math.random() * nextQuestions.length)];
-      setCurrentQuestion(nextQuestion);
+      const nextQ = nextQuestions[Math.floor(Math.random() * nextQuestions.length)];
+      setCurrentQuestion(nextQ);
       setNextQuestions([]);
     }
   }, [nextQuestions]);
@@ -116,7 +115,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
           <form onSubmit={handleAnswerSubmit} className="space-y-4">
             <div className="flex gap-2">
-              <Button type="button" size="icon" variant="outline" onClick={handleBack} disabled={isLoading || qaPairs.length === 0} className="rounded-full h-12 w-12 flex-shrink-0">
+              <Button type="button" size="icon" variant="outline" onClick={handleBack} disabled={isLoading || qaPairs.length === 0} className="rounded-full h-12 w-12 flex-shrink-0" suppressHydrationWarning>
                 <ArrowLeft />
                 <span className="sr-only">Atrás</span>
               </Button>
@@ -126,17 +125,18 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                 placeholder="Tu respuesta..."
                 className="h-12 text-base rounded-full px-6 bg-background/70 focus-visible:ring-accent flex-grow"
                 disabled={isLoading}
+                suppressHydrationWarning
               />
-              <Button type="submit" size="icon" disabled={!currentAnswer.trim() || isLoading} className="rounded-full h-12 w-12 flex-shrink-0">
+              <Button type="submit" size="icon" disabled={!currentAnswer.trim() || isLoading} className="rounded-full h-12 w-12 flex-shrink-0" suppressHydrationWarning>
                 {isLoading ? <Loader2 className="animate-spin" /> : <ArrowRight />}
                 <span className="sr-only">Siguiente</span>
               </Button>
             </div>
             <div className="flex justify-center items-center gap-4 pt-4">
-                <Button onClick={() => handleFinish()} size="lg" variant="ghost" className="rounded-full font-bold text-accent-foreground/80 hover:bg-accent/20 transition-all duration-300" disabled={isLoading || qaPairs.length === 0}>
+                <Button onClick={() => handleFinish()} size="lg" variant="ghost" className="rounded-full font-bold text-accent-foreground/80 hover:bg-accent/20 transition-all duration-300" disabled={isLoading || qaPairs.length === 0} suppressHydrationWarning>
                     Finalizar y Buscar
                 </Button>
-                <Button onClick={() => handleFinish(qaPairs)} variant="link" disabled={isLoading} className="flex items-center gap-2">
+                <Button onClick={() => handleFinish(qaPairs)} variant="link" disabled={isLoading} className="flex items-center gap-2" suppressHydrationWarning>
                     <SkipForward className="h-4 w-4" />
                     Omitir
                 </Button>
