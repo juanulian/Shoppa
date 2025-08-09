@@ -18,7 +18,7 @@ interface QA {
   answer: string;
 }
 
-const initialQuestions = ["What are you primarily shopping for today? (e.g., work, personal hobbies, gifts)"];
+const initialQuestions = ["¿Para qué estás comprando principalmente hoy? (ej. trabajo, pasatiempos, regalos)"];
 
 const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const [questions, setQuestions] = useState<string[]>(initialQuestions);
@@ -56,10 +56,10 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                     setIsFinished(true);
                 }
             } catch (error) {
-                console.error("Failed to generate questions:", error);
+                console.error("No se pudieron generar las preguntas:", error);
                 toast({
                     title: "Error",
-                    description: "Could not generate follow-up questions. You can proceed without them.",
+                    description: "No se pudieron generar preguntas de seguimiento. Puedes continuar sin ellas.",
                     variant: "destructive",
                 });
                 setIsFinished(true);
@@ -73,7 +73,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   };
 
   const handleFinish = () => {
-    const profileData = qaPairs.map(qa => `Q: ${qa.question}\nA: ${qa.answer}`).join('\n\n');
+    const profileData = qaPairs.map(qa => `P: ${qa.question}\nR: ${qa.answer}`).join('\n\n');
     onComplete(profileData);
   };
   
@@ -83,10 +83,10 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
     <Card className="w-full max-w-2xl mx-auto shadow-2xl bg-card/80 backdrop-blur-lg border-white/20">
       <CardHeader>
         <CardTitle className="font-headline text-2xl md:text-3xl text-center">
-            Let's find what's best for you
+            Encontremos lo mejor para ti
         </CardTitle>
         <CardDescription className="text-center">
-            Answer a few questions to personalize your experience.
+            Responde algunas preguntas para personalizar tu experiencia.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -103,18 +103,18 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                 <Input
                     value={currentAnswer}
                     onChange={(e) => setCurrentAnswer(e.target.value)}
-                    placeholder="Your answer..."
+                    placeholder="Tu respuesta..."
                     className="h-12 text-base rounded-full px-6 bg-background/70 focus-visible:ring-accent"
                     disabled={isFinished || isLoading}
                 />
                 <div className="flex justify-end">
                     {isFinished ? (
                          <Button onClick={handleFinish} size="lg" className="rounded-full font-bold bg-accent hover:bg-accent/90 text-accent-foreground transition-all duration-300 w-full md:w-auto">
-                            Let's Go Shopping!
+                            ¡Vamos de Compras!
                         </Button>
                     ) : (
                         <Button type="submit" size="lg" disabled={!currentAnswer.trim() || isLoading} className="rounded-full font-bold shadow-[4px_4px_8px_#d1d1d1,-4px_-4px_8px_#ffffff] dark:shadow-[4px_4px_8px_#181a1e,-4px_-4px_8px_#222428] active:shadow-[inset_4px_4px_8px_#d1d1d1,inset_-4px_-4px_8px_#ffffff] dark:active:shadow-[inset_4px_4px_8px_#181a1e,inset_-4px_-4px_8px_#222428] transition-shadow duration-150 ease-in-out">
-                            {isLoading ? <Loader2 className="animate-spin" /> : 'Next'}
+                            {isLoading ? <Loader2 className="animate-spin" /> : 'Siguiente'}
                         </Button>
                     )}
                 </div>

@@ -1,10 +1,11 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 
 const ProductCardSkeleton = () => {
   return (
     <Card className="bg-card/30 backdrop-blur-lg border border-border/20 shadow-lg rounded-2xl h-full">
       <CardHeader>
+        <Skeleton className="h-40 w-full mb-4" />
         <Skeleton className="h-6 w-3/4 mb-2" />
         <Skeleton className="h-4 w-1/2" />
       </CardHeader>
@@ -23,6 +24,9 @@ const ProductCardSkeleton = () => {
             <Skeleton className="h-4 w-full" />
         </div>
       </CardContent>
+      <CardFooter>
+        <Skeleton className="h-10 w-full" />
+      </CardFooter>
     </Card>
   );
 };

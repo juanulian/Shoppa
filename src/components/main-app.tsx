@@ -4,12 +4,22 @@ import {
   intelligentSearchAgent,
   IntelligentSearchAgentOutput,
 } from '@/ai/flows/intelligent-search-agent';
+import { ProductRecommendation } from '@/ai/schemas/product-recommendation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ProductCard from '@/components/product-card';
 import ProductCardSkeleton from '@/components/product-card-skeleton';
-import { Search } from 'lucide-react';
+import { Search, ShoppingCart, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetFooter,
+} from '@/components/ui/sheet';
+import Image from 'next/image';
 
 interface MainAppProps {
   userProfileData: string;
@@ -19,6 +29,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState<IntelligentSearchAgentOutput>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [cart, setCart] = useState<ProductRecommendation[]>([]);
   const { toast } = useToast();
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -35,10 +46,10 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData }) => {
       });
       setResults(res);
     } catch (error) {
-      console.error('Search failed:', error);
+      console.error('La búsqueda falló:', error);
       toast({
-        title: 'Search Error',
-        description: 'Something went wrong with the search. Please try again.',
+        title: 'Error de Búsqueda',
+        description: 'Algo salió mal con la búsqueda. Por favor, inténtalo de nuevo.',
         variant: 'destructive',
       });
     } finally {
@@ -46,26 +57,39 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData }) => {
     }
   };
 
+  const addToCart = (product: ProductRecommendation) => {
+    setCart((prevCart) => [...prevCart, product]);
+    toast({
+      title: 'Producto añadido',
+      description: `${product.productName} ha sido añadido a tu carrito.`,
+    });
+  };
+
+  const removeFromCart = (productName: string) => {
+    setCart((prevCart) => prevCart.filter((item) => item.productName !== productName));
+  };
+  
+  const getTotalPrice = () => {
+    return cart.reduce((total, item) => total + item.price, 0).toFixed(2);
+  }
+
   return (
     <div className="w-full max-w-5xl mx-auto flex flex-col gap-8">
       <header className="text-center">
         <h2 className="text-3xl md:text-4xl font-bold font-headline tracking-tight">
-          What are you looking for?
+          ¿Qué estás buscando?
         </h2>
         <p className="text-muted-foreground mt-2">
-          Our AI will find the best options based on your needs.
+          Nuestra IA encontrará las mejores opciones según tus necesidades.
         </p>
       </header>
-      <form
-        onSubmit={handleSearch}
-        className="sticky top-4 z-20 w-full"
-      >
-        <div className="relative bg-background/50 backdrop-blur-sm rounded-full border p-1 shadow-md">
+      <div className="sticky top-4 z-20 w-full flex gap-2">
+        <form onSubmit={handleSearch} className="relative flex-grow bg-background/50 backdrop-blur-sm rounded-full border p-1 shadow-md">
           <Input
             type="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="e.g., 'A new laptop for programming'"
+            placeholder="Ej: 'Un nuevo portátil para programar'"
             className="w-full pr-20 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 h-12 text-base pl-6 rounded-full"
             disabled={isLoading}
           />
@@ -76,10 +100,62 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData }) => {
             disabled={isLoading}
           >
             <Search className="h-5 w-5" />
-            <span className="sr-only">Search</span>
+            <span className="sr-only">Buscar</span>
           </Button>
-        </div>
-      </form>
+        </form>
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="outline" size="icon" className="h-14 w-14 rounded-full relative bg-background/50 backdrop-blur-sm shadow-md">
+              <ShoppingCart className="h-6 w-6" />
+              {cart.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full h-6 w-6 flex items-center justify-center text-xs font-bold">
+                  {cart.length}
+                </span>
+              )}
+            </Button>
+          </SheetTrigger>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>Carrito de Compras</SheetTitle>
+            </SheetHeader>
+            <div className="flex flex-col h-full">
+              {cart.length === 0 ? (
+                <div className="flex-grow flex items-center justify-center">
+                  <p className="text-muted-foreground">Tu carrito está vacío.</p>
+                </div>
+              ) : (
+                <div className="flex-grow overflow-y-auto pr-4 -mr-4 mt-4">
+                    <div className="space-y-4">
+                    {cart.map((item, index) => (
+                        <div key={index} className="flex items-center gap-4">
+                            <Image src={item.imageUrl} alt={item.productName} width={64} height={64} className="rounded-md object-cover" data-ai-hint="product image" />
+                            <div className="flex-grow">
+                                <h4 className="font-semibold">{item.productName}</h4>
+                                <p className="text-sm text-muted-foreground">${item.price.toFixed(2)}</p>
+                            </div>
+                            <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.productName)}>
+                                <X className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    ))}
+                    </div>
+                </div>
+              )}
+              {cart.length > 0 && (
+                <SheetFooter className="mt-auto border-t pt-4">
+                    <div className="w-full">
+                        <div className="flex justify-between font-bold text-lg mb-4">
+                            <span>Total:</span>
+                            <span>${getTotalPrice()}</span>
+                        </div>
+                        <Button className="w-full" size="lg">Confirmar Compra</Button>
+                    </div>
+                </SheetFooter>
+              )}
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {isLoading &&
@@ -88,12 +164,12 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData }) => {
           ))}
         {!isLoading &&
           results.map((product, index) => (
-            <ProductCard key={index} {...product} />
+            <ProductCard key={index} {...product} onAddToCart={() => addToCart(product)} />
           ))}
       </div>
       {!isLoading && results.length === 0 && (
          <div className="col-span-full text-center py-16">
-            <p className="text-muted-foreground">Search results will appear here.</p>
+            <p className="text-muted-foreground">Los resultados de la búsqueda aparecerán aquí.</p>
          </div>
       )}
     </div>

@@ -10,6 +10,10 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import {
+  ProductRecommendation,
+  ProductRecommendationSchema,
+} from '@/ai/schemas/product-recommendation';
 
 const IntelligentSearchAgentInputSchema = z.object({
   searchQuery: z.string().describe('The user search query.'),
@@ -17,14 +21,7 @@ const IntelligentSearchAgentInputSchema = z.object({
 });
 export type IntelligentSearchAgentInput = z.infer<typeof IntelligentSearchAgentInputSchema>;
 
-const ProductRecommendationSchema = z.object({
-  productName: z.string().describe('The name of the product.'),
-  productDescription: z.string().describe('A brief description of the product.'),
-  price: z.number().describe('The price of the product.'),
-  qualityScore: z.number().describe('A score representing the quality of the product (0-100).'),
-  availability: z.string().describe('The availability of the product.'),
-  justification: z.string().describe('Justification for recommending this product based on user profile and search query.'),
-});
+export type { ProductRecommendation };
 
 const IntelligentSearchAgentOutputSchema = z.array(ProductRecommendationSchema).describe('A list of product recommendations.');
 export type IntelligentSearchAgentOutput = z.infer<typeof IntelligentSearchAgentOutputSchema>;
@@ -44,7 +41,7 @@ const prompt = ai.definePrompt({
 
   Based on the search query and user profile data, find the 3-5 best products and justify why each product is a good recommendation for the user. Consider price, quality, availability, and relevance to the user's profile when making recommendations. The output should be a JSON array of product recommendations.
 
-  Each product should have a productName, productDescription, price, qualityScore (0-100), availability, and a justification field explaining why it's a good recommendation.
+  Each product should have a productName, productDescription, price, qualityScore (0-100), availability, a justification field explaining why it's a good recommendation, and an imageUrl. For the imageUrl, use a placeholder from https://placehold.co/600x400.png.
   `,
 });
 

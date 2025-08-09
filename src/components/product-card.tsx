@@ -1,6 +1,8 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, HelpCircle, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CheckCircle, HelpCircle, Star, ShoppingCart } from "lucide-react";
+import Image from "next/image";
 
 type ProductCardProps = {
   productName: string;
@@ -9,6 +11,8 @@ type ProductCardProps = {
   qualityScore: number;
   availability: string;
   justification: string;
+  imageUrl: string;
+  onAddToCart: () => void;
 };
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -18,10 +22,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
   qualityScore,
   availability,
   justification,
+  imageUrl,
+  onAddToCart,
 }) => {
   return (
     <Card className="bg-card/30 backdrop-blur-lg border border-border/20 shadow-lg rounded-2xl h-full flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
-      <CardHeader>
+       <CardHeader>
+        <div className="relative aspect-video w-full mb-4">
+            <Image src={imageUrl} alt={productName} fill className="rounded-t-2xl object-cover" data-ai-hint="product image" />
+        </div>
         <CardTitle className="font-headline font-bold text-xl">{productName}</CardTitle>
         <CardDescription>{productDescription}</CardDescription>
       </CardHeader>
@@ -41,13 +50,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <CheckCircle className="w-5 h-5 text-green-500" />
           <span className="text-sm font-medium">{availability}</span>
         </div>
-      </CardContent>
-      <CardFooter className="flex flex-col items-start gap-2">
-        <div className="flex items-center gap-2 font-semibold">
-           <HelpCircle className="w-5 h-5 text-accent"/>
-           <span>Why we recommend it</span>
+         <div className="pt-2">
+            <div className="flex items-center gap-2 font-semibold mb-1">
+                <HelpCircle className="w-5 h-5 text-accent"/>
+                <span>Por qué lo recomendamos</span>
+            </div>
+            <p className="text-sm text-muted-foreground">{justification}</p>
         </div>
-        <p className="text-sm text-muted-foreground">{justification}</p>
+      </CardContent>
+      <CardFooter>
+        <Button className="w-full" onClick={onAddToCart}>
+            <ShoppingCart className="mr-2 h-4 w-4" />
+            Añadir al carrito
+        </Button>
       </CardFooter>
     </Card>
   );
