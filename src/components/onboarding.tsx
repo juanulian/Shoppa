@@ -18,7 +18,7 @@ interface QA {
   answer: string;
 }
 
-const initialQuestion = "¿Para qué estás comprando principalmente hoy? (ej. trabajo, pasatiempos, regalos)";
+const initialQuestion = "¿Qué te gustaría comprar hoy?";
 const totalQuestions = 4;
 
 const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
