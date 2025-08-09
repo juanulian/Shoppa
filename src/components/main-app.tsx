@@ -118,7 +118,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery =
         </p>
       </header>
       <div className="sticky top-4 z-20 w-full flex gap-2">
-        <form onSubmit={onSearchSubmit} className="relative flex-grow bg-background/60 backdrop-blur-xl rounded-full border p-1 shadow-md">
+        <form onSubmit={onSearchSubmit} className="relative flex-grow bg-white/10 backdrop-blur-xl rounded-full border border-white/20 p-1 shadow-md">
           <Input
             type="search"
             value={searchQuery}
@@ -139,7 +139,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery =
         </form>
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="h-14 w-14 rounded-full relative bg-background/60 backdrop-blur-xl shadow-md">
+            <Button variant="outline" size="icon" className="h-14 w-14 rounded-full relative bg-white/10 backdrop-blur-xl border-white/20 shadow-md">
               <ShoppingCart className="h-6 w-6" />
               {cart.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full h-6 w-6 flex items-center justify-center text-xs font-bold">
@@ -148,7 +148,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery =
               )}
             </Button>
           </SheetTrigger>
-          <SheetContent className="bg-background/80 backdrop-blur-xl">
+          <SheetContent className="bg-white/10 backdrop-blur-2xl border-l border-white/20">
             <SheetHeader>
               <SheetTitle>Carrito de Compras</SheetTitle>
             </SheetHeader>
