@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { generateFollowUpQuestions } from '@/ai/flows/dynamic-question-generation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,7 +26,16 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const [currentQuestion, setCurrentQuestion] = useState(initialQuestion);
   const [currentAnswer, setCurrentAnswer] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [nextQuestions, setNextQuestions] = useState<string[]>([]);
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (nextQuestions.length > 0) {
+      const nextQuestion = nextQuestions[Math.floor(Math.random() * nextQuestions.length)];
+      setCurrentQuestion(nextQuestion);
+      setNextQuestions([]);
+    }
+  }, [nextQuestions]);
 
   const handleAnswerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,8 +58,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
         priorQuestionsAndAnswers: newQaPairs
       });
       if (res.questions && res.questions.length > 0) {
-        const nextQuestion = res.questions[Math.floor(Math.random() * res.questions.length)];
-        setCurrentQuestion(nextQuestion);
+        setNextQuestions(res.questions);
       } else {
         handleFinish(newQaPairs);
       }
@@ -85,7 +93,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const progressValue = (qaPairs.length / totalQuestions) * 100;
 
   return (
-    <Card className="w-full max-w-2xl mx-auto shadow-2xl bg-white/30 dark:bg-card/60 backdrop-blur-2xl border-white/20">
+    <Card className="w-full max-w-2xl mx-auto shadow-2xl bg-white/60 dark:bg-card/60 backdrop-blur-xl border-white/20">
       <CardHeader>
         <CardTitle className="font-headline text-2xl md:text-3xl text-center">
             Encontremos lo mejor para ti
