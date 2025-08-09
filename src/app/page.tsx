@@ -10,9 +10,13 @@ export type AppState = 'onboarding' | 'search';
 export default function Home() {
   const [appState, setAppState] = useState<AppState>('onboarding');
   const [userProfile, setUserProfile] = useState<string | null>(null);
+  const [initialSearch, setInitialSearch] = useState<string | undefined>(undefined);
 
-  const handleOnboardingComplete = (profileData: string) => {
+  const handleOnboardingComplete = (profileData: string, initialSearchQuery?: string) => {
     setUserProfile(profileData);
+    if(initialSearchQuery) {
+        setInitialSearch(initialSearchQuery);
+    }
     setAppState('search');
   };
 
@@ -32,7 +36,7 @@ export default function Home() {
           )}
           {appState === 'search' && userProfile !== null && (
             <div className="animate-in fade-in-0 zoom-in-95 duration-500 w-full">
-              <MainApp userProfileData={userProfile} />
+              <MainApp userProfileData={userProfile} initialSearchQuery={initialSearch} />
             </div>
           )}
         </div>

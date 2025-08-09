@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Progress } from '@/components/ui/progress';
 
 interface OnboardingProps {
-  onComplete: (profileData: string) => void;
+  onComplete: (profileData: string, initialSearchQuery?: string) => void;
 }
 
 interface QA {
@@ -78,7 +78,8 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const handleFinish = (finalQaPairs?: QA[]) => {
     const pairsToProcess = finalQaPairs || qaPairs;
     const profileData = pairsToProcess.map(qa => `P: ${qa.question}\nR: ${qa.answer}`).join('\n\n');
-    onComplete(profileData);
+    const firstAnswer = pairsToProcess.find(qa => qa.question === initialQuestion)?.answer;
+    onComplete(profileData, firstAnswer);
   };
   
   const progressValue = (qaPairs.length / totalQuestions) * 100;

@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   intelligentSearchAgent,
   IntelligentSearchAgentOutput,
@@ -23,25 +23,25 @@ import Image from 'next/image';
 
 interface MainAppProps {
   userProfileData: string;
+  initialSearchQuery?: string;
 }
 
-const MainApp: React.FC<MainAppProps> = ({ userProfileData }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery = '' }) => {
+  const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
   const [results, setResults] = useState<IntelligentSearchAgentOutput>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [cart, setCart] = useState<ProductRecommendation[]>([]);
   const { toast } = useToast();
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchQuery.trim()) return;
+  const handleSearch = async (query: string) => {
+    if (!query.trim()) return;
 
     setIsLoading(true);
     setResults([]);
 
     try {
       const res = await intelligentSearchAgent({
-        searchQuery,
+        searchQuery: query,
         userProfileData,
       });
       setResults(res);
@@ -56,6 +56,19 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData }) => {
       setIsLoading(false);
     }
   };
+
+  const onSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSearch(searchQuery);
+  };
+  
+  useEffect(() => {
+    if (initialSearchQuery) {
+        handleSearch(initialSearchQuery);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialSearchQuery]);
+
 
   const addToCart = (product: ProductRecommendation) => {
     setCart((prevCart) => [...prevCart, product]);
@@ -90,6 +103,10 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData }) => {
     setCart([]);
   }
 
+  const mainProduct = results.length > 0 ? results[0] : null;
+  const complementaryProducts = results.length > 1 ? results.slice(1) : [];
+
+
   return (
     <div className="w-full max-w-5xl mx-auto flex flex-col gap-8">
       <header className="text-center">
@@ -101,7 +118,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData }) => {
         </p>
       </header>
       <div className="sticky top-4 z-20 w-full flex gap-2">
-        <form onSubmit={handleSearch} className="relative flex-grow bg-background/50 backdrop-blur-sm rounded-full border p-1 shadow-md">
+        <form onSubmit={onSearchSubmit} className="relative flex-grow bg-background/50 backdrop-blur-sm rounded-full border p-1 shadow-md">
           <Input
             type="search"
             value={searchQuery}
@@ -179,10 +196,13 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData }) => {
           Array.from({ length: 3 }).map((_, i) => (
             <ProductCardSkeleton key={i} />
           ))}
-        {!isLoading &&
-          results.map((product, index) => (
-            <ProductAccordion key={index} {...product} onAddToCart={() => addToCart(product)} />
-          ))}
+        {!isLoading && mainProduct && (
+            <ProductAccordion
+              product={mainProduct}
+              complementaryProducts={complementaryProducts}
+              onAddToCart={addToCart}
+            />
+        )}
       </div>
       {!isLoading && results.length === 0 && (
          <div className="text-center py-16">
