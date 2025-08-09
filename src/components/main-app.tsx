@@ -103,10 +103,6 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery =
     setCart([]);
   }
 
-  const mainProduct = results.length > 0 ? results[0] : null;
-  const complementaryProducts = results.length > 1 ? results.slice(1) : [];
-
-
   return (
     <div className="w-full max-w-5xl mx-auto flex flex-col gap-8">
       <header className="text-center">
@@ -118,7 +114,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery =
         </p>
       </header>
       <div className="sticky top-4 z-20 w-full flex gap-2">
-        <form onSubmit={onSearchSubmit} className="relative flex-grow bg-white/10 backdrop-blur-xl rounded-full border border-white/20 p-1 shadow-md">
+        <form onSubmit={onSearchSubmit} className="relative flex-grow bg-white/30 dark:bg-card/60 backdrop-blur-2xl rounded-full border border-white/20 p-1 shadow-md">
           <Input
             type="search"
             value={searchQuery}
@@ -139,7 +135,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery =
         </form>
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="h-14 w-14 rounded-full relative bg-white/10 backdrop-blur-xl border-white/20 shadow-md">
+            <Button variant="outline" size="icon" className="h-14 w-14 rounded-full relative bg-white/30 dark:bg-card/60 backdrop-blur-2xl border-white/20 shadow-md">
               <ShoppingCart className="h-6 w-6" />
               {cart.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full h-6 w-6 flex items-center justify-center text-xs font-bold">
@@ -148,7 +144,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery =
               )}
             </Button>
           </SheetTrigger>
-          <SheetContent className="bg-white/10 backdrop-blur-2xl border-l border-white/20">
+          <SheetContent className="bg-white/30 dark:bg-card/60 backdrop-blur-2xl border-l border-white/20">
             <SheetHeader>
               <SheetTitle>Carrito de Compras</SheetTitle>
             </SheetHeader>
@@ -196,12 +192,15 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery =
           Array.from({ length: 3 }).map((_, i) => (
             <ProductCardSkeleton key={i} />
           ))}
-        {!isLoading && mainProduct && (
-            <ProductAccordion
-              product={mainProduct}
-              complementaryProducts={complementaryProducts}
-              onAddToCart={addToCart}
-            />
+        {!isLoading && results.length > 0 && (
+            results.map((result, index) => (
+              <ProductAccordion
+                key={index}
+                product={result.mainProduct}
+                complementaryProducts={result.complementaryProducts}
+                onAddToCart={addToCart}
+              />
+            ))
         )}
       </div>
       {!isLoading && results.length === 0 && (

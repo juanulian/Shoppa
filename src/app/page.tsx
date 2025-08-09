@@ -21,7 +21,7 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-gradient-to-br from-red-100 via-amber-100 to-teal-100 dark:from-gray-900 dark:via-purple-950 dark:to-teal-950 overflow-hidden">
+    <div className="relative min-h-screen w-full bg-gradient-to-br from-purple-200 via-blue-200 to-teal-200 dark:from-purple-900 dark:via-blue-950 dark:to-teal-950 overflow-hidden">
        <div className="absolute inset-0 bg-grid-slate-900/[0.04] bg-[bottom_1px_center] dark:bg-grid-slate-400/[0.05] dark:bg-bottom mask-image-gradient"></div>
       <main className="flex flex-col items-center justify-center p-4 md:p-8 min-h-screen">
         <div className="absolute top-8 left-8 z-10 animate-in fade-in duration-1000">

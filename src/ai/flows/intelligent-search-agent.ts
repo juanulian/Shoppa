@@ -23,7 +23,12 @@ export type IntelligentSearchAgentInput = z.infer<typeof IntelligentSearchAgentI
 
 export type { ProductRecommendation };
 
-const IntelligentSearchAgentOutputSchema = z.array(ProductRecommendationSchema).describe('A list of product recommendations.');
+const ProductOptionSchema = z.object({
+  mainProduct: ProductRecommendationSchema,
+  complementaryProducts: z.array(ProductRecommendationSchema).describe('A list of 1 to 3 complementary products for the main product.'),
+});
+
+const IntelligentSearchAgentOutputSchema = z.array(ProductOptionSchema).describe('A list of 2 to 4 product options.');
 export type IntelligentSearchAgentOutput = z.infer<typeof IntelligentSearchAgentOutputSchema>;
 
 export async function intelligentSearchAgent(input: IntelligentSearchAgentInput): Promise<IntelligentSearchAgentOutput> {
@@ -46,9 +51,9 @@ const prompt = ai.definePrompt({
   input: {schema: IntelligentSearchAgentInputSchema},
   output: {schema: IntelligentSearchAgentOutputSchema},
   tools: [googleSearchTool],
-  prompt: `Eres un asistente de compras experto y tu misión es crear una experiencia de compra excepcional para un usuario en Argentina, no solo encontrando un producto, sino también sugiriendo complementos que mejoren su compra.
+  prompt: `Eres un asistente de compras experto y tu misión es crear una experiencia de compra excepcional para un usuario en Argentina. Tu objetivo es encontrar entre 2 y 4 opciones de productos principales excelentes que coincidan con su búsqueda.
 
-Tu tarea es buscar en Google el producto principal que coincida con la consulta del usuario, y ADEMÁS, buscar entre 1 y 3 productos complementarios que generen una solución más completa.
+Para CADA UNA de estas opciones principales, debes ADEMÁS buscar entre 1 y 3 productos complementarios que generen una solución más completa y atractiva.
 
 Al analizar los resultados, sigue estas reglas estrictamente para TODOS los productos (principales y complementarios):
 1. **Precios Reales y Finales:** El precio DEBE ser el que aparece en la página del producto. No inventes ni aproximes precios. Debe estar en pesos argentinos (ARS) o dólares (USD). Si no encuentras el precio final, no incluyas el producto.
@@ -61,7 +66,7 @@ Utiliza la herramienta de búsqueda de Google para encontrar toda la informació
 Consulta de Búsqueda: {{{searchQuery}}}
 Datos del Perfil de Usuario: {{{userProfileData}}}
 
-La salida debe ser un array JSON con el producto principal primero, seguido de 1 a 3 recomendaciones de productos complementarios.
+La salida debe ser un array JSON donde cada elemento representa una opción de compra. Cada opción debe contener un 'mainProduct' y una lista de 'complementaryProducts'.
 Cada producto debe tener productName, productDescription, price, qualityScore (0-100), availability, justification, imageUrl y un productUrl real y funcional. Para imageUrl, usa un marcador de posición de https://placehold.co/600x400.png.
 `,
 });
