@@ -7,7 +7,7 @@ import {
 import { ProductRecommendation } from '@/ai/schemas/product-recommendation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import ProductCard from '@/components/product-card';
+import ProductAccordion from '@/components/product-accordion';
 import ProductCardSkeleton from '@/components/product-card-skeleton';
 import { Search, ShoppingCart, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -71,6 +71,14 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData }) => {
   
   const getTotalPrice = () => {
     return cart.reduce((total, item) => total + item.price, 0).toFixed(2);
+  }
+
+  const handleConfirmPurchase = () => {
+    toast({
+        title: "¡Compra Confirmada!",
+        description: "Gracias por tu compra. Tu pedido está siendo procesado.",
+    });
+    setCart([]);
   }
 
   return (
@@ -148,7 +156,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData }) => {
                             <span>Total:</span>
                             <span>${getTotalPrice()}</span>
                         </div>
-                        <Button className="w-full" size="lg">Confirmar Compra</Button>
+                        <Button className="w-full" size="lg" onClick={handleConfirmPurchase}>Confirmar Compra</Button>
                     </div>
                 </SheetFooter>
               )}
@@ -157,18 +165,18 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData }) => {
         </Sheet>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="space-y-4">
         {isLoading &&
           Array.from({ length: 3 }).map((_, i) => (
             <ProductCardSkeleton key={i} />
           ))}
         {!isLoading &&
           results.map((product, index) => (
-            <ProductCard key={index} {...product} onAddToCart={() => addToCart(product)} />
+            <ProductAccordion key={index} {...product} onAddToCart={() => addToCart(product)} />
           ))}
       </div>
       {!isLoading && results.length === 0 && (
-         <div className="col-span-full text-center py-16">
+         <div className="text-center py-16">
             <p className="text-muted-foreground">Los resultados de la búsqueda aparecerán aquí.</p>
          </div>
       )}

@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { generateFollowUpQuestions } from '@/ai/flows/dynamic-question-generation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Loader2, ArrowRight } from 'lucide-react';
+import { Loader2, ArrowRight, ArrowLeft, SkipForward } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import { Progress } from '@/components/ui/progress';
 
 interface OnboardingProps {
   onComplete: (profileData: string) => void;
@@ -18,6 +19,7 @@ interface QA {
 }
 
 const initialQuestion = "¿Para qué estás comprando principalmente hoy? (ej. trabajo, pasatiempos, regalos)";
+const totalQuestions = 4;
 
 const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const [qaPairs, setQaPairs] = useState<QA[]>([]);
@@ -36,17 +38,20 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
     setQaPairs(newQaPairs);
     setCurrentAnswer('');
 
+    if (newQaPairs.length >= totalQuestions) {
+        handleFinish(newQaPairs);
+        return;
+    }
+
     try {
       const res = await generateFollowUpQuestions({
         initialAnswer: newQaPairs[0].answer,
         priorQuestionsAndAnswers: newQaPairs
       });
       if (res.questions && res.questions.length > 0) {
-        // Pick a random question from the list
         const nextQuestion = res.questions[Math.floor(Math.random() * res.questions.length)];
         setCurrentQuestion(nextQuestion);
       } else {
-        // If no more questions, just finish
         handleFinish(newQaPairs);
       }
     } catch (error) {
@@ -56,11 +61,18 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
         description: "No se pudieron generar preguntas de seguimiento. Puedes finalizar ahora.",
         variant: "destructive",
       });
-      // Allow user to finish even if AI fails
       setCurrentQuestion("Parece que hubo un problema. ¿Quieres finalizar y empezar a buscar?");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleBack = () => {
+    if (qaPairs.length === 0) return;
+    const lastQa = qaPairs[qaPairs.length - 1];
+    setQaPairs(qaPairs.slice(0, -1));
+    setCurrentQuestion(lastQa.question);
+    setCurrentAnswer(lastQa.answer);
   };
 
   const handleFinish = (finalQaPairs?: QA[]) => {
@@ -69,6 +81,8 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
     onComplete(profileData);
   };
   
+  const progressValue = (qaPairs.length / totalQuestions) * 100;
+
   return (
     <Card className="w-full max-w-2xl mx-auto shadow-2xl bg-card/80 backdrop-blur-lg border-white/20">
       <CardHeader>
@@ -76,8 +90,11 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
             Encontremos lo mejor para ti
         </CardTitle>
         <CardDescription className="text-center">
-            Responde algunas preguntas para personalizar tu experiencia. Cuando estés listo, finaliza el proceso.
+            Responde algunas preguntas para personalizar tu experiencia.
         </CardDescription>
+        <div className="pt-4">
+            <Progress value={progressValue} className="w-full" />
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
@@ -89,6 +106,10 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
           <form onSubmit={handleAnswerSubmit} className="space-y-4">
             <div className="flex gap-2">
+              <Button type="button" size="icon" variant="outline" onClick={handleBack} disabled={isLoading || qaPairs.length === 0} className="rounded-full h-12 w-12 flex-shrink-0">
+                <ArrowLeft />
+                <span className="sr-only">Atrás</span>
+              </Button>
               <Input
                 value={currentAnswer}
                 onChange={(e) => setCurrentAnswer(e.target.value)}
@@ -101,10 +122,14 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                 <span className="sr-only">Siguiente</span>
               </Button>
             </div>
-            <div className="flex justify-center pt-4">
-              <Button onClick={() => handleFinish()} size="lg" variant="ghost" className="rounded-full font-bold text-accent-foreground/80 hover:bg-accent/20 transition-all duration-300 w-full md:w-auto" disabled={isLoading || qaPairs.length === 0}>
-                Finalizar y Buscar
-              </Button>
+            <div className="flex justify-center items-center gap-4 pt-4">
+                <Button onClick={() => handleFinish()} size="lg" variant="ghost" className="rounded-full font-bold text-accent-foreground/80 hover:bg-accent/20 transition-all duration-300" disabled={isLoading || qaPairs.length === 0}>
+                    Finalizar y Buscar
+                </Button>
+                <Button onClick={() => handleFinish(qaPairs)} variant="link" disabled={isLoading} className="flex items-center gap-2">
+                    <SkipForward className="h-4 w-4" />
+                    Omitir
+                </Button>
             </div>
           </form>
         </div>
