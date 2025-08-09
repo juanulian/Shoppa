@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ProductAccordion from '@/components/product-accordion';
 import ProductCardSkeleton from '@/components/product-card-skeleton';
-import { Search, ShoppingCart, X, RefreshCw } from 'lucide-react';
+import { Search, ShoppingCart, X, RefreshCw, Bot } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   Sheet,
@@ -116,10 +116,6 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery =
             Nuestra IA encontrará las mejores opciones según tus necesidades.
           </p>
         </div>
-        <Button onClick={onNewSearch} variant="outline">
-          <RefreshCw className="mr-2 h-4 w-4" />
-          Nueva Búsqueda
-        </Button>
       </header>
       <div className="sticky top-4 z-20 w-full flex gap-2">
         <form onSubmit={onSearchSubmit} className="relative flex-grow bg-white/30 dark:bg-card/60 backdrop-blur-2xl rounded-full border border-white/20 p-1 shadow-md">
@@ -143,6 +139,9 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery =
             <span className="sr-only">Buscar</span>
           </Button>
         </form>
+        <Button onClick={onNewSearch} variant="outline" size="icon" className="h-14 w-14 rounded-full bg-white/30 dark:bg-card/60 backdrop-blur-2xl border-white/20 shadow-md" suppressHydrationWarning>
+            <RefreshCw className="h-6 w-6" />
+        </Button>
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="outline" size="icon" className="h-14 w-14 rounded-full relative bg-white/30 dark:bg-card/60 backdrop-blur-2xl border-white/20 shadow-md" suppressHydrationWarning>
@@ -205,14 +204,22 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery =
             <ProductCardSkeleton key={i} />
           ))}
         {!isLoading && results.length > 0 && (
-            results.map((result, index) => (
+          <>
+            {results.map((result, index) => (
               <ProductAccordion
                 key={index}
                 product={result.mainProduct}
                 complementaryProducts={result.complementaryProducts}
                 onAddToCart={addToCart}
               />
-            ))
+            ))}
+            <div className="flex justify-center pt-4">
+                <Button onClick={() => handleSearch(searchQuery)} variant="outline" size="lg">
+                    <Bot className="mr-2 h-5 w-5" />
+                    Buscar más opciones
+                </Button>
+            </div>
+          </>
         )}
       </div>
       {!isLoading && results.length === 0 && (
