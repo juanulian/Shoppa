@@ -85,7 +85,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const progressValue = (qaPairs.length / totalQuestions) * 100;
 
   return (
-    <Card className="w-full max-w-2xl mx-auto shadow-2xl bg-card/80 backdrop-blur-lg border-white/20">
+    <Card className="w-full max-w-2xl mx-auto shadow-2xl bg-card/60 backdrop-blur-xl border-white/20">
       <CardHeader>
         <CardTitle className="font-headline text-2xl md:text-3xl text-center">
             Encontremos lo mejor para ti

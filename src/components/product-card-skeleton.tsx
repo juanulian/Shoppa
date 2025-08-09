@@ -3,20 +3,20 @@ import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
 
 const ProductCardSkeleton = () => {
   return (
-    <Card className="bg-card/30 backdrop-blur-lg border border-border/20 shadow-lg rounded-2xl h-full">
+    <Card className="bg-card/60 backdrop-blur-xl border border-border/20 shadow-lg rounded-2xl h-full">
       <CardHeader>
-        <Skeleton className="h-40 w-full mb-4" />
-        <Skeleton className="h-6 w-3/4 mb-2" />
-        <Skeleton className="h-4 w-1/2" />
+        <div className="flex gap-4 items-center w-full">
+            <Skeleton className="h-24 w-24 rounded-md" />
+            <div className="flex-grow space-y-2">
+                <Skeleton className="h-6 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+            </div>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="space-y-1">
+        <div className="space-y-2">
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-5/6" />
-        </div>
-        <div className="flex justify-between items-center">
-          <Skeleton className="h-8 w-24 rounded-full" />
-          <Skeleton className="h-8 w-24 rounded-full" />
         </div>
         <div className="space-y-2 pt-2">
             <Skeleton className="h-5 w-1/3" />

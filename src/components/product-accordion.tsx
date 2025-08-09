@@ -25,7 +25,7 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
   onAddToCart,
 }) => {
   return (
-    <Accordion type="single" collapsible className="w-full bg-card/30 backdrop-blur-lg border border-border/20 shadow-lg rounded-2xl transition-all duration-300 hover:shadow-2xl">
+    <Accordion type="single" collapsible className="w-full bg-card/60 backdrop-blur-xl border border-border/20 shadow-lg rounded-2xl transition-all duration-300 hover:shadow-2xl">
       <AccordionItem value="item-1" className="border-b-0">
         <AccordionTrigger className="p-4 hover:no-underline">
           <div className="flex gap-4 items-center w-full">
@@ -74,7 +74,7 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
                          <h4 className="font-headline font-bold text-md text-center">Productos Complementarios</h4>
                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {complementaryProducts.map((compProduct, index) => (
-                                <Card key={index} className="bg-background/50 overflow-hidden">
+                                <Card key={index} className="bg-background/60 backdrop-blur-lg overflow-hidden">
                                     <CardContent className="p-3 flex flex-col h-full">
                                         <div className="relative h-24 w-full mb-2">
                                             <Image src={compProduct.imageUrl} alt={compProduct.productName} fill className="rounded-md object-cover" data-ai-hint="product image" />
