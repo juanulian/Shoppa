@@ -9,7 +9,7 @@
  */
 
 import {ai} from '@/ai/genkit';
-import { googleSearchTool } from '@genkit-ai/googleai';
+import { googleSearchTool } from '@genkit-ai/google-cloud';
 import {z} from 'genkit';
 import {
   ProductRecommendation,
