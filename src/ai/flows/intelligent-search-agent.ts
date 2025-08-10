@@ -35,28 +35,17 @@ export async function intelligentSearchAgent(input: IntelligentSearchAgentInput)
   return intelligentSearchAgentFlow(input);
 }
 
-const googleSearchTool = ai.defineTool(
-    {
-      name: 'googleSearch',
-      description:
-        'Performs a Google search. Use this to find products that match the user\'s query and complementary items.',
-      inputSchema: z.any(),
-      outputSchema: z.any(),
-    },
-    async (input: any) => input
-  );
-
 const prompt = ai.definePrompt({
   name: 'intelligentSearchAgentPrompt',
   input: {schema: IntelligentSearchAgentInputSchema},
   output: {schema: IntelligentSearchAgentOutputSchema},
-  tools: [googleSearchTool],
+  tools: ['googleSearch'],
   prompt: `Eres un asistente de compras experto y tu misión es crear una experiencia de compra excepcional para un usuario en Argentina. Tu objetivo es encontrar entre 2 y 4 opciones de productos principales excelentes que coincidan con su búsqueda.
 
 Para CADA UNA de estas opciones principales, debes ADEMÁS buscar entre 1 y 3 productos complementarios que generen una solución más completa y atractiva.
 
 **PROCESO DE BÚSQUEDA OBLIGATORIO:**
-1. Realiza búsquedas exhaustivas en Google para cada producto usando la herramienta 'googleSearchTool'.
+1. Realiza búsquedas exhaustivas en Google para cada producto usando la herramienta 'googleSearch'.
 2. Visita las páginas de productos específicas para obtener información real y verificable.
 3. Extrae ÚNICAMENTE datos que puedas verificar directamente de las páginas web.
 
