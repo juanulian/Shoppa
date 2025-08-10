@@ -214,7 +214,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, initialSearchQuery =
               />
             ))}
             <div className="flex justify-center pt-4">
-                <Button onClick={() => handleSearch(searchQuery)} variant="outline" size="lg">
+                <Button onClick={() => handleSearch(searchQuery)} variant="outline" size="lg" suppressHydrationWarning>
                     <Bot className="mr-2 h-5 w-5" />
                     Buscar más opciones
                 </Button>

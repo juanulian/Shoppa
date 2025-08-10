@@ -51,6 +51,9 @@ Your questions should be designed to uncover key information in these areas:
     *   *Example areas:* Is budget the top priority? Or is it quality, specific features, brand, durability, ease of use, or aesthetics?
 3.  **Past Experiences:** What have they used before?
     *   *Example areas:* What did they like or dislike about previous products? Are they looking to upgrade from something specific? Are they loyal to any brands?
+4.  **Intelligent Category Detection:**
+    *   If the user's request mentions categories like "ropa", "zapatillas", "calzado", "vestido", "pantalón", "remera", etc., you MUST ask for "talle" (size) and "género" (gender, e.g., para hombre, mujer, niño/a).
+    *   *Example for clothing:* "¡Perfecto! ¿Para qué género buscas y qué talle necesitarías?"
 
 **Conversation History:**
 *Initial Question:* "¿Qué te gustaría comprar hoy?"
@@ -65,6 +68,7 @@ A: {{{this.answer}}}
 {{/if}}
 
 **Your Task:**
+- Analyze the user's answers. If they are vague, your priority is to ask clarifying questions before moving on.
 - Generate a list of 1-3 new, non-repetitive, conversational questions based on the strategy above.
 - Do not ask for information that has already been provided in the conversation history.
 - Frame the questions in a friendly, natural way in Spanish.

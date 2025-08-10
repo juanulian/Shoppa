@@ -66,6 +66,7 @@ export default function VerifiedProductLink({
         disabled 
         className={className}
         variant="outline"
+        suppressHydrationWarning
       >
         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
         Verificando...
