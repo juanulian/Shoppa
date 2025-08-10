@@ -9,7 +9,6 @@
  */
 
 import {ai} from '@/ai/genkit';
-import { googleSearchTool } from '@genkit-ai/google-cloud';
 import {z} from 'genkit';
 import {
   ProductRecommendation,
@@ -40,7 +39,7 @@ const prompt = ai.definePrompt({
   name: 'intelligentSearchAgentPrompt',
   input: {schema: IntelligentSearchAgentInputSchema},
   output: {schema: IntelligentSearchAgentOutputSchema},
-  tools: [googleSearchTool],
+  tools: ['googleSearch'],
   prompt: `Eres un asistente de compras experto y tu misión es crear una experiencia de compra excepcional para un usuario en Argentina. Tu objetivo es encontrar entre 2 y 4 opciones de productos principales excelentes que coincidan con su búsqueda.
 
 Para CADA UNA de estas opciones principales, debes ADEMÁS buscar entre 1 y 3 productos complementarios que generen una solución más completa y atractiva.
