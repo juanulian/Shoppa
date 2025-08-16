@@ -14,6 +14,21 @@ import {
   ProductRecommendation,
   ProductRecommendationSchema,
 } from '@/ai/schemas/product-recommendation';
+import { demoProducts } from '@/lib/demo-products';
+
+
+const getLocalProducts = ai.defineTool(
+    {
+      name: 'getLocalProducts',
+      description: 'Retrieves a list of available products from the local demo file.',
+      inputSchema: z.void(),
+      outputSchema: z.array(ProductRecommendationSchema),
+    },
+    async () => {
+      return demoProducts;
+    }
+  )
+
 
 const IntelligentSearchAgentInputSchema = z.object({
   searchQuery: z.string().describe('The user search query.'),
@@ -39,72 +54,28 @@ const prompt = ai.definePrompt({
   name: 'intelligentSearchAgentPrompt',
   input: {schema: IntelligentSearchAgentInputSchema},
   output: {schema: IntelligentSearchAgentOutputSchema},
-  tools: ['googleSearch'],
-  prompt: `Eres un asistente de compras experto y tu misión es crear una experiencia de compra excepcional para un usuario en Argentina. Tu objetivo es encontrar entre 2 y 4 opciones de productos principales excelentes que coincidan con su búsqueda.
+  tools: [getLocalProducts],
+  prompt: `Eres un asistente de compras experto y tu misión es crear una experiencia de compra excepcional para un usuario en Argentina. Tu objetivo es seleccionar entre 2 y 4 opciones de productos principales excelentes que coincidan con su búsqueda, utilizando la lista de productos disponibles que te proporciona la herramienta 'getLocalProducts'.
 
-Para CADA UNA de estas opciones principales, debes ADEMÁS buscar entre 1 y 3 productos complementarios que generen una solución más completa y atractiva.
+Para CADA UNA de estas opciones principales, debes ADEMÁS seleccionar entre 1 y 3 productos complementarios de la misma lista que generen una solución más completa y atractiva.
 
-**PROCESO DE BÚSQUEDA OBLIGATORIO:**
-1. Realiza búsquedas exhaustivas en Google para cada producto usando la herramienta 'googleSearch'.
-2. Visita las páginas de productos específicas para obtener información real y verificable.
-3. Extrae ÚNICAMENTE datos que puedas verificar directamente de las páginas web.
+**PROCESO DE SELECCIÓN OBLIGATORIO:**
+1. Llama a la herramienta 'getLocalProducts' para obtener la lista completa de productos disponibles para la demo.
+2. Analiza la consulta de búsqueda del usuario y su perfil.
+3. Filtra y selecciona los productos más relevantes de la lista. No inventes productos que no estén en la lista.
+4. Para cada producto principal, elige productos complementarios lógicos de la misma lista.
+5. Justifica tus recomendaciones basándote en la consulta del usuario y los datos del producto.
 
-**REGLAS ESTRICTAS - CUMPLIMIENTO OBLIGATORIO PARA TODOS LOS PRODUCTOS:**
-
-1. **PRECIOS REALES Y VERIFICADOS:**
-   - El precio DEBE ser el precio exacto que aparece en la página del producto.
-   - DEBE estar en ARS (pesos argentinos) o USD (dólares).
-   - Si la página muestra el precio en otra moneda, conviértelo a ARS.
-   - **PROHIBIDO:** Inventar, aproximar o suponer precios.
-   - **SI NO ENCUENTRAS EL PRECIO REAL:** Descarta ese producto y busca otro.
-
-2. **ENLACES DIRECTOS DE COMPRA:**
-   - La productUrl DEBE llevar directamente a la página específica del producto.
-   - El enlace debe permitir agregar el producto al carrito o comprarlo.
-   - **ENLACES PROHIBIDOS:**
-     * Enlaces de búsqueda de Google.
-     * Enlaces a categorías generales.
-     * Enlaces a páginas de inicio.
-     * Enlaces rotos o inválidos.
-   - **SI NO ENCUENTRAS UN ENLACE DIRECTO:** Descarta ese producto y busca otro.
-
-3. **IMÁGENES REALES DEL PRODUCTO:**
-   - La imageUrl DEBE ser la URL de la imagen real del producto.
-   - Extrae la imagen principal que aparece en la página del producto.
-   - La imagen debe ser de alta calidad y mostrar claramente el producto.
-   - **PROHIBIDO:** Usar imágenes de marcador de posición o placeholder.
-   - **SI NO ENCUENTRAS LA IMAGEN REAL:** Descarta ese producto y busca otro.
-
-4. **DISPONIBILIDAD EN ARGENTINA:**
-   - Verifica que el producto esté disponible en:
-     * Tiendas argentinas (MercadoLibre, Fravega, Garbarino, etc.).
-     * O tiendas internacionales que envíen a Argentina.
-   - Confirma el stock o disponibilidad actual.
-   - **SI NO ESTÁ DISPONIBLE EN ARGENTINA:** Descarta ese producto y busca otro.
-
-5. **INFORMACIÓN COMPLETA Y VERIFICADA:**
-   - productName: Nombre exacto del producto como aparece en la tienda.
-   - productDescription: Descripción real basada en la información de la página.
-   - qualityScore: Calificación basada en reviews reales (0-100).
-   - availability: Estado real del stock ("En stock", "Últimas unidades", etc.).
-   - justification: Explicación detallada de por qué recomiendas este producto.
-
-**CRITERIO DE DESCARTE:**
-Si un producto NO cumple con TODOS los requisitos anteriores (precio real, enlace directo, imagen real, disponibilidad en Argentina), NO lo incluyas en los resultados. Es mejor devolver menos productos pero con información 100% verificada que inventar datos.
-
-**VALIDACIÓN FINAL:**
-Antes de devolver los resultados, verifica que:
-- Cada URL funcione y lleve al producto específico.
-- Cada precio sea el real y actual.
-- Cada imagen sea la real del producto.
-- Todo esté disponible para compra en Argentina.
+**REGLAS ESTRICTAS - CUMPLIMIENTO OBLIGATORIO:**
+1. **USA SOLO PRODUCTOS LOCALES:** Solo puedes recomendar productos que existan en la lista proporcionada por la herramienta 'getLocalProducts'.
+2. **NO INVENTES DATOS:** Todos los datos (nombre, precio, descripción, URL, etc.) deben ser exactamente los que están en el archivo local. No los modifiques.
+3. **SÉ CREATIVO CON LAS RECOMENDACIONES:** Aunque la lista de productos es fija, tu valor está en cómo combinas el producto principal con los complementarios y cómo justificas la elección para el usuario.
+4. **RESPETA EL FORMATO DE SALIDA:** La salida debe ser un array JSON donde cada elemento representa una opción de compra. Cada opción debe contener un 'mainProduct' y una lista de 'complementaryProducts'.
 
 Consulta de Búsqueda: {{{searchQuery}}}
 Datos del Perfil de Usuario: {{{userProfileData}}}
 
-La salida debe ser un array JSON donde cada elemento representa una opción de compra. Cada opción debe contener un 'mainProduct' y una lista de 'complementaryProducts'.
-
-**IMPORTANTE:** Solo incluye productos que cumplan con TODAS las reglas. Si no puedes verificar algún dato, NO incluyas ese producto.
+Comienza llamando a 'getLocalProducts' y luego construye tu recomendación.
 `,
 });
 
