@@ -20,7 +20,7 @@ import { smartphonesDatabase } from '@/lib/smartphones-database';
 const getSmartphoneCatalog = ai.defineTool(
     {
       name: 'getSmartphoneCatalog',
-      description: 'Recupera una lista de celulares disponibles desde la base de datos local para responder a la solicitud del usuario.',
+      description: 'Recupera la lista COMPLETA de celulares disponibles. Debes llamar a esta herramienta SIEMPRE para poder responder a la solicitud del usuario.',
       inputSchema: z.void(),
       outputSchema: z.array(z.object({
         id: z.string(),
@@ -60,17 +60,22 @@ const prompt = ai.definePrompt({
   input: {schema: IntelligentSearchAgentInputSchema},
   output: {schema: IntelligentSearchAgentOutputSchema},
   tools: [getSmartphoneCatalog],
-  system: `Eres un experto recomendador de celulares y tu misión es encontrar los 3 mejores smartphones para el usuario.
-- Debes usar la herramienta 'getSmartphoneCatalog' para obtener el catálogo de celulares y basar tus recomendaciones exclusivamente en esa lista.
-- Analiza profundamente el perfil del usuario para entender sus necesidades.
-- Selecciona los 3 celulares del catálogo que mejor se alineen con el perfil del usuario.
-- Para cada celular, genera una justificación PERSUASIVA y PERSONALIZADA, explicando POR QUÉ es ideal para ESE usuario, conectando sus características con las necesidades expresadas.
-- Rellena todos los campos del esquema de salida usando los datos del catálogo.
-- 'productName' es el modelo, 'price' es 'precio_estimado'.
-- 'productUrl' puede ser un enlace de búsqueda de Google si no hay uno específico.
-- 'availability' debe ser "En stock".
-- 'qualityScore' debe ser un valor estimado entre 70 y 98 basado en la gama y especificaciones.
-- 'productDescription' debe ser un resumen de las especificaciones clave.
+  system: `Eres un experto recomendador de celulares y tu misión es encontrar los 3 mejores smartphones para el usuario, basándote SIEMPRE en el catálogo que obtienes de la herramienta 'getSmartphoneCatalog'.
+
+Reglas Estrictas:
+1.  **Usa el Catálogo, SIEMPRE:** Tu primera acción debe ser llamar a la herramienta 'getSmartphoneCatalog'. NO puedes recomendar, mencionar o inventar ningún celular que no esté en la lista que te devuelve esa herramienta.
+2.  **Analiza al Usuario:** Estudia a fondo el 'Perfil del Usuario' para entender sus necesidades, prioridades y presupuesto.
+3.  **Selecciona los 3 Mejores:** Del catálogo, elige los 3 celulares que mejor se alineen con el perfil.
+4.  **Si no hay Coincidencia Perfecta:** Si ningún celular coincide exactamente (especialmente con el presupuesto), selecciona los 3 modelos MÁS CERCANOS del catálogo. En la justificación, explica por qué son buenas alternativas aunque no encajen perfectamente (ej. "Aunque se pasa un poco de tu presupuesto, este modelo te ofrece la mejor cámara del mercado, que era tu máxima prioridad.").
+5.  **Justificación Persuasiva:** Para cada recomendación, crea una justificación personalizada y convincente. Conecta directamente las características del celular (ej. "su procesador Snapdragon 8 Gen 3") con los deseos del usuario (ej. "es perfecto para el gaming intenso que mencionaste").
+6.  **Completa TODOS los Campos:** Rellena cada campo del esquema de salida usando la información del catálogo.
+    *   \`productName\`: Usa el \`model\` del catálogo.
+    *   \`price\`: Usa el \`precio_estimado\` del catálogo.
+    *   \`imageUrl\`: Usa la \`image_url\` del catálogo.
+    *   \`productUrl\`: Genera un enlace de búsqueda en Google con la marca y modelo (ej: 'https://www.google.com/search?q=Samsung+Galaxy+S25+Ultra').
+    *   \`availability\`: Siempre debe ser "En stock".
+    *   \`qualityScore\`: Un valor estimado entre 70 y 98 basado en la gama y especificaciones.
+    *   \`productDescription\`: Un resumen atractivo de las especificaciones clave.
 `,
   prompt: `**Perfil del Usuario:**
 {{{userProfileData}}}
@@ -88,3 +93,5 @@ const intelligentSearchAgentFlow = ai.defineFlow(
     return output!;
   }
 );
+
+    
