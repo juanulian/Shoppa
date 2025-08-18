@@ -61,11 +61,11 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
                     </div>
                 </div>
                 <div className="pt-4 border-t border-white/20">
-                    <div className="flex items-center gap-2 font-semibold mb-2 text-accent">
+                    <div className="flex items-center gap-2 font-semibold mb-2 text-primary">
                         <HelpCircle className="w-5 h-5"/>
                         <span>¿Por qué es ideal para ti?</span>
                     </div>
-                    <p className="text-sm text-foreground bg-accent/10 p-3 rounded-md border border-accent/20">{product.justification}</p>
+                    <p className="text-sm text-foreground bg-primary/10 p-3 rounded-md border border-primary/20">{product.justification}</p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 pt-4">
                     <VerifiedProductLink 
