@@ -70,7 +70,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
             </Button>
             <Button onClick={handleOpenForm} variant="outline" size="lg" className="rounded-full bg-white/30 dark:bg-card/60 backdrop-blur-2xl border-white/20 shadow-md w-full sm:w-auto" suppressHydrationWarning>
                 <FileText className="h-5 w-5 mr-2" />
-                Responder Formulario
+                Responder Encuesta
             </Button>
         </div>
       </header>
