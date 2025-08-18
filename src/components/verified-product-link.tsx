@@ -37,7 +37,7 @@ export default function VerifiedProductLink({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cerrar</AlertDialogCancel>
-          <AlertDialogAction onClick={() => alert('Encuesta de satisfacción pendiente de implementación.')}>
+          <AlertDialogAction onClick={() => window.open('https://forms.gle/CVdyFmBcASjXRKww7', '_blank')}>
             Avanzar
           </AlertDialogAction>
         </AlertDialogFooter>
