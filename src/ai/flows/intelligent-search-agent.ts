@@ -62,7 +62,7 @@ const prompt = ai.definePrompt({
   input: {schema: IntelligentSearchAgentInputSchema},
   output: {schema: IntelligentSearchAgentOutputSchema},
   tools: [getSmartphoneCatalog],
-  prompt: `Eres un experto recomendador de celulares y tu misión es encontrar los 3 mejores smartphones para el usuario basándote en sus respuestas. Utiliza EXCLUSIVAMENTE el catálogo de productos proporcionado por la herramienta 'getSmartphoneCatalog'.
+  prompt: `Eres un experto recomendador de celulares y tu misión es encontrar los 3 mejores smartphones para el usuario basándote en sus respuestas. Utiliza EXCLUSIVAMENTE el catálogo de productos proporcionado por la herramienta 'getSmartphoneCatalog'. Los precios en el catálogo están en Pesos Argentinos (ARS).
 
 **PROCESO DE SELECCIÓN OBLIGATORIO:**
 1. Llama a la herramienta 'getSmartphoneCatalog' para obtener la lista COMPLETA de celulares disponibles.
