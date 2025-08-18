@@ -8,7 +8,7 @@ import { ProductRecommendation } from '@/ai/schemas/product-recommendation';
 import { Button } from '@/components/ui/button';
 import ProductAccordion from '@/components/product-accordion';
 import ProductCardSkeleton from '@/components/product-card-skeleton';
-import { RefreshCw, Bot, Smartphone } from 'lucide-react';
+import { RefreshCw, Bot, Smartphone, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Logo from './icons/logo';
 
@@ -19,7 +19,7 @@ interface MainAppProps {
 
 const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
   const [results, setResults] = useState<IntelligentSearchAgentOutput>([]);
-  const [isLoading, setIsLoading] = useState(true); // <--- CAMBIO CLAVE: Inicializar en true
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   const handleSearch = async () => {
@@ -43,6 +43,10 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
     }
   };
 
+  const handleOpenForm = () => {
+    window.open('https://forms.gle/CVdyFmBcASjXRKww7', '_blank');
+  };
+
   useEffect(() => {
     handleSearch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -50,8 +54,8 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
 
   return (
     <div className="w-full max-w-5xl mx-auto flex flex-col gap-8">
-      <header className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-        <div>
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-center md:text-left">
+        <div className="w-full md:w-auto">
           <h2 className="text-3xl md:text-4xl font-bold font-headline tracking-tight">
             Aquí están tus recomendaciones
           </h2>
@@ -59,10 +63,16 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
             Shoppa ha seleccionado los 3 mejores celulares para ti.
           </p>
         </div>
-        <Button onClick={onNewSearch} variant="outline" size="lg" className="rounded-full bg-white/30 dark:bg-card/60 backdrop-blur-2xl border-white/20 shadow-md w-full sm:w-auto" suppressHydrationWarning>
-            <RefreshCw className="h-5 w-5 mr-2" />
-            Empezar de Nuevo
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+            <Button onClick={onNewSearch} variant="outline" size="lg" className="rounded-full bg-white/30 dark:bg-card/60 backdrop-blur-2xl border-white/20 shadow-md w-full sm:w-auto" suppressHydrationWarning>
+                <RefreshCw className="h-5 w-5 mr-2" />
+                Empezar de Nuevo
+            </Button>
+            <Button onClick={handleOpenForm} variant="outline" size="lg" className="rounded-full bg-white/30 dark:bg-card/60 backdrop-blur-2xl border-white/20 shadow-md w-full sm:w-auto" suppressHydrationWarning>
+                <FileText className="h-5 w-5 mr-2" />
+                Responder Formulario
+            </Button>
+        </div>
       </header>
 
       <div className="space-y-4">
