@@ -34,7 +34,7 @@ export default function Home() {
           <Logo />
         </div>
 
-        <div className="w-full max-w-2xl mx-auto z-10">
+        <div className={`w-full max-w-2xl mx-auto z-10 ${appState === 'search' ? 'pt-16 md:pt-0' : ''}`}>
           {appState === 'onboarding' && (
             <div className="animate-in fade-in-0 zoom-in-95 duration-500">
               <Onboarding onComplete={handleOnboardingComplete} />
