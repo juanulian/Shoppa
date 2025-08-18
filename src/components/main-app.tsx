@@ -56,7 +56,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
             Aquí están tus recomendaciones
           </h2>
           <p className="text-muted-foreground mt-2">
-            Nuestra IA ha seleccionado los 3 mejores celulares para ti.
+            Shoppa ha seleccionado los 3 mejores celulares para ti.
           </p>
         </div>
         <Button onClick={onNewSearch} variant="outline" size="lg" className="rounded-full bg-white/30 dark:bg-card/60 backdrop-blur-2xl border-white/20 shadow-md" suppressHydrationWarning>
