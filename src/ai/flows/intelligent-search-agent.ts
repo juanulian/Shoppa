@@ -59,7 +59,7 @@ const prompt = ai.definePrompt({
   name: 'intelligentSearchAgentPrompt',
   input: {schema: IntelligentSearchAgentInputSchema},
   output: {schema: IntelligentSearchAgentOutputSchema},
-  tools: [getSmartphoneCatalog, ai.tool.googleSearch()],
+  tools: [getSmartphoneCatalog],
   system: `Eres un experto recomendador de celulares y tu misión es encontrar los 3 mejores smartphones para el usuario.
 - Debes usar la herramienta 'getSmartphoneCatalog' para obtener el catálogo de celulares y basar tus recomendaciones exclusivamente en esa lista.
 - Analiza profundamente el perfil del usuario para entender sus necesidades.
