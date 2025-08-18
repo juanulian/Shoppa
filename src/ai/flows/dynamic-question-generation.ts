@@ -21,7 +21,7 @@ const GenerateFollowUpQuestionsInputSchema = z.object({
       })
     )
     .optional()
-    .describe('Una lista de preguntas y respuestas previas en el flujo de incorporación.'),
+    .describe('Una lista de preguntas y respuestas previas en el flujo de incorporation.'),
 });
 export type GenerateFollowUpQuestionsInput = z.infer<typeof GenerateFollowUpQuestionsInputSchema>;
 
@@ -89,5 +89,3 @@ const generateFollowUpQuestionsFlow = ai.defineFlow(
     return output!;
   }
 );
-
-    
