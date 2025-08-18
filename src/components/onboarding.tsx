@@ -5,7 +5,7 @@ import { generateFollowUpQuestions } from '@/ai/flows/dynamic-question-generatio
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Loader2, ArrowRight, ArrowLeft, SkipForward } from 'lucide-react';
+import { Loader2, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from '@/components/ui/progress';
 
@@ -19,7 +19,7 @@ interface QA {
 }
 
 const initialQuestion = "¿Qué es lo más importante para ti en un nuevo celular?";
-const totalQuestions = 3; // Ajustado para una demo más completa
+const maxQuestions = 5; 
 
 const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const [qaPairs, setQaPairs] = useState<QA[]>([]);
@@ -45,34 +45,43 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
     setIsLoading(true);
     const newQaPair = { question: currentQuestion, answer: currentAnswer };
     const newQaPairs = [...qaPairs, newQaPair];
-    setQaPairs(newQaPairs);
-    setCurrentAnswer('');
-
-    if (newQaPairs.length >= totalQuestions) {
-        handleFinish(newQaPairs);
-        return;
-    }
-
+    
     try {
       const res = await generateFollowUpQuestions({
         initialAnswer: newQaPairs[0].answer,
         priorQuestionsAndAnswers: newQaPairs
       });
+
+      if (!res.isAnswerRelevant) {
+        toast({
+          title: "Respuesta poco clara",
+          description: "No he entendido bien tu respuesta. ¿Podrías ser un poco más específico para poder ayudarte mejor?",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return; 
+      }
+
+      setQaPairs(newQaPairs);
+      setCurrentAnswer('');
+
+      if (newQaPairs.length >= maxQuestions || !res.questions || res.questions.length === 0) {
+        handleFinish(newQaPairs);
+        return;
+      }
+      
       if (res.questions && res.questions.length > 0) {
         setNextQuestions(res.questions);
       } else {
-        // Si no hay más preguntas, finalizamos
         handleFinish(newQaPairs);
       }
     } catch (error) {
       console.error("No se pudieron generar las preguntas:", error);
       toast({
         title: "Error",
-        description: "No se pudieron generar más preguntas. Puedes finalizar ahora.",
+        description: "Hubo un problema al generar la siguiente pregunta. Puedes finalizar ahora si lo deseas.",
         variant: "destructive",
       });
-      // Preparamos para finalizar
-      setCurrentQuestion("Parece que hubo un problema. ¿Quieres finalizar y ver tus recomendaciones?");
     } finally {
       setIsLoading(false);
     }
@@ -100,7 +109,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
     onComplete(profileData);
   };
   
-  const progressValue = (qaPairs.length / totalQuestions) * 100;
+  const progressValue = (qaPairs.length / maxQuestions) * 100;
 
   return (
     <Card className="w-full max-w-2xl mx-auto shadow-2xl bg-white/60 dark:bg-card/60 backdrop-blur-xl border-white/20">
@@ -109,10 +118,11 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
             Encontremos tu celular ideal
         </CardTitle>
         <CardDescription className="text-center">
-            Responde {totalQuestions} preguntas rápidas para recibir una recomendación experta.
+            Responde algunas preguntas para recibir una recomendación experta.
         </CardDescription>
         <div className="pt-4">
             <Progress value={progressValue} className="w-full" />
+            <p className="text-xs text-center mt-1 text-muted-foreground">Pregunta {qaPairs.length + 1} de {maxQuestions}</p>
         </div>
       </CardHeader>
       <CardContent className="p-4 md:p-6">
