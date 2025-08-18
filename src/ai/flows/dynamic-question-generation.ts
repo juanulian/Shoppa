@@ -1,18 +1,18 @@
 'use server';
 
 /**
- * @fileOverview Dynamic question generation flow for onboarding new users.
+ * @fileOverview Flujo de generación de preguntas dinámicas para la incorporación de nuevos usuarios interesados en celulares.
  *
- * - generateFollowUpQuestions - A function that generates follow-up questions based on the user's initial answer and prior questions.
- * - GenerateFollowUpQuestionsInput - The input type for the generateFollowUpQuestions function.
- * - GenerateFollowUpQuestionsOutput - The return type for the generateFollowUpQuestions function.
+ * - generateFollowUpQuestions - Una función que genera preguntas de seguimiento basadas en la respuesta inicial del usuario y preguntas anteriores.
+ * - GenerateFollowUpQuestionsInput - El tipo de entrada para la función generateFollowUpQuestions.
+ * - GenerateFollowUpQuestionsOutput - El tipo de retorno para la función generateFollowUpQuestions.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateFollowUpQuestionsInputSchema = z.object({
-  initialAnswer: z.string().describe('The user\'s initial answer to the onboarding question.'),
+  initialAnswer: z.string().describe('La respuesta inicial del usuario a la pregunta de incorporación.'),
   priorQuestionsAndAnswers: z
     .array(
       z.object({
@@ -21,12 +21,12 @@ const GenerateFollowUpQuestionsInputSchema = z.object({
       })
     )
     .optional()
-    .describe('A list of prior questions and answers in the onboarding flow.'),
+    .describe('Una lista de preguntas y respuestas previas en el flujo de incorporación.'),
 });
 export type GenerateFollowUpQuestionsInput = z.infer<typeof GenerateFollowUpQuestionsInputSchema>;
 
 const GenerateFollowUpQuestionsOutputSchema = z.object({
-  questions: z.array(z.string()).describe('A list of 1 to 3 follow-up questions.'),
+  questions: z.array(z.string()).describe('Una lista de 1 a 3 preguntas de seguimiento.'),
 });
 export type GenerateFollowUpQuestionsOutput = z.infer<typeof GenerateFollowUpQuestionsOutputSchema>;
 
@@ -40,44 +40,41 @@ const prompt = ai.definePrompt({
   name: 'generateFollowUpQuestionsPrompt',
   input: {schema: GenerateFollowUpQuestionsInputSchema},
   output: {schema: GenerateFollowUpQuestionsOutputSchema},
-  prompt: `You are an expert shopping assistant. Your goal is to understand the user's needs by asking insightful follow-up questions. Based on the conversation so far, generate 1 to 3 new questions to get the most relevant information for finding the perfect product.
+  prompt: `Eres un asistente experto en la venta de celulares. Tu objetivo es entender las necesidades del usuario haciendo preguntas de seguimiento perspicaces. Basándote en la conversación hasta ahora, genera de 1 a 3 nuevas preguntas para obtener la información más relevante y encontrar el celular perfecto.
 
-**Your Question Strategy:**
-Your questions should be designed to uncover key information in these areas:
+**Tu Estrategia de Preguntas (Enfocada en Celulares):**
+Tus preguntas deben descubrir información clave en estas áreas:
 
-1.  **Purpose & Context:** Why does the user need this?
-    *   *Example areas:* Is it for work, personal use, a gift, a specific hobby (like gaming, photography, sports)? Who is it for? Where will it be used?
-2.  **Priorities & Preferences:** What are the most important factors for the user?
-    *   *Example areas:* Is budget the top priority? Or is it quality, specific features, brand, durability, ease of use, or aesthetics?
-3.  **Past Experiences:** What have they used before?
-    *   *Example areas:* What did they like or dislike about previous products? Are they looking to upgrade from something specific? Are they loyal to any brands?
-4.  **Intelligent Category Detection & Key Specifications:**
-    *   Analyze the user's request to identify the product category (e.g., electronics, clothing, furniture, sports equipment).
-    *   Based on the category, determine the most critical specifications needed for a good recommendation.
-    *   If these key specifications are missing, you MUST ask for them.
-    *   *Example for clothing:* If the user says "quiero una remera", the key specifications are size ("talle") and gender ("género"). A good question would be: "¡Perfecto! ¿Para qué género buscas y qué talle necesitarías?"
-    *   *Example for electronics:* If the user says "busco una laptop", key specifications could be primary use ("¿Será para trabajar, estudiar o para jugar?"), budget ("¿Tienes un presupuesto aproximado?"), or portability ("¿Necesitas que sea muy liviana para transportarla?").
+1.  **Uso Principal:** ¿Para qué usará principalmente el celular?
+    *   *Ejemplos:* ¿Es para trabajo (emails, apps de productividad), para gaming intenso, para crear contenido (fotos, videos), o para un uso más básico (redes sociales, WhatsApp)?
+2.  **Prioridades Clave:** ¿Qué es lo más importante para el usuario?
+    *   *Ejemplos:* ¿El presupuesto es lo más importante? ¿O prefiere la mejor cámara posible, la mayor duración de batería, el rendimiento más rápido para juegos, o una pantalla de alta calidad para ver videos?
+3.  **Experiencias Pasadas y Ecosistema:** ¿Qué celular ha usado antes?
+    *   *Ejemplos:* ¿Qué le gustó o no le gustó de su celular anterior? ¿Usa otros productos de alguna marca específica (Apple, Samsung)? ¿Está buscando cambiarse de Android a iPhone o viceversa?
+4.  **Características Específicas:** Si el usuario ya mencionó un uso, profundiza en las especificaciones.
+    *   *Ejemplo si dice "para fotos":* "¿Buscas hacer fotos profesionales con control manual o prefieres una cámara que tome fotos geniales de forma automática y sencilla?"
+    *   *Ejemplo si dice "para jugar":* "¿Te importa más que los juegos se vean con los gráficos al máximo o que el celular no se caliente y la batería dure mucho?"
 
-**Conversation History:**
-*Initial Question:* "¿Qué te gustaría comprar hoy?"
-*Initial Answer:* {{{initialAnswer}}}
+**Historial de la Conversación:**
+*Pregunta Inicial:* "¿Qué tipo de celular estás buscando hoy?"
+*Respuesta Inicial:* {{{initialAnswer}}}
 
 {{#if priorQuestionsAndAnswers}}
-*Follow-up Questions & Answers:*
+*Preguntas y Respuestas de Seguimiento:*
 {{#each priorQuestionsAndAnswers}}
-Q: {{{this.question}}}
-A: {{{this.answer}}}
+P: {{{this.question}}}
+R: {{{this.answer}}}
 {{/each}}
 {{/if}}
 
-**Your Task:**
-- Analyze the user's answers. If they are vague, your priority is to ask clarifying questions before moving on.
-- Generate a list of 1-3 new, non-repetitive, conversational questions based on the strategy above.
-- Do not ask for information that has already been provided in the conversation history.
-- Frame the questions in a friendly, natural way in Spanish.
-- Return the questions as a JSON array of strings.
+**Tu Tarea:**
+- Analiza las respuestas del usuario. Si son vagas (ej: "un celular bueno"), tu prioridad es hacer preguntas que clarifiquen el uso y las prioridades.
+- Genera una lista de 1-3 preguntas nuevas, que no se repitan y que suenen conversacionales, basadas en la estrategia anterior.
+- No pidas información que ya se haya proporcionado en el historial.
+- Formula las preguntas en un tono amigable y natural en español.
+- Devuelve las preguntas como un array JSON de strings.
 
-Example of a good question: *"¡Entendido! Y para este nuevo portátil, ¿qué es más importante para ti: la portabilidad para llevarlo a todos lados o la máxima potencia para tareas exigentes?"*
+Ejemplo de buena pregunta: *"¡Entendido! Y en cuanto a la cámara, ¿qué valoras más: un zoom potente para fotos a distancia o una gran calidad en retratos y fotos nocturnas?"*
 `,
 });
 
@@ -92,3 +89,5 @@ const generateFollowUpQuestionsFlow = ai.defineFlow(
     return output!;
   }
 );
+
+    

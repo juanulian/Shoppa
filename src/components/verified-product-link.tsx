@@ -24,7 +24,7 @@ export default function VerifiedProductLink({
 
     const validateUrl = () => {
       // Validaciones básicas de URL
-      if (!url || url === '#' || url === '' || url.includes('google.com/search') || url.includes('google.com/url')) {
+      if (!url || url === '#' || url === '' || !url.startsWith('http')) {
         generateFallbackUrl();
         if(isMounted) setIsChecking(false);
         return
@@ -32,8 +32,13 @@ export default function VerifiedProductLink({
       
       try {
         const urlObj = new URL(url);
-        setVerifiedUrl(url);
-        setIsValid(true);
+        // Evitar URLs de búsqueda genéricas de Google
+        if (urlObj.hostname.includes('google.com')) {
+          generateFallbackUrl();
+        } else {
+          setVerifiedUrl(url);
+          setIsValid(true);
+        }
       } catch {
         generateFallbackUrl();
       }
@@ -45,6 +50,7 @@ export default function VerifiedProductLink({
     return () => {
         isMounted = false;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url, productName])
 
   const generateFallbackUrl = () => {
@@ -69,7 +75,7 @@ export default function VerifiedProductLink({
         suppressHydrationWarning
       >
         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-        Verificando...
+        Verificando link...
       </Button>
     )
   }
@@ -84,7 +90,7 @@ export default function VerifiedProductLink({
         {isValid ? (
         <>
             <ExternalLink className="h-4 w-4 mr-2" />
-            Ver Producto
+            Ver oferta
         </>
         ) : (
         <>
@@ -95,3 +101,5 @@ export default function VerifiedProductLink({
     </Button>
   )
 }
+
+    

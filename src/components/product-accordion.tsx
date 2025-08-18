@@ -8,22 +8,17 @@ import {
 } from "@/components/ui/accordion"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle, HelpCircle, Star, ShoppingCart, Plus } from "lucide-react";
+import { CheckCircle, HelpCircle, Star } from "lucide-react";
 import type { ProductRecommendation } from "@/ai/schemas/product-recommendation";
 import SmartProductImage from "./smart-product-image";
 import VerifiedProductLink from "./verified-product-link";
 
 type ProductAccordionProps = {
   product: ProductRecommendation;
-  complementaryProducts: ProductRecommendation[];
-  onAddToCart: (product: ProductRecommendation) => void;
 };
 
 const ProductAccordion: React.FC<ProductAccordionProps> = ({
   product,
-  complementaryProducts,
-  onAddToCart,
 }) => {
   return (
     <Accordion type="single" collapsible className="w-full bg-white/30 dark:bg-card/60 backdrop-blur-2xl border border-white/20 shadow-lg rounded-2xl transition-all duration-300 hover:shadow-2xl">
@@ -44,7 +39,7 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
                 <h3 className="font-headline font-bold text-lg">{product.productName}</h3>
                 <div className="flex items-center gap-4 mt-2">
                     <Badge variant="secondary" className="text-base font-bold py-1 px-3">
-                        ${product.price.toFixed(2)}
+                        {product.price}
                     </Badge>
                     <div className="flex items-center gap-1 text-yellow-500">
                         <Star className="w-5 h-5 fill-current" />
@@ -65,58 +60,20 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
                         <span className="text-sm font-medium">{product.availability}</span>
                     </div>
                 </div>
-                <div className="pt-2">
-                    <div className="flex items-center gap-2 font-semibold mb-1">
-                        <HelpCircle className="w-5 h-5 text-accent"/>
-                        <span>Por qué lo recomendamos</span>
+                <div className="pt-4 border-t border-white/20">
+                    <div className="flex items-center gap-2 font-semibold mb-2 text-accent">
+                        <HelpCircle className="w-5 h-5"/>
+                        <span>¿Por qué es ideal para ti?</span>
                     </div>
-                    <p className="text-sm text-muted-foreground">{product.justification}</p>
+                    <p className="text-sm text-foreground bg-accent/10 p-3 rounded-md border border-accent/20">{product.justification}</p>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-2">
-                    <Button className="w-full sm:w-auto flex-grow" onClick={() => onAddToCart(product)} suppressHydrationWarning>
-                        <ShoppingCart className="mr-2 h-4 w-4" />
-                        Añadir al carrito
-                    </Button>
+                <div className="flex flex-col sm:flex-row gap-2 pt-4">
                     <VerifiedProductLink 
                         url={product.productUrl}
                         productName={product.productName}
-                        className="w-full sm:w-auto"
+                        className="w-full sm:w-auto flex-grow"
                     />
                 </div>
-
-                {complementaryProducts.length > 0 && (
-                    <div className="space-y-4 pt-4 border-t border-white/20">
-                         <h4 className="font-headline font-bold text-md text-center">Productos Complementarios</h4>
-                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {complementaryProducts.map((compProduct, index) => (
-                                <Card key={index} className="bg-white/30 dark:bg-card/60 backdrop-blur-lg overflow-hidden border-white/20">
-                                    <CardContent className="p-3 flex flex-col h-full">
-                                        <div className="relative h-24 w-full mb-2">
-                                            <SmartProductImage 
-                                                src={compProduct.imageUrl} 
-                                                alt={compProduct.productName}
-                                                productName={compProduct.productName}
-                                                className="rounded-md object-cover" 
-                                                width={150}
-                                                height={96}
-                                            />
-                                        </div>
-                                        <h5 className="font-bold text-sm flex-grow">{compProduct.productName}</h5>
-                                        <p className="text-xs text-muted-foreground mt-1">{compProduct.justification}</p>
-                                        <div className="flex items-center justify-between mt-3">
-                                            <Badge variant="secondary" className="text-sm font-bold">
-                                                ${compProduct.price.toFixed(2)}
-                                            </Badge>
-                                            <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full" onClick={() => onAddToCart(compProduct)} suppressHydrationWarning>
-                                                <Plus className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                         </div>
-                    </div>
-                )}
             </div>
         </AccordionContent>
       </AccordionItem>

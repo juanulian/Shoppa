@@ -1,11 +1,11 @@
 'use server';
 
 /**
- * @fileOverview An intelligent search agent that finds the best product options based on the search query and user profile data by searching the web.
+ * @fileOverview Un agente de búsqueda inteligente que encuentra las mejores opciones de celulares basándose en los datos del usuario y un catálogo local.
  *
- * - intelligentSearchAgent - A function that handles the product search process.
- * - IntelligentSearchAgentInput - The input type for the intelligentSearchAgent function.
- * - IntelligentSearchAgentOutput - The return type for the intelligentSearchAgent function.
+ * - intelligentSearchAgent - Una función que maneja el proceso de recomendación de celulares.
+ * - IntelligentSearchAgentInput - El tipo de entrada para la función intelligentSearchAgent.
+ * - IntelligentSearchAgentOutput - El tipo de retorno para la función intelligentSearchAgent.
  */
 
 import {ai} from '@/ai/genkit';
@@ -14,36 +14,30 @@ import {
   ProductRecommendation,
   ProductRecommendationSchema,
 } from '@/ai/schemas/product-recommendation';
-import { demoProducts } from '@/lib/demo-products';
+import { smartphonesDatabase } from '@/lib/smartphones-database';
 
 
-const getLocalProducts = ai.defineTool(
+const getSmartphoneCatalog = ai.defineTool(
     {
-      name: 'getLocalProducts',
-      description: 'Retrieves a list of available products from the local demo file.',
+      name: 'getSmartphoneCatalog',
+      description: 'Recupera una lista de celulares disponibles desde la base de datos local.',
       inputSchema: z.void(),
-      outputSchema: z.array(ProductRecommendationSchema),
+      outputSchema: z.any(),
     },
     async () => {
-      return demoProducts;
+      // Devuelve solo la lista de dispositivos para simplificar
+      return smartphonesDatabase.devices;
     }
   )
 
-
 const IntelligentSearchAgentInputSchema = z.object({
-  searchQuery: z.string().describe('The user search query.'),
-  userProfileData: z.string().describe('User profile data collected from onboarding questions.'),
+  userProfileData: z.string().describe('Datos del perfil de usuario recopilados de las preguntas de incorporación.'),
 });
 export type IntelligentSearchAgentInput = z.infer<typeof IntelligentSearchAgentInputSchema>;
 
 export type { ProductRecommendation };
 
-const ProductOptionSchema = z.object({
-  mainProduct: ProductRecommendationSchema,
-  complementaryProducts: z.array(ProductRecommendationSchema).describe('A list of 1 to 3 complementary products for the main product.'),
-});
-
-const IntelligentSearchAgentOutputSchema = z.array(ProductOptionSchema).describe('A list of 2 to 4 product options.');
+const IntelligentSearchAgentOutputSchema = z.array(ProductRecommendationSchema).describe('Una lista de 3 recomendaciones de celulares.');
 export type IntelligentSearchAgentOutput = z.infer<typeof IntelligentSearchAgentOutputSchema>;
 
 export async function intelligentSearchAgent(input: IntelligentSearchAgentInput): Promise<IntelligentSearchAgentOutput> {
@@ -54,28 +48,26 @@ const prompt = ai.definePrompt({
   name: 'intelligentSearchAgentPrompt',
   input: {schema: IntelligentSearchAgentInputSchema},
   output: {schema: IntelligentSearchAgentOutputSchema},
-  tools: [getLocalProducts],
-  prompt: `Eres un asistente de compras experto y tu misión es crear una experiencia de compra excepcional para un usuario en Argentina. Tu objetivo es seleccionar entre 2 y 4 opciones de productos principales excelentes que coincidan con su búsqueda, utilizando la lista de productos disponibles que te proporciona la herramienta 'getLocalProducts'.
-
-Para CADA UNA de estas opciones principales, debes ADEMÁS seleccionar entre 1 y 3 productos complementarios de la misma lista que generen una solución más completa y atractiva.
+  tools: [getSmartphoneCatalog],
+  prompt: `Eres un experto recomendador de celulares y tu misión es encontrar los 3 mejores smartphones para el usuario basándote en sus respuestas. Utiliza EXCLUSIVAMENTE el catálogo de productos proporcionado por la herramienta 'getSmartphoneCatalog'.
 
 **PROCESO DE SELECCIÓN OBLIGATORIO:**
-1. Llama a la herramienta 'getLocalProducts' para obtener la lista completa de productos disponibles para la demo.
-2. Analiza la consulta de búsqueda del usuario y su perfil.
-3. Filtra y selecciona los productos más relevantes de la lista. No inventes productos que no estén en la lista.
-4. Para cada producto principal, elige productos complementarios lógicos de la misma lista.
-5. Justifica tus recomendaciones basándote en la consulta del usuario y los datos del producto.
+1. Llama a la herramienta 'getSmartphoneCatalog' para obtener la lista COMPLETA de celulares disponibles.
+2. Analiza profundamente el perfil del usuario, que contiene sus respuestas a preguntas sobre sus necesidades y preferencias (uso, cámara, gaming, presupuesto, etc.).
+3. Selecciona los 3 celulares del catálogo que mejor se alineen con el perfil del usuario.
+4. Para cada celular seleccionado, debes generar una justificación PERSUASIVA y PERSONALIZADA. No te limites a repetir las especificaciones. Explica POR QUÉ ese celular es ideal para ESE usuario en particular, conectando sus características con las necesidades expresadas por el usuario.
 
 **REGLAS ESTRICTAS - CUMPLIMIENTO OBLIGATORIO:**
-1. **USA SOLO PRODUCTOS LOCALES:** Solo puedes recomendar productos que existan en la lista proporcionada por la herramienta 'getLocalProducts'.
-2. **NO INVENTES DATOS:** Todos los datos (nombre, precio, descripción, URL, etc.) deben ser exactamente los que están en el archivo local. No los modifiques.
-3. **SÉ CREATIVO CON LAS RECOMENDACIONES:** Aunque la lista de productos es fija, tu valor está en cómo combinas el producto principal con los complementarios y cómo justificas la elección para el usuario.
-4. **RESPETA EL FORMATO DE SALIDA:** La salida debe ser un array JSON donde cada elemento representa una opción de compra. Cada opción debe contener un 'mainProduct' y una lista de 'complementaryProducts'.
+1. **USA SOLO EL CATÁLOGO LOCAL:** Solo puedes recomendar celulares que existan en la lista proporcionada por la herramienta 'getSmartphoneCatalog'.
+2. **NO INVENTES DATOS:** Todos los datos (modelo, especificaciones, etc.) deben ser exactamente los que están en el catálogo.
+3. **JUSTIFICACIÓN PERSUASIVA:** La clave de tu trabajo es la justificación. Debe ser convincente y conectar directamente con las respuestas del usuario. Por ejemplo, si el usuario dijo "me importa mucho la batería", tu justificación debería decir algo como: "Este modelo es perfecto para ti porque su batería de 5000mAh te asegura que llegarás al final del día sin problemas, algo que mencionaste que era muy importante."
+4. **RESPETA EL FORMATO DE SALIDA:** La salida debe ser un array JSON con exactamente 3 recomendaciones de productos.
+5. **RELLENA TODOS LOS CAMPOS:** Asegúrate de completar todos los campos del esquema de salida (productName, productDescription, price, imageUrl, productUrl, y la importante 'justification'). Usa los datos del catálogo para esto. 'productName' es el modelo, 'price' es 'precio_estimado'. El 'productUrl' puede ser un enlace de búsqueda genérico de Google si no hay uno específico.
 
-Consulta de Búsqueda: {{{searchQuery}}}
-Datos del Perfil de Usuario: {{{userProfileData}}}
+**Perfil del Usuario:**
+{{{userProfileData}}}
 
-Comienza llamando a 'getLocalProducts' y luego construye tu recomendación.
+Comienza llamando a 'getSmartphoneCatalog' y luego construye tu recomendación.
 `,
 });
 
@@ -90,3 +82,5 @@ const intelligentSearchAgentFlow = ai.defineFlow(
     return output!;
   }
 );
+
+    

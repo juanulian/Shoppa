@@ -18,8 +18,8 @@ interface QA {
   answer: string;
 }
 
-const initialQuestion = "¿Qué te gustaría comprar hoy?";
-const totalQuestions = 4;
+const initialQuestion = "¿Qué es lo más importante para ti en un nuevo celular?";
+const totalQuestions = 3; // Reducido para una demo más ágil
 
 const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const [qaPairs, setQaPairs] = useState<QA[]>([]);
@@ -31,6 +31,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
   useEffect(() => {
     if (nextQuestions.length > 0) {
+      // Tomar una pregunta aleatoria de las generadas
       const nextQ = nextQuestions[Math.floor(Math.random() * nextQuestions.length)];
       setCurrentQuestion(nextQ);
       setNextQuestions([]);
@@ -60,16 +61,18 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
       if (res.questions && res.questions.length > 0) {
         setNextQuestions(res.questions);
       } else {
+        // Si no hay más preguntas, finalizamos
         handleFinish(newQaPairs);
       }
     } catch (error) {
       console.error("No se pudieron generar las preguntas:", error);
       toast({
         title: "Error",
-        description: "No se pudieron generar preguntas de seguimiento. Puedes finalizar ahora.",
+        description: "No se pudieron generar más preguntas. Puedes finalizar ahora.",
         variant: "destructive",
       });
-      setCurrentQuestion("Parece que hubo un problema. ¿Quieres finalizar y empezar a buscar?");
+      // Preparamos para finalizar
+      setCurrentQuestion("Parece que hubo un problema. ¿Quieres finalizar y ver tus recomendaciones?");
     } finally {
       setIsLoading(false);
     }
@@ -85,9 +88,16 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
   const handleFinish = (finalQaPairs?: QA[]) => {
     const pairsToProcess = finalQaPairs || qaPairs;
+    if (pairsToProcess.length === 0) {
+      toast({
+        title: "Espera un momento",
+        description: "Por favor, responde al menos una pregunta para que podamos ayudarte.",
+        variant: "default",
+      });
+      return;
+    }
     const profileData = pairsToProcess.map(qa => `P: ${qa.question}\nR: ${qa.answer}`).join('\n\n');
-    const firstAnswer = pairsToProcess.find(qa => qa.question === initialQuestion)?.answer;
-    onComplete(profileData, firstAnswer);
+    onComplete(profileData);
   };
   
   const progressValue = (qaPairs.length / totalQuestions) * 100;
@@ -96,10 +106,10 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
     <Card className="w-full max-w-2xl mx-auto shadow-2xl bg-white/60 dark:bg-card/60 backdrop-blur-xl border-white/20">
       <CardHeader>
         <CardTitle className="font-headline text-2xl md:text-3xl text-center">
-            Encontremos lo mejor para ti
+            Encontremos tu celular ideal
         </CardTitle>
         <CardDescription className="text-center">
-            Responde algunas preguntas para personalizar tu experiencia.
+            Responde {totalQuestions} preguntas rápidas para recibir una recomendación experta.
         </CardDescription>
         <div className="pt-4">
             <Progress value={progressValue} className="w-full" />
@@ -122,7 +132,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
               <Input
                 value={currentAnswer}
                 onChange={(e) => setCurrentAnswer(e.target.value)}
-                placeholder="Tu respuesta..."
+                placeholder="Ej: 'la cámara' o 'que la batería dure mucho'"
                 className="h-12 text-base rounded-full px-6 bg-background/70 focus-visible:ring-accent flex-grow"
                 disabled={isLoading}
                 suppressHydrationWarning
@@ -134,11 +144,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
             </div>
             <div className="flex justify-center items-center gap-4 pt-4">
                 <Button onClick={() => handleFinish()} size="lg" variant="ghost" className="rounded-full font-bold text-accent-foreground/80 hover:bg-accent/20 transition-all duration-300" disabled={isLoading || qaPairs.length === 0} suppressHydrationWarning>
-                    Finalizar y Buscar
-                </Button>
-                <Button onClick={() => handleFinish(qaPairs)} variant="link" disabled={isLoading} className="flex items-center gap-2" suppressHydrationWarning>
-                    <SkipForward className="h-4 w-4" />
-                    Omitir
+                    Finalizar y Ver Celulares
                 </Button>
             </div>
           </form>
@@ -149,3 +155,5 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 };
 
 export default Onboarding;
+
+    

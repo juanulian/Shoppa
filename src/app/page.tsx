@@ -42,7 +42,7 @@ export default function Home() {
           )}
           {appState === 'search' && userProfile !== null && (
             <div className="animate-in fade-in-0 zoom-in-95 duration-500 w-full">
-              <MainApp userProfileData={userProfile} initialSearchQuery={initialSearch} onNewSearch={handleNewSearch} />
+              <MainApp userProfileData={userProfile} onNewSearch={handleNewSearch} />
             </div>
           )}
         </div>
