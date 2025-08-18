@@ -10,6 +10,7 @@ interface SmartProductImageProps {
   className?: string
   width?: number
   height?: number
+  fill?: boolean
   priority?: boolean
 }
 
@@ -18,8 +19,9 @@ export default function SmartProductImage({
   alt, 
   productName,
   className = "",
-  width = 400,
-  height = 400,
+  width,
+  height,
+  fill = false,
   priority = false
 }: SmartProductImageProps) {
   const [imgSrc, setImgSrc] = useState(src)
@@ -76,7 +78,7 @@ export default function SmartProductImage({
   if (isLoading) {
     return (
       <div className={`animate-pulse bg-gray-200/50 dark:bg-gray-800/50 rounded-lg ${className}`} 
-           style={{ width, height }} />
+           style={fill ? {} : { width, height }} />
     )
   }
 
@@ -86,7 +88,7 @@ export default function SmartProductImage({
     return (
       <div 
         className={`flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg ${className}`}
-        style={{ width, height }}
+        style={fill ? {} : { width, height }}
       >
         <svg 
           width="100%" 
@@ -131,8 +133,9 @@ export default function SmartProductImage({
       <Image
         src={imgSrc}
         alt={alt}
-        width={width}
-        height={height}
+        width={!fill ? width : undefined}
+        height={!fill ? height : undefined}
+        fill={fill}
         className={className}
         onError={handleError}
         priority={priority}
@@ -146,7 +149,7 @@ export default function SmartProductImage({
         src={imgSrc} 
         alt={alt}
         className={className}
-        style={{ width, height, objectFit: 'cover' }}
+        style={fill ? { width: '100%', height: '100%', objectFit: 'cover' } : { width, height, objectFit: 'cover' }}
         onError={handleError}
       />
     )

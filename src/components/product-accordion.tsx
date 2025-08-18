@@ -25,14 +25,13 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
       <AccordionItem value="item-1" className="border-b-0">
         <AccordionTrigger className="p-4 hover:no-underline">
           <div className="flex gap-4 items-center w-full">
-            <div className="relative h-24 w-24 flex-shrink-0">
+            <div className="relative h-28 w-28 flex-shrink-0">
                 <SmartProductImage 
                     src={product.imageUrl} 
                     alt={product.productName}
                     productName={product.productName}
                     className="rounded-md object-cover"
-                    width={96}
-                    height={96}
+                    fill
                 />
             </div>
             <div className="flex-grow text-left">
