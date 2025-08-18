@@ -19,7 +19,7 @@ interface QA {
 }
 
 const initialQuestion = "¿Qué es lo más importante para ti en un nuevo celular?";
-const totalQuestions = 2; // Reducido para una demo más ágil
+const totalQuestions = 3; // Ajustado para una demo más completa
 
 const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const [qaPairs, setQaPairs] = useState<QA[]>([]);
