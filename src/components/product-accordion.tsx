@@ -24,7 +24,7 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
     <Accordion type="single" collapsible className="w-full bg-white/30 dark:bg-card/60 backdrop-blur-2xl border border-white/20 shadow-lg rounded-2xl transition-all duration-300 hover:shadow-2xl">
       <AccordionItem value="item-1" className="border-b-0">
         <AccordionTrigger className="p-4 hover:no-underline">
-          <div className="flex gap-4 items-center w-full">
+          <div className="flex flex-col sm:flex-row gap-4 items-center w-full text-center sm:text-left">
             <div className="relative h-28 w-28 flex-shrink-0">
                 <SmartProductImage 
                     src={product.imageUrl} 
@@ -34,9 +34,9 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
                     fill
                 />
             </div>
-            <div className="flex-grow text-left">
+            <div className="flex-grow">
                 <h3 className="font-headline font-bold text-lg">{product.productName}</h3>
-                <div className="flex items-center gap-4 mt-2">
+                <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2 sm:gap-4 mt-2">
                     <Badge variant="secondary" className="text-base font-bold py-1 px-3">
                         {product.price}
                     </Badge>
@@ -50,7 +50,7 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
             </div>
           </div>
         </AccordionTrigger>
-        <AccordionContent className="p-6 pt-2">
+        <AccordionContent className="p-4 sm:p-6 pt-2">
             <div className="space-y-6">
                 <div>
                     <p className="text-sm text-muted-foreground">{product.productDescription}</p>

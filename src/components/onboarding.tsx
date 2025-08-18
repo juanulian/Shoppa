@@ -104,7 +104,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
   return (
     <Card className="w-full max-w-2xl mx-auto shadow-2xl bg-white/60 dark:bg-card/60 backdrop-blur-xl border-white/20">
-      <CardHeader>
+      <CardHeader className="p-4 md:p-6">
         <CardTitle className="font-headline text-2xl md:text-3xl text-center">
             Encontremos tu celular ideal
         </CardTitle>
@@ -115,7 +115,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
             <Progress value={progressValue} className="w-full" />
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-4 md:p-6">
         <div className="space-y-6">
           <div className="text-center min-h-[4rem] flex items-center justify-center p-2">
             <p className="text-lg font-medium text-foreground animate-in fade-in duration-500">
@@ -125,7 +125,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
           <form onSubmit={handleAnswerSubmit} className="space-y-4">
             <div className="flex gap-2">
-              <Button type="button" size="icon" variant="outline" onClick={handleBack} disabled={isLoading || qaPairs.length === 0} className="rounded-full h-12 w-12 flex-shrink-0" suppressHydrationWarning>
+              <Button type="button" size="icon" variant="outline" onClick={handleBack} disabled={isLoading || qaPairs.length === 0} className="rounded-full h-10 w-10 md:h-12 md:w-12 flex-shrink-0" suppressHydrationWarning>
                 <ArrowLeft />
                 <span className="sr-only">Atrás</span>
               </Button>
@@ -133,11 +133,11 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                 value={currentAnswer}
                 onChange={(e) => setCurrentAnswer(e.target.value)}
                 placeholder="Ej: 'la cámara' o 'que la batería dure mucho'"
-                className="h-12 text-base rounded-full px-6 bg-background/70 focus-visible:ring-accent flex-grow"
+                className="h-10 md:h-12 text-sm md:text-base rounded-full px-4 md:px-6 bg-background/70 focus-visible:ring-accent flex-grow"
                 disabled={isLoading}
                 suppressHydrationWarning
               />
-              <Button type="submit" size="icon" disabled={!currentAnswer.trim() || isLoading} className="rounded-full h-12 w-12 flex-shrink-0" suppressHydrationWarning>
+              <Button type="submit" size="icon" disabled={!currentAnswer.trim() || isLoading} className="rounded-full h-10 w-10 md:h-12 md:w-12 flex-shrink-0" suppressHydrationWarning>
                 {isLoading ? <Loader2 className="animate-spin" /> : <ArrowRight />}
                 <span className="sr-only">Siguiente</span>
               </Button>
