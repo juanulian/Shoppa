@@ -22,7 +22,20 @@ const getSmartphoneCatalog = ai.defineTool(
       name: 'getSmartphoneCatalog',
       description: 'Recupera una lista de celulares disponibles desde la base de datos local.',
       inputSchema: z.void(),
-      outputSchema: z.any(),
+      // Se define un esquema de salida explícito para la herramienta, para que la IA sepa qué esperar.
+      outputSchema: z.array(z.object({
+        id: z.string(),
+        brand: z.string(),
+        model: z.string(),
+        storage: z.string(),
+        image_url: z.string(),
+        gama: z.string(),
+        precio_estimado: z.string(),
+        uso_recomendado: z.array(z.string()),
+        especificaciones: z.any(),
+        durabilidad: z.any(),
+        ideal_para: z.array(z.string()),
+      })),
     },
     async () => {
       // Devuelve solo la lista de dispositivos para simplificar
@@ -62,7 +75,7 @@ const prompt = ai.definePrompt({
 2. **NO INVENTES DATOS:** Todos los datos (modelo, especificaciones, etc.) deben ser exactamente los que están en el catálogo.
 3. **JUSTIFICACIÓN PERSUASIVA:** La clave de tu trabajo es la justificación. Debe ser convincente y conectar directamente con las respuestas del usuario. Por ejemplo, si el usuario dijo "me importa mucho la batería", tu justificación debería decir algo como: "Este modelo es perfecto para ti porque su batería de 5000mAh te asegura que llegarás al final del día sin problemas, algo que mencionaste que era muy importante."
 4. **RESPETA EL FORMATO DE SALIDA:** La salida debe ser un array JSON con exactamente 3 recomendaciones de productos.
-5. **RELLENA TODOS LOS CAMPOS:** Asegúrate de completar todos los campos del esquema de salida (productName, productDescription, price, imageUrl, productUrl, y la importante 'justification'). Usa los datos del catálogo para esto. 'productName' es el modelo, 'price' es 'precio_estimado'. El 'productUrl' puede ser un enlace de búsqueda genérico de Google si no hay uno específico.
+5. **RELLENA TODOS LOS CAMPOS:** Asegúrate de completar todos los campos del esquema de salida (productName, productDescription, price, imageUrl, productUrl, y la importante 'justification'). Usa los datos del catálogo para esto. 'productName' es el modelo, 'price' es 'precio_estimado'. El 'productUrl' puede ser un enlace de búsqueda genérico de Google si no hay uno específico (ej: 'https://www.google.com/search?q=Samsung+Galaxy+S25'). 'availability' debe ser "En stock". 'qualityScore' debe ser un valor estimado entre 70 y 98 basado en la gama y especificaciones. 'productDescription' debe ser un resumen de las especificaciones clave.
 
 **Perfil del Usuario:**
 {{{userProfileData}}}
