@@ -19,7 +19,7 @@ interface MainAppProps {
 
 const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
   const [results, setResults] = useState<IntelligentSearchAgentOutput>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // <--- CAMBIO CLAVE: Inicializar en true
   const { toast } = useToast();
 
   const handleSearch = async () => {
@@ -87,16 +87,8 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
           </>
         )}
       </div>
-      {!isLoading && results.length === 0 && (
-         <div className="text-center py-16 flex flex-col items-center gap-4">
-            <Smartphone size={48} className="text-muted-foreground" />
-            <p className="text-muted-foreground">Generando tus recomendaciones personalizadas...</p>
-         </div>
-      )}
     </div>
   );
 };
 
 export default MainApp;
-
-    
