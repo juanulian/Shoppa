@@ -69,8 +69,6 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 pt-4">
                     <VerifiedProductLink 
-                        url={product.productUrl}
-                        productName={product.productName}
                         className="w-full sm:w-auto flex-grow"
                     />
                 </div>

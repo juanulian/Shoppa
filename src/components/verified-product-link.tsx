@@ -1,105 +1,47 @@
 'use client'
 
-import { ExternalLink, AlertCircle, Loader2 } from 'lucide-react'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Button } from '@/components/ui/button'
-import { useState, useEffect } from 'react'
 
 interface VerifiedProductLinkProps {
-  url: string
-  productName: string
   className?: string
 }
 
 export default function VerifiedProductLink({ 
-  url, 
-  productName,
   className = ""
 }: VerifiedProductLinkProps) {
-  const [verifiedUrl, setVerifiedUrl] = useState(url)
-  const [isValid, setIsValid] = useState(false)
-  const [isChecking, setIsChecking] = useState(true)
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const validateUrl = () => {
-      // Validaciones básicas de URL
-      if (!url || url === '#' || url === '' || !url.startsWith('http')) {
-        generateFallbackUrl();
-        if(isMounted) setIsChecking(false);
-        return
-      }
-      
-      try {
-        const urlObj = new URL(url);
-        // Evitar URLs de búsqueda genéricas de Google
-        if (urlObj.hostname.includes('google.com')) {
-          generateFallbackUrl();
-        } else {
-          setVerifiedUrl(url);
-          setIsValid(true);
-        }
-      } catch {
-        generateFallbackUrl();
-      }
-      if(isMounted) setIsChecking(false);
-    }
-    
-    validateUrl();
-
-    return () => {
-        isMounted = false;
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [url, productName])
-
-  const generateFallbackUrl = () => {
-    const searchQuery = encodeURIComponent(productName)
-    const mercadoLibreUrl = `https://listado.mercadolibre.com.ar/${searchQuery}`
-    setVerifiedUrl(mercadoLibreUrl)
-    setIsValid(false)
-  }
-
-  const handleClick = () => {
-    if (verifiedUrl) {
-      window.open(verifiedUrl, '_blank', 'noopener,noreferrer')
-    }
-  }
-
-  if (isChecking) {
-    return (
-      <Button 
-        disabled 
-        className={className}
-        variant="outline"
-        suppressHydrationWarning
-      >
-        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-        Verificando link...
-      </Button>
-    )
-  }
-
+  
   return (
-    <Button
-        onClick={handleClick}
-        className={className}
-        variant={isValid ? "default" : "outline"}
-        suppressHydrationWarning
-    >
-        {isValid ? (
-        <>
-            <ExternalLink className="h-4 w-4 mr-2" />
-            Ver oferta
-        </>
-        ) : (
-        <>
-            <AlertCircle className="h-4 w-4 mr-2" />
-            Buscar en MercadoLibre
-        </>
-        )}
-    </Button>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button className={className}>
+          Comprar
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Simulación de Compra Finalizada</AlertDialogTitle>
+          <AlertDialogDescription>
+            La simulación de compra ha finalizado. ¿Avanzamos a la encuesta de satisfacción?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cerrar</AlertDialogCancel>
+          <AlertDialogAction onClick={() => alert('Encuesta de satisfacción pendiente de implementación.')}>
+            Avanzar
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }
-
-    
