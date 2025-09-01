@@ -9,6 +9,15 @@ export default {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        'hero': "url('/background/botones.jpg')",
+        'problem': "url('/background/abstract_pastel_8k.png')",
+        'solution': "url('/background/abstract_rosa_8k.jpg')",
+        'results': "url('/background/cards.png')",
+        'benefits': "url('/background/cards_2.png')",
+        'faq': "url('/background/abstract_salmon_8k.png')",
+        'header-footer': "url('/background/header_footer.png')",
+      },
       fontFamily: {
         body: ['Nunito', 'sans-serif'],
         headline: ['Nunito', 'sans-serif'],
