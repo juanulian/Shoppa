@@ -55,15 +55,14 @@ export default function LandingPage() {
             <Header />
             <main className="flex-1">
                 {/* Hero Section */}
-                <section 
-                    className="relative pt-32 pb-20 md:pt-48 md:pb-32 text-center overflow-hidden"
-                    style={{
-                        backgroundImage: "url('/background/botones.jpg')",
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                    }}
-                >
-                    <div className="absolute inset-0 bg-white/50 dark:bg-slate-950/80"></div>
+                <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 text-center overflow-hidden">
+                    <div className="absolute inset-0 z-0">
+                        <div 
+                            className="absolute inset-0 bg-cover bg-center"
+                            style={{ backgroundImage: "url('/background/botones.jpg')" }}
+                        ></div>
+                        <div className="absolute inset-0 bg-white/50 dark:bg-slate-950/80"></div>
+                    </div>
                     <div className="container mx-auto px-4 md:px-6 relative z-10">
                         <Badge variant="outline" className="mb-4 border-primary/50 text-primary animate-in fade-in-0 duration-1000 bg-background/50 backdrop-blur-sm">La solución de IA para Retail Tech</Badge>
                         <h1 className="text-4xl font-extrabold tracking-tight md:text-6xl animate-in fade-in-0 slide-in-from-bottom-5 duration-1000">
@@ -84,17 +83,15 @@ export default function LandingPage() {
                 </section>
 
                 {/* Problem Section */}
-                <section 
-                    id="problema" 
-                    className="relative py-16 md:py-24"
-                    style={{
-                        backgroundImage: "url('/background/abstract_pastel_8k.png')",
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                    }}
-                >
-                    <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
-                    <div className="container mx-auto px-4 md:px-6 relative">
+                <section id="problema" className="relative py-16 md:py-24">
+                    <div className="absolute inset-0 z-0">
+                        <div
+                            className="absolute inset-0 bg-cover bg-center"
+                            style={{ backgroundImage: "url('/background/abstract_pastel_8k.png')" }}
+                        ></div>
+                        <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
+                    </div>
+                    <div className="container mx-auto px-4 md:px-6 relative z-10">
                         <div className="text-center">
                             <h2 className="text-3xl font-bold tracking-tight">El costo oculto de la indecisión del cliente</h2>
                             <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
@@ -123,17 +120,15 @@ export default function LandingPage() {
                 </section>
 
                 {/* Solution Section */}
-                <section 
-                    id="solucion" 
-                    className="relative py-16 md:py-24"
-                    style={{
-                        backgroundImage: "url('/background/abstract_rosa_8k.jpg')",
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                    }}
-                >
-                    <div className="absolute inset-0 bg-background/80 dark:bg-slate-950/80 backdrop-blur-sm"></div>
-                    <div className="container mx-auto px-4 md:px-6 relative">
+                <section id="solucion" className="relative py-16 md:py-24">
+                    <div className="absolute inset-0 z-0">
+                        <div
+                            className="absolute inset-0 bg-cover bg-center"
+                            style={{ backgroundImage: "url('/background/abstract_rosa_8k.jpg')" }}
+                        ></div>
+                        <div className="absolute inset-0 bg-background/80 dark:bg-slate-950/80 backdrop-blur-sm"></div>
+                    </div>
+                    <div className="container mx-auto px-4 md:px-6 relative z-10">
                         <div className="text-center">
                             <h2 className="text-3xl font-bold tracking-tight">La Solución: Tu Asesor Digital 24/7</h2>
                             <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
@@ -171,17 +166,15 @@ export default function LandingPage() {
                 </section>
 
                 {/* Social Proof Section */}
-                <section 
-                    id="resultados" 
-                    className="relative py-16 md:py-24"
-                    style={{
-                        backgroundImage: "url('/background/cards.png')",
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                    }}
-                >
-                    <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
-                    <div className="container mx-auto px-4 md:px-6 relative">
+                <section id="resultados" className="relative py-16 md:py-24">
+                    <div className="absolute inset-0 z-0">
+                        <div
+                            className="absolute inset-0 bg-cover bg-center"
+                            style={{ backgroundImage: "url('/background/cards.png')" }}
+                        ></div>
+                        <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
+                    </div>
+                    <div className="container mx-auto px-4 md:px-6 relative z-10">
                         <div className="text-center">
                             <h2 className="text-3xl font-bold tracking-tight">Resultados Reales, No Promesas Vacías</h2>
                             <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
@@ -201,16 +194,15 @@ export default function LandingPage() {
                 </section>
                 
                 {/* Benefits Section */}
-                <section 
-                    className="relative py-16 md:py-24"
-                    style={{
-                        backgroundImage: "url('/background/cards_2.png')",
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                    }}
-                >
-                    <div className="absolute inset-0 bg-background/80 dark:bg-slate-950/80 backdrop-blur-sm"></div>
-                    <div className="container mx-auto px-4 md:px-6 relative">
+                <section className="relative py-16 md:py-24">
+                    <div className="absolute inset-0 z-0">
+                        <div
+                            className="absolute inset-0 bg-cover bg-center"
+                            style={{ backgroundImage: "url('/background/cards_2.png')" }}
+                        ></div>
+                        <div className="absolute inset-0 bg-background/80 dark:bg-slate-950/80 backdrop-blur-sm"></div>
+                    </div>
+                    <div className="container mx-auto px-4 md:px-6 relative z-10">
                         <div className="text-center">
                             <h2 className="text-3xl font-bold tracking-tight">Los Resultados que Obtenés en Tu Negocio</h2>
                             <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
@@ -232,16 +224,15 @@ export default function LandingPage() {
                 </section>
 
                  {/* Testimonials Section */}
-                <section 
-                    className="relative py-16 md:py-24"
-                    style={{
-                        backgroundImage: "url('/background/cards.png')",
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                    }}
-                >
-                     <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
-                    <div className="container mx-auto px-4 md:px-6 relative">
+                <section className="relative py-16 md:py-24">
+                    <div className="absolute inset-0 z-0">
+                        <div
+                            className="absolute inset-0 bg-cover bg-center"
+                            style={{ backgroundImage: "url('/background/cards.png')" }}
+                        ></div>
+                        <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
+                    </div>
+                    <div className="container mx-auto px-4 md:px-6 relative z-10">
                          <div className="text-center">
                             <h2 className="text-3xl font-bold tracking-tight">Lo que dicen quienes ya lo probaron</h2>
                              <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
@@ -259,17 +250,15 @@ export default function LandingPage() {
 
 
                 {/* Pricing Section */}
-                <section 
-                    id="precios" 
-                    className="relative py-16 md:py-24"
-                    style={{
-                        backgroundImage: "url('/background/abstract_rosa_8k.jpg')",
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                    }}
-                >
-                     <div className="absolute inset-0 bg-background/80 dark:bg-slate-950/80 backdrop-blur-sm"></div>
-                    <div className="container mx-auto px-4 md:px-6 relative">
+                <section id="precios" className="relative py-16 md:py-24">
+                    <div className="absolute inset-0 z-0">
+                        <div
+                            className="absolute inset-0 bg-cover bg-center"
+                            style={{ backgroundImage: "url('/background/abstract_rosa_8k.jpg')" }}
+                        ></div>
+                        <div className="absolute inset-0 bg-background/80 dark:bg-slate-950/80 backdrop-blur-sm"></div>
+                    </div>
+                    <div className="container mx-auto px-4 md:px-6 relative z-10">
                         <div className="max-w-3xl mx-auto text-center">
                             <h2 className="text-3xl font-bold tracking-tight">Modelos Flexibles para Cada Negocio</h2>
                             <p className="mt-4 text-muted-foreground">
@@ -295,16 +284,15 @@ export default function LandingPage() {
                 </section>
 
                 {/* FAQ Section */}
-                <section 
-                    className="relative py-16 md:py-24"
-                    style={{
-                        backgroundImage: "url('/background/abstract_salmon_8k.png')",
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                    }}
-                >
-                    <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
-                    <div className="container mx-auto px-4 md:px-6 max-w-3xl relative">
+                <section className="relative py-16 md:py-24">
+                    <div className="absolute inset-0 z-0">
+                        <div
+                            className="absolute inset-0 bg-cover bg-center"
+                            style={{ backgroundImage: "url('/background/abstract_salmon_8k.png')" }}
+                        ></div>
+                        <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
+                    </div>
+                    <div className="container mx-auto px-4 md:px-6 max-w-3xl relative z-10">
                         <div className="text-center mb-12">
                             <h2 className="text-3xl font-bold tracking-tight">Preguntas Frecuentes</h2>
                         </div>

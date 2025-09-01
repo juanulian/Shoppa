@@ -8,16 +8,15 @@ import { Button } from '@/components/ui/button';
 
 export function Header() {
   return (
-    <header 
-      className="fixed top-0 left-0 right-0 z-50 shadow-sm"
-      style={{
-          backgroundImage: "url('/background/header_footer.png')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-      }}
-    >
-      <div className="absolute inset-0 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm"></div>
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 relative">
+    <header className="fixed top-0 left-0 right-0 z-50 shadow-sm">
+      <div className="absolute inset-0 z-0">
+          <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: "url('/background/header_footer.png')" }}
+          ></div>
+          <div className="absolute inset-0 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm"></div>
+      </div>
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 relative z-10">
         <Link href="/" className="flex items-center gap-2">
           <Logo />
         </Link>
