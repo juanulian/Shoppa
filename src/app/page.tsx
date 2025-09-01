@@ -55,7 +55,7 @@ export default function LandingPage() {
             <Header />
             <main className="flex-1">
                 {/* Hero Section */}
-                <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 text-center overflow-hidden bg-cover bg-center bg-hero">
+                <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 text-center overflow-hidden bg-[url('/background/botones.jpg')] bg-cover bg-center">
                     <div className="absolute inset-0 bg-white/50 dark:bg-slate-950/80"></div>
                     <div className="container mx-auto px-4 md:px-6 relative z-10">
                         <Badge variant="outline" className="mb-4 border-primary/50 text-primary animate-in fade-in-0 duration-1000 bg-background/50 backdrop-blur-sm">La solución de IA para Retail Tech</Badge>
@@ -77,7 +77,7 @@ export default function LandingPage() {
                 </section>
 
                 {/* Problem Section */}
-                <section id="problema" className="relative py-16 md:py-24 bg-cover bg-center bg-problem">
+                <section id="problema" className="relative py-16 md:py-24 bg-[url('/background/abstract_pastel_8k.png')] bg-cover bg-center">
                     <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
                     <div className="container mx-auto px-4 md:px-6 relative z-10">
                         <div className="text-center">
@@ -108,7 +108,7 @@ export default function LandingPage() {
                 </section>
 
                 {/* Solution Section */}
-                <section id="solucion" className="relative py-16 md:py-24 bg-cover bg-center bg-solution">
+                <section id="solucion" className="relative py-16 md:py-24 bg-[url('/background/abstract_rosa_8k.jpg')] bg-cover bg-center">
                     <div className="absolute inset-0 bg-background/80 dark:bg-slate-950/80 backdrop-blur-sm"></div>
                     <div className="container mx-auto px-4 md:px-6 relative z-10">
                         <div className="text-center">
@@ -148,7 +148,7 @@ export default function LandingPage() {
                 </section>
 
                 {/* Social Proof Section */}
-                <section id="resultados" className="relative py-16 md:py-24 bg-cover bg-center bg-results">
+                <section id="resultados" className="relative py-16 md:py-24 bg-[url('/background/cards.png')] bg-cover bg-center">
                     <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
                     <div className="container mx-auto px-4 md:px-6 relative z-10">
                         <div className="text-center">
@@ -170,7 +170,7 @@ export default function LandingPage() {
                 </section>
                 
                 {/* Benefits Section */}
-                <section className="relative py-16 md:py-24 bg-cover bg-center bg-benefits">
+                <section className="relative py-16 md:py-24 bg-[url('/background/cards_2.png')] bg-cover bg-center">
                     <div className="absolute inset-0 bg-background/80 dark:bg-slate-950/80 backdrop-blur-sm"></div>
                     <div className="container mx-auto px-4 md:px-6 relative z-10">
                         <div className="text-center">
@@ -194,7 +194,7 @@ export default function LandingPage() {
                 </section>
 
                  {/* Testimonials Section */}
-                <section className="relative py-16 md:py-24 bg-cover bg-center bg-results">
+                <section className="relative py-16 md:py-24 bg-[url('/background/cards.png')] bg-cover bg-center">
                     <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
                     <div className="container mx-auto px-4 md:px-6 relative z-10">
                          <div className="text-center">
@@ -214,7 +214,7 @@ export default function LandingPage() {
 
 
                 {/* Pricing Section */}
-                <section id="precios" className="relative py-16 md:py-24 bg-cover bg-center bg-solution">
+                <section id="precios" className="relative py-16 md:py-24 bg-[url('/background/abstract_rosa_8k.jpg')] bg-cover bg-center">
                     <div className="absolute inset-0 bg-background/80 dark:bg-slate-950/80 backdrop-blur-sm"></div>
                     <div className="container mx-auto px-4 md:px-6 relative z-10">
                         <div className="max-w-3xl mx-auto text-center">
@@ -242,7 +242,7 @@ export default function LandingPage() {
                 </section>
 
                 {/* FAQ Section */}
-                <section className="relative py-16 md:py-24 bg-cover bg-center bg-faq">
+                <section className="relative py-16 md:py-24 bg-[url('/background/abstract_salmon_8k.png')] bg-cover bg-center">
                     <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
                     <div className="container mx-auto px-4 md:px-6 max-w-3xl relative z-10">
                         <div className="text-center mb-12">

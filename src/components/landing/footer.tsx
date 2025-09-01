@@ -5,7 +5,7 @@ import Logo from '../icons/logo';
 
 export function Footer() {
   return (
-    <footer className="w-full py-8 relative overflow-hidden bg-header-footer bg-cover bg-center">
+    <footer className="w-full py-8 relative overflow-hidden bg-[url('/background/header_footer.png')] bg-cover bg-center">
       <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4 md:px-6 relative z-10">
         <div className="flex flex-col gap-2">

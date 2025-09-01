@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 
 export function Header() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 shadow-sm bg-header-footer bg-cover bg-center">
+    <header className="fixed top-0 left-0 right-0 z-50 shadow-sm bg-[url('/background/header_footer.png')] bg-cover bg-center">
       <div className="absolute inset-0 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm"></div>
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 relative z-10">
         <Link href="/" className="flex items-center gap-2">
