@@ -10,7 +10,7 @@ export function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-        <Link href="/landing" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <Logo />
         </Link>
         <nav className="hidden items-center gap-6 md:flex">
@@ -44,7 +44,7 @@ export function Header() {
             <Link href="#contacto">Agendar Reunión</Link>
           </Button>
           <Button asChild>
-            <Link href="/">Ver Demo en Vivo</Link>
+            <Link href="/demo">Ver Demo en Vivo</Link>
           </Button>
         </div>
       </div>
