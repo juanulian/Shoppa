@@ -58,7 +58,7 @@ export default function LandingPage() {
                 <section 
                     className="relative pt-32 pb-20 md:pt-48 md:pb-32 text-center overflow-hidden"
                     style={{
-                        backgroundImage: "url('/background/abstract_beige_8k.png')",
+                        backgroundImage: "url('/background/botones.jpg')",
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                     }}
@@ -175,7 +175,7 @@ export default function LandingPage() {
                     id="resultados" 
                     className="relative py-16 md:py-24"
                     style={{
-                        backgroundImage: "url('/background/abstract_salmon_8k.png')",
+                        backgroundImage: "url('/background/cards.png')",
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                     }}
@@ -204,7 +204,7 @@ export default function LandingPage() {
                 <section 
                     className="relative py-16 md:py-24"
                     style={{
-                        backgroundImage: "url('/background/abstract_beige_8k.png')",
+                        backgroundImage: "url('/background/cards_2.png')",
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                     }}
@@ -235,7 +235,7 @@ export default function LandingPage() {
                 <section 
                     className="relative py-16 md:py-24"
                     style={{
-                        backgroundImage: "url('/background/abstract_pastel_8k.png')",
+                        backgroundImage: "url('/background/cards.png')",
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                     }}

@@ -5,8 +5,16 @@ import Logo from '../icons/logo';
 
 export function Footer() {
   return (
-    <footer className="w-full bg-slate-100 dark:bg-slate-800/20 py-8">
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4 md:px-6">
+    <footer 
+      className="w-full py-8 relative"
+      style={{
+          backgroundImage: "url('/background/header_footer.png')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+      }}
+    >
+      <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
+      <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4 md:px-6 relative">
         <div className="flex flex-col gap-2">
           <Logo />
           <p className="text-sm text-muted-foreground">
@@ -46,7 +54,7 @@ export function Footer() {
           </Link>
         </div>
       </div>
-      <div className="container mx-auto mt-8 px-4 md:px-6 text-center text-xs text-muted-foreground">
+      <div className="container mx-auto mt-8 px-4 md:px-6 text-center text-xs text-muted-foreground relative">
         &copy; {new Date().getFullYear()} Shoppa!. Todos los derechos reservados.
       </div>
     </footer>
