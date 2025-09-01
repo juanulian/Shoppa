@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 
 
 const StatCard = ({ icon: Icon, title, description, value }) => (
-    <div className="group relative overflow-hidden rounded-lg border bg-white p-6 transition-all duration-300 hover:shadow-2xl dark:bg-slate-900 dark:border-slate-800 hover:-translate-y-2">
+    <div className="group relative overflow-hidden rounded-lg border bg-white/50 backdrop-blur-sm p-6 transition-all duration-300 hover:shadow-2xl dark:bg-slate-900/50 dark:border-slate-800 hover:-translate-y-2">
         <div className="absolute top-0 right-0 -m-4 h-24 w-24 rounded-full bg-primary/10 opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:scale-150"></div>
         <div className="relative z-10">
             <Icon className="h-10 w-10 text-primary mb-4" />
@@ -23,7 +24,7 @@ const StatCard = ({ icon: Icon, title, description, value }) => (
 );
 
 const BenefitCard = ({ icon: Icon, title, children }) => (
-    <Card className="p-6 text-center flex flex-col items-center shadow-lg hover:shadow-primary/20 transition-shadow duration-300 dark:bg-slate-800/50">
+    <Card className="p-6 text-center flex flex-col items-center shadow-lg hover:shadow-primary/20 transition-shadow duration-300 bg-card/50 backdrop-blur-sm dark:bg-slate-800/50">
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
             <Icon className="h-6 w-6" />
         </div>
@@ -33,7 +34,7 @@ const BenefitCard = ({ icon: Icon, title, children }) => (
 );
 
 const TestimonialCard = ({ text, author }) => (
-    <Card className="p-6 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 shadow-sm">
+    <Card className="p-6 bg-white/50 backdrop-blur-sm dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 shadow-sm">
         <CardContent className="p-0">
             <p className="text-muted-foreground mb-4 italic">"{text}"</p>
             <p className="font-semibold text-right text-primary">- {author}</p>
@@ -42,8 +43,8 @@ const TestimonialCard = ({ text, author }) => (
 );
 
 const FAQItem = ({ value, question, children }) => (
-    <AccordionItem value={value}>
-        <AccordionTrigger className="text-lg font-semibold">{question}</AccordionTrigger>
+    <AccordionItem value={value} className="border-white/20">
+        <AccordionTrigger className="text-lg font-semibold text-left hover:no-underline">{question}</AccordionTrigger>
         <AccordionContent className="text-muted-foreground">{children}</AccordionContent>
     </AccordionItem>
 );
@@ -54,10 +55,17 @@ export default function LandingPage() {
             <Header />
             <main className="flex-1">
                 {/* Hero Section */}
-                <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 text-center bg-white dark:bg-slate-950 overflow-hidden">
-                    <div className="absolute inset-0 bg-grid-slate-900/[0.04] bg-[bottom_1px_center] dark:bg-grid-slate-400/[0.05] dark:bg-bottom mask-image-gradient"></div>
+                <section 
+                    className="relative pt-32 pb-20 md:pt-48 md:pb-32 text-center overflow-hidden"
+                    style={{
+                        backgroundImage: "url('/background/abstract_beige_8k.png')",
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                    }}
+                >
+                    <div className="absolute inset-0 bg-white/50 dark:bg-slate-950/80"></div>
                     <div className="container mx-auto px-4 md:px-6 relative z-10">
-                        <Badge variant="outline" className="mb-4 border-primary/50 text-primary animate-in fade-in-0 duration-1000">La solución de IA para Retail Tech</Badge>
+                        <Badge variant="outline" className="mb-4 border-primary/50 text-primary animate-in fade-in-0 duration-1000 bg-background/50 backdrop-blur-sm">La solución de IA para Retail Tech</Badge>
                         <h1 className="text-4xl font-extrabold tracking-tight md:text-6xl animate-in fade-in-0 slide-in-from-bottom-5 duration-1000">
                             ¿Tus clientes abandonan el carrito porque no saben qué elegir?
                         </h1>
@@ -76,8 +84,17 @@ export default function LandingPage() {
                 </section>
 
                 {/* Problem Section */}
-                <section id="problema" className="py-16 md:py-24 bg-slate-100 dark:bg-slate-900/50">
-                    <div className="container mx-auto px-4 md:px-6">
+                <section 
+                    id="problema" 
+                    className="relative py-16 md:py-24"
+                    style={{
+                        backgroundImage: "url('/background/abstract_pastel_8k.png')",
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                    }}
+                >
+                    <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
+                    <div className="container mx-auto px-4 md:px-6 relative">
                         <div className="text-center">
                             <h2 className="text-3xl font-bold tracking-tight">El costo oculto de la indecisión del cliente</h2>
                             <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
@@ -85,19 +102,19 @@ export default function LandingPage() {
                             </p>
                         </div>
                         <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                            <div className="p-4">
+                            <div className="p-4 rounded-lg bg-background/30">
                                 <p className="text-4xl font-bold text-primary">68%</p>
                                 <p className="text-sm text-muted-foreground">de carritos abandonados en e-commerce.</p>
                             </div>
-                            <div className="p-4">
+                            <div className="p-4 rounded-lg bg-background/30">
                                 <p className="text-4xl font-bold text-primary">30+</p>
                                 <p className="text-sm text-muted-foreground">minutos comparando sin decidirse a comprar.</p>
                             </div>
-                            <div className="p-4">
+                            <div className="p-4 rounded-lg bg-background/30">
                                 <p className="text-4xl font-bold text-primary">50%</p>
                                 <p className="text-sm text-muted-foreground">del tiempo de tus vendedores en consultas repetitivas.</p>
                             </div>
-                            <div className="p-4">
+                            <div className="p-4 rounded-lg bg-background/30">
                                 <p className="text-4xl font-bold text-primary">Bajo</p>
                                 <p className="text-sm text-muted-foreground">margen de ganancia al competir solo por precio.</p>
                             </div>
@@ -106,8 +123,17 @@ export default function LandingPage() {
                 </section>
 
                 {/* Solution Section */}
-                <section id="solucion" className="py-16 md:py-24">
-                    <div className="container mx-auto px-4 md:px-6">
+                <section 
+                    id="solucion" 
+                    className="relative py-16 md:py-24"
+                    style={{
+                        backgroundImage: "url('/background/abstract_rosa_8k.jpg')",
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                    }}
+                >
+                    <div className="absolute inset-0 bg-background/80 dark:bg-slate-950/80 backdrop-blur-sm"></div>
+                    <div className="container mx-auto px-4 md:px-6 relative">
                         <div className="text-center">
                             <h2 className="text-3xl font-bold tracking-tight">La Solución: Tu Asesor Digital 24/7</h2>
                             <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
@@ -120,21 +146,21 @@ export default function LandingPage() {
                                 <div className="h-0.5 bg-primary transition-all duration-500 w-1/2"></div>
                             </div>
                             <div className="relative flex flex-col items-center text-center p-4">
-                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary text-primary-foreground border-4 border-background dark:border-slate-950 mb-4">
+                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary text-primary-foreground border-4 border-background/80 dark:border-slate-900/80 mb-4">
                                     <Group className="h-8 w-8" />
                                 </div>
                                 <h3 className="font-semibold">1. Cliente llega confundido</h3>
                                 <p className="text-sm text-muted-foreground">Abrumado por opciones y especificaciones técnicas.</p>
                             </div>
                             <div className="relative flex flex-col items-center text-center p-4">
-                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary text-primary-foreground border-4 border-background dark:border-slate-950 mb-4">
+                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary text-primary-foreground border-4 border-background/80 dark:border-slate-900/80 mb-4">
                                     <Bot className="h-8 w-8" />
                                 </div>
                                 <h3 className="font-semibold">2. Shoppa! hace preguntas simples</h3>
                                 <p className="text-sm text-muted-foreground">Entiende la necesidad real del cliente en su lenguaje.</p>
                             </div>
                             <div className="relative flex flex-col items-center text-center p-4">
-                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary text-primary-foreground border-4 border-background dark:border-slate-950 mb-4">
+                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary text-primary-foreground border-4 border-background/80 dark:border-slate-900/80 mb-4">
                                     <Zap className="h-8 w-8" />
                                 </div>
                                 <h3 className="font-semibold">3. Cliente recibe 3 opciones perfectas</h3>
@@ -145,8 +171,17 @@ export default function LandingPage() {
                 </section>
 
                 {/* Social Proof Section */}
-                <section id="resultados" className="py-16 md:py-24 bg-slate-100 dark:bg-slate-900/50">
-                    <div className="container mx-auto px-4 md:px-6">
+                <section 
+                    id="resultados" 
+                    className="relative py-16 md:py-24"
+                    style={{
+                        backgroundImage: "url('/background/abstract_salmon_8k.png')",
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                    }}
+                >
+                    <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
+                    <div className="container mx-auto px-4 md:px-6 relative">
                         <div className="text-center">
                             <h2 className="text-3xl font-bold tracking-tight">Resultados Reales, No Promesas Vacías</h2>
                             <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
@@ -166,8 +201,16 @@ export default function LandingPage() {
                 </section>
                 
                 {/* Benefits Section */}
-                <section className="py-16 md:py-24">
-                    <div className="container mx-auto px-4 md:px-6">
+                <section 
+                    className="relative py-16 md:py-24"
+                    style={{
+                        backgroundImage: "url('/background/abstract_beige_8k.png')",
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                    }}
+                >
+                    <div className="absolute inset-0 bg-background/80 dark:bg-slate-950/80 backdrop-blur-sm"></div>
+                    <div className="container mx-auto px-4 md:px-6 relative">
                         <div className="text-center">
                             <h2 className="text-3xl font-bold tracking-tight">Los Resultados que Obtenés en Tu Negocio</h2>
                             <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
@@ -189,8 +232,16 @@ export default function LandingPage() {
                 </section>
 
                  {/* Testimonials Section */}
-                <section className="py-16 md:py-24 bg-slate-100 dark:bg-slate-900/50">
-                    <div className="container mx-auto px-4 md:px-6">
+                <section 
+                    className="relative py-16 md:py-24"
+                    style={{
+                        backgroundImage: "url('/background/abstract_pastel_8k.png')",
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                    }}
+                >
+                     <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
+                    <div className="container mx-auto px-4 md:px-6 relative">
                          <div className="text-center">
                             <h2 className="text-3xl font-bold tracking-tight">Lo que dicen quienes ya lo probaron</h2>
                              <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
@@ -208,8 +259,17 @@ export default function LandingPage() {
 
 
                 {/* Pricing Section */}
-                <section id="precios" className="py-16 md:py-24">
-                    <div className="container mx-auto px-4 md:px-6">
+                <section 
+                    id="precios" 
+                    className="relative py-16 md:py-24"
+                    style={{
+                        backgroundImage: "url('/background/abstract_rosa_8k.jpg')",
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                    }}
+                >
+                     <div className="absolute inset-0 bg-background/80 dark:bg-slate-950/80 backdrop-blur-sm"></div>
+                    <div className="container mx-auto px-4 md:px-6 relative">
                         <div className="max-w-3xl mx-auto text-center">
                             <h2 className="text-3xl font-bold tracking-tight">Modelos Flexibles para Cada Negocio</h2>
                             <p className="mt-4 text-muted-foreground">
@@ -217,7 +277,7 @@ export default function LandingPage() {
                             </p>
                         </div>
                         <div className="mt-12">
-                            <Card className="max-w-2xl mx-auto shadow-2xl bg-gradient-to-br from-primary/10 to-transparent dark:from-primary/20 dark:to-transparent">
+                            <Card className="max-w-2xl mx-auto shadow-2xl bg-gradient-to-br from-primary/10 to-transparent dark:from-primary/20 dark:to-transparent backdrop-blur-sm">
                                 <CardContent className="p-8">
                                     <h3 className="text-2xl font-bold text-primary mb-2">Pay-per-Success</h3>
                                     <p className="text-4xl font-bold mb-4">Costo Cero para tu negocio</p>
@@ -235,8 +295,16 @@ export default function LandingPage() {
                 </section>
 
                 {/* FAQ Section */}
-                <section className="py-16 md:py-24 bg-slate-100 dark:bg-slate-900/50">
-                    <div className="container mx-auto px-4 md:px-6 max-w-3xl">
+                <section 
+                    className="relative py-16 md:py-24"
+                    style={{
+                        backgroundImage: "url('/background/abstract_salmon_8k.png')",
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                    }}
+                >
+                    <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
+                    <div className="container mx-auto px-4 md:px-6 max-w-3xl relative">
                         <div className="text-center mb-12">
                             <h2 className="text-3xl font-bold tracking-tight">Preguntas Frecuentes</h2>
                         </div>
