@@ -147,27 +147,27 @@ const LandingPage: React.FC = () => {
                             </p>
                         </div>
                         <div className="relative mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <div className="absolute top-1/2 left-0 w-full h-0.5 bg-slate-200 dark:bg-slate-800 -translate-y-1/2 hidden md:block"></div>
-                            <div className="absolute top-1/2 left-0 w-full flex justify-between hidden md:flex">
-                                <div className="h-0.5 bg-primary transition-all duration-500 w-1/2"></div>
-                            </div>
-                            <div className="relative flex flex-col items-center text-center p-6 bg-gradient-to-br from-primary/15 via-white/90 to-primary/10 backdrop-blur-sm rounded-xl border-2 border-primary/30 shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:-translate-y-1">
+                            <div className="absolute top-1/4 left-0 w-full h-0.5 bg-slate-200 dark:bg-slate-700 hidden md:block border-b-2 border-dashed border-primary/30"></div>
+                            
+                            <div className="relative flex flex-col items-center text-center p-6 bg-gradient-to-br from-primary/15 via-white/90 to-primary/10 backdrop-blur-sm rounded-xl border-2 border-primary/30 shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:-translate-y-1 z-10">
                                 <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-4 border-white/50 dark:border-slate-900/50 mb-4 shadow-lg">
                                     <User className="h-8 w-8" />
                                 </div>
                                 <h3 className="font-semibold text-primary mb-2">1. Cliente llega confundido</h3>
                                 <p className="text-sm text-slate-600 dark:text-slate-400">Abrumado por opciones y especificaciones técnicas.</p>
                             </div>
-                            <div className="relative flex flex-col items-center text-center p-6 bg-gradient-to-br from-primary/15 via-white/90 to-primary/10 backdrop-blur-sm rounded-xl border-2 border-primary/30 shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:-translate-y-1">
-                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-4 border-white/50 dark:border-slate-900/50 mb-4 shadow-lg scale-75">
-                                <Logo />
+
+                            <div className="relative flex flex-col items-center text-center p-6 bg-gradient-to-br from-primary/15 via-white/90 to-primary/10 backdrop-blur-sm rounded-xl border-2 border-primary/30 shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:-translate-y-1 z-10">
+                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-4 border-white/50 dark:border-slate-900/50 mb-4 shadow-lg">
+                                    <h1 className="text-4xl font-headline font-extrabold text-primary-foreground tracking-tight -rotate-12 transform">S!</h1>
                                 </div>
                                 <h3 className="font-semibold text-primary mb-2">2. Shoppa! hace preguntas simples</h3>
                                 <p className="text-sm text-slate-600 dark:text-slate-400">Entiende la necesidad real del cliente en su lenguaje.</p>
                             </div>
-                            <div className="relative flex flex-col items-center text-center p-6 bg-gradient-to-br from-primary/15 via-white/90 to-primary/10 backdrop-blur-sm rounded-xl border-2 border-primary/30 shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:-translate-y-1">
-                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-4 border-white/50 dark:border-slate-900/50 mb-4 shadow-lg scale-75">
-                                <Logo />
+                            
+                            <div className="relative flex flex-col items-center text-center p-6 bg-gradient-to-br from-primary/15 via-white/90 to-primary/10 backdrop-blur-sm rounded-xl border-2 border-primary/30 shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:-translate-y-1 z-10">
+                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-4 border-white/50 dark:border-slate-900/50 mb-4 shadow-lg">
+                                    <Zap className="h-8 w-8" />
                                 </div>
                                 <h3 className="font-semibold text-primary mb-2">3. Cliente recibe 3 opciones perfectas</h3>
                                 <p className="text-sm text-slate-600 dark:text-slate-400">Recomendaciones claras con justificaciones que generan confianza.</p>
