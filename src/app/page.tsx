@@ -183,13 +183,13 @@ const LandingPage: React.FC = () => {
                         <div className="text-center">
                             <h2 className="text-3xl font-bold tracking-tight">Resultados Reales, No Promesas Vacías</h2>
                             <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
-                                Los datos de nuestra prueba piloto hablan por sí solos. Los usuarios no solo están satisfechos, están listos para comprar.
+                                Los datos de nuestra prueba piloto hablan por sí solos. Los clientes no solo están satisfechos, están listos para comprar.
                             </p>
                         </div>
                         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                            <StatCard icon={BarChart} value="81%" title="Preferencia vs. Sitios Tradicionales" description="Una abrumadora mayoría prefiere la guía de Shoppa! a navegar catálogos complejos." />
-                           <StatCard icon={Zap} value="4.6/5" title="Satisfacción de Usuario" description="Calificación promedio que supera los estándares de la industria del e-commerce." />
-                           <StatCard icon={Group} value="9 de cada 10" title="usuarios" description="recomendarían activamente la experiencia a otros." />
+                           <StatCard icon={Zap} value="4.6/5" title="Satisfacción de Cliente" description="Calificación promedio que supera los estándares de la industria del e-commerce." />
+                           <StatCard icon={Group} value="9 de cada 10" title="clientes" description="recomendarían activamente la experiencia a otros." />
                         </div>
                         <div className="text-center mt-4 text-xs text-muted-foreground">
                             * Métricas validadas sobre una muestra de usuarios en nuestra encuesta de satisfacción.
