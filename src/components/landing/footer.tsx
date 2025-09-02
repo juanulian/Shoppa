@@ -21,8 +21,7 @@ export function Footer() {
             Desarrollado en Argentina
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-8 text-sm">
-          <div>
+        <div className="text-sm">
             <h4 className="font-semibold mb-2">Navegación</h4>
             <ul className="space-y-2">
               <li><Link href="#problema" className="text-muted-foreground hover:text-foreground">El Problema</Link></li>
@@ -30,14 +29,6 @@ export function Footer() {
               <li><Link href="#resultados" className="text-muted-foreground hover:text-foreground">Resultados</Link></li>
               <li><Link href="#precios" className="text-muted-foreground hover:text-foreground">Precios</Link></li>
             </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold mb-2">Legal</h4>
-            <ul className="space-y-2">
-              <li><Link href="#" className="text-muted-foreground hover:text-foreground">Términos y Condiciones</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-foreground">Política de Privacidad</Link></li>
-            </ul>
-          </div>
         </div>
         <div className="text-sm">
           <h4 className="font-semibold mb-2">Contacto</h4>
