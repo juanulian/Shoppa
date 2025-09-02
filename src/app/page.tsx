@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -10,48 +8,71 @@ import { Header } from '@/components/landing/header';
 import { Footer } from '@/components/landing/footer';
 import { Badge } from '@/components/ui/badge';
 
+interface StatCardProps {
+    icon: React.ComponentType<{ className?: string }>;
+    title: string;
+    description: string;
+    value: string;
+}
 
-const StatCard = ({ icon: Icon, title, description, value }) => (
-    <div className="group relative overflow-hidden rounded-lg border bg-white/50 backdrop-blur-sm p-6 transition-all duration-300 hover:shadow-2xl dark:bg-slate-900/50 dark:border-slate-800 hover:-translate-y-2">
-        <div className="absolute top-0 right-0 -m-4 h-24 w-24 rounded-full bg-primary/10 opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:scale-150"></div>
+const StatCard: React.FC<StatCardProps> = ({ icon: Icon, title, description, value }) => (
+    <div className="group relative overflow-hidden rounded-lg border-2 border-primary/20 bg-gradient-to-br from-primary/10 via-white/80 to-primary/5 backdrop-blur-sm p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/25 dark:from-primary/20 dark:via-slate-900/80 dark:to-primary/10 dark:border-primary/30 hover:-translate-y-2 hover:border-primary/40">
+        <div className="absolute top-0 right-0 -m-4 h-24 w-24 rounded-full bg-primary/20 opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:scale-150"></div>
         <div className="relative z-10">
-            <Icon className="h-10 w-10 text-primary mb-4" />
-            <p className="text-4xl font-bold text-slate-900 dark:text-white mb-1">{value}</p>
+            <Icon className="h-10 w-10 text-primary mb-4 drop-shadow-sm" />
+            <p className="text-4xl font-bold text-primary dark:text-primary mb-1 drop-shadow-sm">{value}</p>
             <h3 className="font-semibold text-slate-800 dark:text-slate-200">{title}</h3>
-            <p className="text-sm text-muted-foreground">{description}</p>
+            <p className="text-sm text-slate-600 dark:text-slate-400">{description}</p>
         </div>
     </div>
 );
 
-const BenefitCard = ({ icon: Icon, title, children }) => (
-    <Card className="p-6 text-center flex flex-col items-center shadow-lg hover:shadow-primary/20 transition-shadow duration-300 bg-card/50 backdrop-blur-sm dark:bg-slate-800/50">
-        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+interface BenefitCardProps {
+    icon: React.ComponentType<{ className?: string }>;
+    title: string;
+    children: React.ReactNode;
+}
+
+const BenefitCard: React.FC<BenefitCardProps> = ({ icon: Icon, title, children }) => (
+    <Card className="p-6 text-center flex flex-col items-center shadow-lg hover:shadow-primary/30 transition-all duration-300 bg-gradient-to-b from-primary/5 via-white/90 to-primary/10 backdrop-blur-sm dark:from-primary/10 dark:via-slate-800/90 dark:to-primary/20 border-2 border-primary/20 hover:border-primary/40 hover:-translate-y-1">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg">
             <Icon className="h-6 w-6" />
         </div>
-        <h3 className="mb-2 text-xl font-bold">{title}</h3>
-        <p className="text-muted-foreground">{children}</p>
+        <h3 className="mb-2 text-xl font-bold text-primary">{title}</h3>
+        <p className="text-slate-600 dark:text-slate-400">{children}</p>
     </Card>
 );
 
-const TestimonialCard = ({ text, author }) => (
-    <Card className="p-6 bg-white/50 backdrop-blur-sm dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 shadow-sm">
+interface TestimonialCardProps {
+    text: string;
+    author: string;
+}
+
+const TestimonialCard: React.FC<TestimonialCardProps> = ({ text, author }) => (
+    <Card className="p-6 bg-gradient-to-br from-white/90 via-primary/5 to-white/80 backdrop-blur-sm dark:from-slate-800/90 dark:via-primary/10 dark:to-slate-800/80 border-2 border-primary/20 dark:border-primary/30 shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-1">
         <CardContent className="p-0">
-            <p className="text-muted-foreground mb-4 italic">"{text}"</p>
+            <p className="text-slate-600 dark:text-slate-300 mb-4 italic">"{text}"</p>
             <p className="font-semibold text-right text-primary">- {author}</p>
         </CardContent>
     </Card>
 );
 
-const FAQItem = ({ value, question, children }) => (
+interface FAQItemProps {
+    value: string;
+    question: string;
+    children: React.ReactNode;
+}
+
+const FAQItem: React.FC<FAQItemProps> = ({ value, question, children }) => (
     <AccordionItem value={value} className="border-white/20">
         <AccordionTrigger className="text-lg font-semibold text-left hover:no-underline">{question}</AccordionTrigger>
         <AccordionContent className="text-muted-foreground">{children}</AccordionContent>
     </AccordionItem>
 );
 
-export default function LandingPage() {
+const LandingPage: React.FC = () => {
     return (
-        <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200">
+        <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200" style={{ backgroundImage: "url('/background/header_footer.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
             <Header />
             <main className="flex-1">
                 {/* Hero Section */}
@@ -77,7 +98,7 @@ export default function LandingPage() {
                 </section>
 
                 {/* Problem Section */}
-                <section id="problema" className="relative py-16 md:py-24 bg-[url('/background/abstract_pastel_8k.png')] bg-cover bg-center">
+                <section id="problema" className="relative py-16 md:py-24 bg-[url('/background/cards.png')] bg-cover bg-center">
                     <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
                     <div className="container mx-auto px-4 md:px-6 relative z-10">
                         <div className="text-center">
@@ -87,28 +108,31 @@ export default function LandingPage() {
                             </p>
                         </div>
                         <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                            <div className="p-4 rounded-lg bg-background/30">
-                                <p className="text-4xl font-bold text-primary">68%</p>
-                                <p className="text-sm text-muted-foreground">de carritos abandonados en e-commerce.</p>
+                            <div className="relative p-6 rounded-xl border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-primary/20 bg-cover bg-center" style={{ backgroundImage: "url('/background/cards.png')" }}>
+                                <div className="absolute inset-0 bg-primary/10 backdrop-blur-sm rounded-lg"></div>
+                                <div className="relative">
+                                    <p className="text-4xl font-bold text-primary drop-shadow-sm">68%</p>
+                                    <p className="text-sm text-slate-100 dark:text-slate-300 font-medium">de carritos abandonados en e-commerce.</p>
+                                </div>
                             </div>
-                            <div className="p-4 rounded-lg bg-background/30">
-                                <p className="text-4xl font-bold text-primary">30+</p>
-                                <p className="text-sm text-muted-foreground">minutos comparando sin decidirse a comprar.</p>
+                            <div className="p-6 rounded-xl bg-gradient-to-br from-primary/10 via-white/90 to-primary/5 backdrop-blur-sm border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-primary/20">
+                                <p className="text-4xl font-bold text-primary drop-shadow-sm">30+</p>
+                                <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">minutos comparando sin decidirse a comprar.</p>
                             </div>
-                            <div className="p-4 rounded-lg bg-background/30">
-                                <p className="text-4xl font-bold text-primary">50%</p>
-                                <p className="text-sm text-muted-foreground">del tiempo de tus vendedores en consultas repetitivas.</p>
+                            <div className="p-6 rounded-xl bg-gradient-to-br from-primary/10 via-white/90 to-primary/5 backdrop-blur-sm border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-primary/20">
+                                <p className="text-4xl font-bold text-primary drop-shadow-sm">50%</p>
+                                <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">del tiempo de tus vendedores en consultas repetitivas.</p>
                             </div>
-                            <div className="p-4 rounded-lg bg-background/30">
-                                <p className="text-4xl font-bold text-primary">Bajo</p>
-                                <p className="text-sm text-muted-foreground">margen de ganancia al competir solo por precio.</p>
+                            <div className="p-6 rounded-xl bg-gradient-to-br from-primary/10 via-white/90 to-primary/5 backdrop-blur-sm border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-primary/20">
+                                <p className="text-4xl font-bold text-primary drop-shadow-sm">Bajo</p>
+                                <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">margen de ganancia al competir solo por precio.</p>
                             </div>
                         </div>
                     </div>
                 </section>
 
                 {/* Solution Section */}
-                <section id="solucion" className="relative py-16 md:py-24 bg-[url('/background/abstract_rosa_8k.jpg')] bg-cover bg-center">
+                <section id="solucion" className="relative py-16 md:py-24 bg-[url('/background/botones.jpg')] bg-cover bg-center">
                     <div className="absolute inset-0 bg-background/80 dark:bg-slate-950/80 backdrop-blur-sm"></div>
                     <div className="container mx-auto px-4 md:px-6 relative z-10">
                         <div className="text-center">
@@ -122,26 +146,26 @@ export default function LandingPage() {
                             <div className="absolute top-1/2 left-0 w-full flex justify-between hidden md:flex">
                                 <div className="h-0.5 bg-primary transition-all duration-500 w-1/2"></div>
                             </div>
-                            <div className="relative flex flex-col items-center text-center p-4">
-                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary text-primary-foreground border-4 border-background/80 dark:border-slate-900/80 mb-4">
+                            <div className="relative flex flex-col items-center text-center p-6 bg-gradient-to-br from-primary/15 via-white/90 to-primary/10 backdrop-blur-sm rounded-xl border-2 border-primary/30 shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:-translate-y-1">
+                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-4 border-white/50 dark:border-slate-900/50 mb-4 shadow-lg">
                                     <Group className="h-8 w-8" />
                                 </div>
-                                <h3 className="font-semibold">1. Cliente llega confundido</h3>
-                                <p className="text-sm text-muted-foreground">Abrumado por opciones y especificaciones técnicas.</p>
+                                <h3 className="font-semibold text-primary mb-2">1. Cliente llega confundido</h3>
+                                <p className="text-sm text-slate-600 dark:text-slate-400">Abrumado por opciones y especificaciones técnicas.</p>
                             </div>
-                            <div className="relative flex flex-col items-center text-center p-4">
-                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary text-primary-foreground border-4 border-background/80 dark:border-slate-900/80 mb-4">
+                            <div className="relative flex flex-col items-center text-center p-6 bg-gradient-to-br from-primary/15 via-white/90 to-primary/10 backdrop-blur-sm rounded-xl border-2 border-primary/30 shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:-translate-y-1">
+                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-4 border-white/50 dark:border-slate-900/50 mb-4 shadow-lg">
                                     <Bot className="h-8 w-8" />
                                 </div>
-                                <h3 className="font-semibold">2. Shoppa! hace preguntas simples</h3>
-                                <p className="text-sm text-muted-foreground">Entiende la necesidad real del cliente en su lenguaje.</p>
+                                <h3 className="font-semibold text-primary mb-2">2. Shoppa! hace preguntas simples</h3>
+                                <p className="text-sm text-slate-600 dark:text-slate-400">Entiende la necesidad real del cliente en su lenguaje.</p>
                             </div>
-                            <div className="relative flex flex-col items-center text-center p-4">
-                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary text-primary-foreground border-4 border-background/80 dark:border-slate-900/80 mb-4">
+                            <div className="relative flex flex-col items-center text-center p-6 bg-gradient-to-br from-primary/15 via-white/90 to-primary/10 backdrop-blur-sm rounded-xl border-2 border-primary/30 shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:-translate-y-1">
+                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-4 border-white/50 dark:border-slate-900/50 mb-4 shadow-lg">
                                     <Zap className="h-8 w-8" />
                                 </div>
-                                <h3 className="font-semibold">3. Cliente recibe 3 opciones perfectas</h3>
-                                <p className="text-sm text-muted-foreground">Recomendaciones claras con justificaciones que generan confianza.</p>
+                                <h3 className="font-semibold text-primary mb-2">3. Cliente recibe 3 opciones perfectas</h3>
+                                <p className="text-sm text-slate-600 dark:text-slate-400">Recomendaciones claras con justificaciones que generan confianza.</p>
                             </div>
                         </div>
                     </div>
@@ -194,7 +218,7 @@ export default function LandingPage() {
                 </section>
 
                  {/* Testimonials Section */}
-                <section className="relative py-16 md:py-24 bg-[url('/background/cards.png')] bg-cover bg-center">
+                <section className="relative py-16 md:py-24 bg-[url('/background/header_footer.png')] bg-cover bg-center">
                     <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
                     <div className="container mx-auto px-4 md:px-6 relative z-10">
                          <div className="text-center">
@@ -212,9 +236,8 @@ export default function LandingPage() {
                     </div>
                 </section>
 
-
                 {/* Pricing Section */}
-                <section id="precios" className="relative py-16 md:py-24 bg-[url('/background/abstract_rosa_8k.jpg')] bg-cover bg-center">
+                <section id="precios" className="relative py-16 md:py-24 bg-[url('/background/cards_2.png')] bg-cover bg-center">
                     <div className="absolute inset-0 bg-background/80 dark:bg-slate-950/80 backdrop-blur-sm"></div>
                     <div className="container mx-auto px-4 md:px-6 relative z-10">
                         <div className="max-w-3xl mx-auto text-center">
@@ -242,7 +265,7 @@ export default function LandingPage() {
                 </section>
 
                 {/* FAQ Section */}
-                <section className="relative py-16 md:py-24 bg-[url('/background/abstract_salmon_8k.png')] bg-cover bg-center">
+                <section className="relative py-16 md:py-24 bg-[url('/background/cards.png')] bg-cover bg-center">
                     <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
                     <div className="container mx-auto px-4 md:px-6 max-w-3xl relative z-10">
                         <div className="text-center mb-12">
@@ -266,8 +289,9 @@ export default function LandingPage() {
                 </section>
 
                 {/* Final CTA Section */}
-                <section id="contacto" className="py-16 md:py-24 text-white" style={{ background: 'linear-gradient(45deg, hsl(var(--primary)), hsl(var(--primary) / 0.7))' }}>
-                    <div className="container mx-auto px-4 md:px-6 text-center">
+                <section id="contacto" className="py-16 md:py-24 text-white relative bg-[url('/background/botones.jpg')] bg-cover bg-center">
+                    <div className="absolute inset-0" style={{ background: 'linear-gradient(45deg, hsl(var(--primary) / 0.9), hsl(var(--primary) / 0.7))' }}></div>
+                    <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
                         <h2 className="text-3xl font-bold tracking-tight">¿Listo para dejar de perder clientes?</h2>
                         <p className="mt-4 max-w-2xl mx-auto">
                             Probá Shoppa! sin compromiso. La implementación es rápida, gratuita y te acompañamos en cada paso.
@@ -287,10 +311,12 @@ export default function LandingPage() {
             <Footer />
         </div>
     );
-}
+};
+
+export default LandingPage;
 
 // CheckCircle icon component
-const CheckCircle = (props) => (
+const CheckCircle: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg
     {...props}
     xmlns="http://www.w3.org/2000/svg"
