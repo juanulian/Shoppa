@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,7 @@ import { ArrowRight, BarChart, Bot, DollarSign, Group, TrendingUp, Zap } from 'l
 import { Header } from '@/components/landing/header';
 import { Footer } from '@/components/landing/footer';
 import { Badge } from '@/components/ui/badge';
+import Logo from '@/components/icons/logo';
 
 interface StatCardProps {
     icon: React.ComponentType<{ className?: string }>;
@@ -150,22 +152,22 @@ const LandingPage: React.FC = () => {
                                 <div className="h-0.5 bg-primary transition-all duration-500 w-1/2"></div>
                             </div>
                             <div className="relative flex flex-col items-center text-center p-6 bg-gradient-to-br from-primary/15 via-white/90 to-primary/10 backdrop-blur-sm rounded-xl border-2 border-primary/30 shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:-translate-y-1">
-                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-4 border-white/50 dark:border-slate-900/50 mb-4 shadow-lg">
-                                    <Group className="h-8 w-8" />
+                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-4 border-white/50 dark:border-slate-900/50 mb-4 shadow-lg scale-75">
+                                    <Logo />
                                 </div>
                                 <h3 className="font-semibold text-primary mb-2">1. Cliente llega confundido</h3>
                                 <p className="text-sm text-slate-600 dark:text-slate-400">Abrumado por opciones y especificaciones técnicas.</p>
                             </div>
                             <div className="relative flex flex-col items-center text-center p-6 bg-gradient-to-br from-primary/15 via-white/90 to-primary/10 backdrop-blur-sm rounded-xl border-2 border-primary/30 shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:-translate-y-1">
-                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-4 border-white/50 dark:border-slate-900/50 mb-4 shadow-lg">
-                                    <Bot className="h-8 w-8" />
+                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-4 border-white/50 dark:border-slate-900/50 mb-4 shadow-lg scale-75">
+                                <Logo />
                                 </div>
                                 <h3 className="font-semibold text-primary mb-2">2. Shoppa! hace preguntas simples</h3>
                                 <p className="text-sm text-slate-600 dark:text-slate-400">Entiende la necesidad real del cliente en su lenguaje.</p>
                             </div>
                             <div className="relative flex flex-col items-center text-center p-6 bg-gradient-to-br from-primary/15 via-white/90 to-primary/10 backdrop-blur-sm rounded-xl border-2 border-primary/30 shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:-translate-y-1">
-                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-4 border-white/50 dark:border-slate-900/50 mb-4 shadow-lg">
-                                    <Zap className="h-8 w-8" />
+                                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-4 border-white/50 dark:border-slate-900/50 mb-4 shadow-lg scale-75">
+                                <Logo />
                                 </div>
                                 <h3 className="font-semibold text-primary mb-2">3. Cliente recibe 3 opciones perfectas</h3>
                                 <p className="text-sm text-slate-600 dark:text-slate-400">Recomendaciones claras con justificaciones que generan confianza.</p>
