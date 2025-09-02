@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { ArrowRight, BarChart, Bot, DollarSign, Group, TrendingUp, Zap, User } from 'lucide-react';
+import { ArrowRight, BarChart, Bot, DollarSign, Group, TrendingUp, Zap, User, Smile } from 'lucide-react';
 import { Header } from '@/components/landing/header';
 import { Footer } from '@/components/landing/footer';
 import { Badge } from '@/components/ui/badge';
@@ -90,7 +90,7 @@ const LandingPage: React.FC = () => {
                         </p>
                         <div className="mt-8 flex flex-wrap justify-center gap-4 animate-in fade-in-0 slide-in-from-bottom-5 duration-1000 delay-300">
                             <Button size="lg" asChild>
-                                <Link href="/demo">Ver Demo en Vivo <ArrowRight className="ml-2 h-5 w-5" /></Link>
+                                <Link href="/demo">Probar ahora <ArrowRight className="ml-2 h-5 w-5" /></Link>
                             </Button>
                             <Button size="lg" variant="outline" asChild>
                                 <Link href="#contacto">Agendar Reunión</Link>
@@ -159,7 +159,7 @@ const LandingPage: React.FC = () => {
 
                             <div className="relative flex flex-col items-center text-center p-6 bg-gradient-to-br from-primary/15 via-white/90 to-primary/10 backdrop-blur-sm rounded-xl border-2 border-primary/30 shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:-translate-y-1 z-10">
                                 <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground border-4 border-white/50 dark:border-slate-900/50 mb-4 shadow-lg">
-                                    <h1 className="text-4xl font-headline font-extrabold text-primary-foreground tracking-tight -rotate-12 transform">S!</h1>
+                                    <h1 className="text-4xl font-headline font-extrabold text-primary-foreground tracking-tight">S!</h1>
                                 </div>
                                 <h3 className="font-semibold text-primary mb-2">2. Shoppa! hace preguntas simples</h3>
                                 <p className="text-sm text-slate-600 dark:text-slate-400">Entiende la necesidad real del cliente en su lenguaje.</p>
@@ -186,11 +186,10 @@ const LandingPage: React.FC = () => {
                                 Los datos de nuestra prueba piloto hablan por sí solos. Los usuarios no solo están satisfechos, están listos para comprar.
                             </p>
                         </div>
-                        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                           <StatCard icon={TrendingUp} value="56%" title="Intención de Compra" description="Más de la mitad de los usuarios afirmaron su intención de comprar tras la recomendación." />
+                        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                            <StatCard icon={BarChart} value="81%" title="Preferencia vs. Sitios Tradicionales" description="Una abrumadora mayoría prefiere la guía de Shoppa! a navegar catálogos complejos." />
                            <StatCard icon={Zap} value="4.6/5" title="Satisfacción de Usuario" description="Calificación promedio que supera los estándares de la industria del e-commerce." />
-                           <StatCard icon={Group} value="92%" title="NPS Positivo (Promotores)" description="9 de cada 10 usuarios recomendarían activamente la experiencia a otros." />
+                           <StatCard icon={Group} value="9 de cada 10" title="usuarios" description="recomendarían activamente la experiencia a otros." />
                         </div>
                         <div className="text-center mt-4 text-xs text-muted-foreground">
                             * Métricas validadas sobre una muestra de usuarios en nuestra encuesta de satisfacción.
@@ -212,7 +211,7 @@ const LandingPage: React.FC = () => {
                             <BenefitCard icon={TrendingUp} title="Más Conversiones">
                                 Clientes que entienden qué compran, compran más. Shoppa! transforma dudas en ventas, reduciendo el abandono de carrito.
                             </BenefitCard>
-                            <BenefitCard icon={Group} title="Clientes Más Satisfechos">
+                            <BenefitCard icon={Smile} title="Clientes Más Satisfechos">
                                 Una experiencia de compra guiada y sin fricción genera clientes leales. La satisfacción de 4.6/5 se traduce en recompras y recomendaciones.
                             </BenefitCard>
                             <BenefitCard icon={DollarSign} title="Vendedores Optimizados">

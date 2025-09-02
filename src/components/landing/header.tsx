@@ -45,7 +45,7 @@ export function Header() {
             <Link href="#contacto">Agendar Reunión</Link>
           </Button>
           <Button asChild>
-            <Link href="/demo">Ver Demo en Vivo</Link>
+            <Link href="/demo">Probar ahora</Link>
           </Button>
         </div>
       </div>
