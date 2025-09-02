@@ -302,7 +302,7 @@ const LandingPage: React.FC = () => {
                         </p>
                         <div className="mt-8">
                             <Button size="lg" variant="secondary" className="bg-white text-primary hover:bg-slate-200" asChild>
-                                <Link href="/demo">Lo quiero probar</Link>
+                                <Link href="mailto:juan.ulian@pluscompol.com?subject=Solicitud%20de%20Reunión%20-%20Shoppa!&body=Hola!%20Me%20gustaría%20coordinar%20una%20reunión%20en%20los%20próximos%20días%20para%20ver%20como%20implementar%20Shoppa!%20en%20mi%20negocio.%20Vendo%20...%20(completar%20sugerencia)">Lo quiero probar</Link>
                             </Button>
                         </div>
                          <p className="mt-4 text-sm text-white/80">
