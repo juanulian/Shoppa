@@ -81,7 +81,7 @@ const LandingPage: React.FC = () => {
                 <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 text-center overflow-hidden bg-[url('/background/botones.jpg')] bg-cover bg-center">
                     <div className="absolute inset-0 bg-white/50 dark:bg-slate-950/80"></div>
                     <div className="container mx-auto px-4 md:px-6 relative z-10">
-                        <Badge variant="outline" className="mb-4 border-primary/50 text-primary animate-in fade-in-0 duration-1000 bg-background/50 backdrop-blur-sm">La solución de IA para Retail Tech</Badge>
+                        <Badge variant="outline" className="mb-4 border-primary/50 text-primary animate-in fade-in-0 duration-1000 bg-background/50 backdrop-blur-sm">Asesoramiento Inteligente para tus Clientes</Badge>
                         <h1 className="text-4xl font-extrabold tracking-tight md:text-6xl animate-in fade-in-0 slide-in-from-bottom-5 duration-1000">
                             ¿Tus clientes abandonan el carrito porque no saben qué elegir?
                         </h1>
