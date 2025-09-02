@@ -119,9 +119,12 @@ const LandingPage: React.FC = () => {
                                 <p className="text-4xl font-bold text-primary drop-shadow-sm">30+</p>
                                 <p className="text-sm text-slate-800 dark:text-slate-200 font-medium">minutos comparando sin decidirse a comprar.</p>
                             </div>
-                            <div className="p-6 rounded-xl bg-gradient-to-br from-primary/10 via-white/90 to-primary/5 backdrop-blur-sm border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-primary/20">
-                                <p className="text-4xl font-bold text-primary drop-shadow-sm">50%</p>
-                                <p className="text-sm text-slate-800 dark:text-slate-200 font-medium">del tiempo de tus vendedores en consultas repetitivas.</p>
+                            <div className="relative p-6 rounded-xl border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-primary/20 bg-cover bg-center bg-[url('/background/cards_2.png')]">
+                                <div className="absolute inset-0 bg-primary/10 backdrop-blur-sm rounded-lg"></div>
+                                <div className="relative">
+                                    <p className="text-4xl font-bold text-primary drop-shadow-sm">50%</p>
+                                    <p className="text-sm text-slate-800 dark:text-slate-200 font-medium">del tiempo de tus vendedores en consultas repetitivas.</p>
+                                </div>
                             </div>
                             <div className="p-6 rounded-xl bg-gradient-to-br from-primary/10 via-white/90 to-primary/5 backdrop-blur-sm border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-primary/20">
                                 <p className="text-4xl font-bold text-primary drop-shadow-sm">Bajo</p>
