@@ -72,7 +72,7 @@ const FAQItem: React.FC<FAQItemProps> = ({ value, question, children }) => (
 
 const LandingPage: React.FC = () => {
     return (
-        <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200" style={{ backgroundImage: "url('/background/header_footer.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200">
             <Header />
             <main className="flex-1">
                 {/* Hero Section */}
@@ -108,24 +108,24 @@ const LandingPage: React.FC = () => {
                             </p>
                         </div>
                         <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                            <div className="relative p-6 rounded-xl border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-primary/20 bg-cover bg-center" style={{ backgroundImage: "url('/background/cards.png')" }}>
+                            <div className="relative p-6 rounded-xl border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-primary/20 bg-cover bg-center bg-[url('/background/cards_2.png')]">
                                 <div className="absolute inset-0 bg-primary/10 backdrop-blur-sm rounded-lg"></div>
                                 <div className="relative">
                                     <p className="text-4xl font-bold text-primary drop-shadow-sm">68%</p>
-                                    <p className="text-sm text-slate-100 dark:text-slate-300 font-medium">de carritos abandonados en e-commerce.</p>
+                                    <p className="text-sm text-slate-800 dark:text-slate-200 font-medium">de carritos abandonados en e-commerce.</p>
                                 </div>
                             </div>
                             <div className="p-6 rounded-xl bg-gradient-to-br from-primary/10 via-white/90 to-primary/5 backdrop-blur-sm border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-primary/20">
                                 <p className="text-4xl font-bold text-primary drop-shadow-sm">30+</p>
-                                <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">minutos comparando sin decidirse a comprar.</p>
+                                <p className="text-sm text-slate-800 dark:text-slate-200 font-medium">minutos comparando sin decidirse a comprar.</p>
                             </div>
                             <div className="p-6 rounded-xl bg-gradient-to-br from-primary/10 via-white/90 to-primary/5 backdrop-blur-sm border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-primary/20">
                                 <p className="text-4xl font-bold text-primary drop-shadow-sm">50%</p>
-                                <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">del tiempo de tus vendedores en consultas repetitivas.</p>
+                                <p className="text-sm text-slate-800 dark:text-slate-200 font-medium">del tiempo de tus vendedores en consultas repetitivas.</p>
                             </div>
                             <div className="p-6 rounded-xl bg-gradient-to-br from-primary/10 via-white/90 to-primary/5 backdrop-blur-sm border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-primary/20">
                                 <p className="text-4xl font-bold text-primary drop-shadow-sm">Bajo</p>
-                                <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">margen de ganancia al competir solo por precio.</p>
+                                <p className="text-sm text-slate-800 dark:text-slate-200 font-medium">margen de ganancia al competir solo por precio.</p>
                             </div>
                         </div>
                     </div>
