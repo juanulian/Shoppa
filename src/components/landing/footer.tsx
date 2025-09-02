@@ -7,7 +7,7 @@ export function Footer() {
   return (
     <footer className="w-full py-8 relative overflow-hidden bg-[url('/background/header_footer.png')] bg-cover bg-center">
       <div className="absolute inset-0 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm"></div>
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4 md:px-6 relative z-10">
+      <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 px-4 md:px-6 relative z-10">
         <div className="flex flex-col gap-2">
           <Logo />
           <p className="text-sm text-muted-foreground">
@@ -29,13 +29,6 @@ export function Footer() {
               <li><Link href="#resultados" className="text-muted-foreground hover:text-foreground">Resultados</Link></li>
               <li><Link href="#precios" className="text-muted-foreground hover:text-foreground">Precios</Link></li>
             </ul>
-        </div>
-        <div className="text-sm">
-          <h4 className="font-semibold mb-2">Contacto</h4>
-          <p className="text-muted-foreground">¿Listo para potenciar tus ventas?</p>
-          <Link href="mailto:hola@shoppa.ai" className="text-primary font-medium hover:underline">
-            hola@shoppa.ai
-          </Link>
         </div>
       </div>
       <div className="container mx-auto mt-8 px-4 md:px-6 text-center text-xs text-muted-foreground relative z-10">
