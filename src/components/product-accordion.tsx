@@ -21,7 +21,7 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
   product,
 }) => {
   return (
-    <Accordion type="single" collapsible className="w-full bg-white/30 dark:bg-card/60 backdrop-blur-2xl border border-white/20 shadow-lg rounded-2xl transition-all duration-300 hover:shadow-2xl">
+    <Accordion type="single" collapsible className="w-full glassmorphism-card rounded-2xl transition-all duration-500 hover:glassmorphism-strong hover:scale-[1.02] hover-glow floating-elements">
       <AccordionItem value="item-1" className="border-b-0">
         <AccordionTrigger className="p-4 hover:no-underline">
           <div className="flex flex-col sm:flex-row gap-4 items-center w-full text-center sm:text-left">
@@ -37,7 +37,7 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
             <div className="flex-grow">
                 <h3 className="font-headline font-bold text-lg">{product.productName}</h3>
                 <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2 sm:gap-4 mt-2">
-                    <Badge variant="secondary" className="text-base font-bold py-1 px-3">
+                    <Badge variant="secondary" className="text-base font-bold py-1 px-3 glassmorphism text-white shadow-lg">
                         {product.price}
                     </Badge>
                     <div className="flex items-center gap-1 text-yellow-500">
@@ -59,12 +59,14 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
                         <span className="text-sm font-medium">{product.availability}</span>
                     </div>
                 </div>
-                <div className="pt-4 border-t border-white/20">
-                    <div className="flex items-center gap-2 font-semibold mb-2 text-primary">
+                <div className="pt-4 border-t border-white/30">
+                    <div className="flex items-center gap-2 font-semibold mb-3 text-primary">
                         <HelpCircle className="w-5 h-5"/>
                         <span>¿Por qué es ideal para ti?</span>
                     </div>
-                    <p className="text-sm text-foreground bg-primary/10 p-3 rounded-md border border-primary/20">{product.justification}</p>
+                    <div className="glassmorphism rounded-xl p-4 shadow-inner">
+                        <p className="text-sm text-foreground/90 leading-relaxed">{product.justification}</p>
+                    </div>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 pt-4">
                     <VerifiedProductLink 

@@ -64,11 +64,11 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-            <Button onClick={onNewSearch} variant="outline" size="lg" className="rounded-full bg-white/30 dark:bg-card/60 backdrop-blur-2xl border-white/20 shadow-md w-full sm:w-auto" suppressHydrationWarning>
+            <Button onClick={onNewSearch} variant="outline" size="lg" className="rounded-full glassmorphism-strong w-full sm:w-auto transition-all duration-300 hover:scale-105" suppressHydrationWarning>
                 <RefreshCw className="h-5 w-5 mr-2" />
                 Empezar de Nuevo
             </Button>
-            <Button onClick={handleOpenForm} variant="outline" size="lg" className="rounded-full bg-white/30 dark:bg-card/60 backdrop-blur-2xl border-white/20 shadow-md w-full sm:w-auto" suppressHydrationWarning>
+            <Button onClick={handleOpenForm} variant="outline" size="lg" className="rounded-full glassmorphism-strong w-full sm:w-auto transition-all duration-300 hover:scale-105" suppressHydrationWarning>
                 <FileText className="h-5 w-5 mr-2" />
                 Responder Encuesta
             </Button>
@@ -89,7 +89,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
               />
             ))}
             <div className="flex justify-center pt-4">
-                <Button onClick={handleSearch} variant="outline" size="lg" suppressHydrationWarning>
+                <Button onClick={handleSearch} variant="outline" size="lg" className="glassmorphism-strong transition-all duration-300 hover:scale-105" suppressHydrationWarning>
                     <Bot className="mr-2 h-5 w-5" />
                     Buscar 3 opciones diferentes
                 </Button>

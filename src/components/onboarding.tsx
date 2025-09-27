@@ -112,7 +112,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const progressValue = (qaPairs.length / maxQuestions) * 100;
 
   return (
-    <Card className="w-full max-w-2xl mx-auto shadow-2xl bg-white/60 dark:bg-card/60 backdrop-blur-xl border-white/20">
+    <Card className="w-full max-w-2xl mx-auto glassmorphism-strong shadow-2xl transition-all duration-500 hover-glow floating-elements">
       <CardHeader className="p-4 md:p-6">
         <CardTitle className="font-headline text-2xl md:text-3xl text-center">
             Encontremos tu celular ideal
@@ -135,7 +135,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
           <form onSubmit={handleAnswerSubmit} className="space-y-4">
             <div className="flex gap-2">
-              <Button type="button" size="icon" variant="outline" onClick={handleBack} disabled={isLoading || qaPairs.length === 0} className="rounded-full h-10 w-10 md:h-12 md:w-12 flex-shrink-0" suppressHydrationWarning>
+              <Button type="button" size="icon" variant="outline" onClick={handleBack} disabled={isLoading || qaPairs.length === 0} className="rounded-full h-10 w-10 md:h-12 md:w-12 flex-shrink-0 glassmorphism transition-all duration-300 hover:scale-110" suppressHydrationWarning>
                 <ArrowLeft />
                 <span className="sr-only">Atrás</span>
               </Button>
@@ -143,17 +143,17 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                 value={currentAnswer}
                 onChange={(e) => setCurrentAnswer(e.target.value)}
                 placeholder="Ej: 'la cámara' o 'que la batería dure mucho'"
-                className="h-10 md:h-12 text-sm md:text-base rounded-full px-4 md:px-6 bg-background/70 focus-visible:ring-accent flex-grow"
+                className="h-10 md:h-12 text-sm md:text-base rounded-full px-4 md:px-6 glassmorphism focus-visible:ring-accent flex-grow transition-all duration-300"
                 disabled={isLoading}
                 suppressHydrationWarning
               />
-              <Button type="submit" size="icon" disabled={!currentAnswer.trim() || isLoading} className="rounded-full h-10 w-10 md:h-12 md:w-12 flex-shrink-0" suppressHydrationWarning>
+              <Button type="submit" size="icon" disabled={!currentAnswer.trim() || isLoading} className="rounded-full h-10 w-10 md:h-12 md:w-12 flex-shrink-0 glassmorphism-strong transition-all duration-300 hover:scale-110" suppressHydrationWarning>
                 {isLoading ? <Loader2 className="animate-spin" /> : <ArrowRight />}
                 <span className="sr-only">Siguiente</span>
               </Button>
             </div>
             <div className="flex justify-center items-center gap-4 pt-4">
-                <Button onClick={() => handleFinish()} size="lg" variant="ghost" className="rounded-full font-bold text-accent-foreground/80 hover:bg-accent/20 transition-all duration-300" disabled={isLoading || qaPairs.length === 0} suppressHydrationWarning>
+                <Button onClick={() => handleFinish()} size="lg" variant="ghost" className="rounded-full font-bold glassmorphism transition-all duration-300 hover:scale-105 hover:glassmorphism-strong" disabled={isLoading || qaPairs.length === 0} suppressHydrationWarning>
                     Finalizar y Ver Celulares
                 </Button>
             </div>

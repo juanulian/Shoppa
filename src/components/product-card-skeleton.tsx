@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
 
 const ProductCardSkeleton = () => {
   return (
-    <Card className="bg-card/60 backdrop-blur-xl border border-border/20 shadow-lg rounded-2xl h-full">
+    <Card className="glassmorphism-card rounded-2xl h-full transition-all duration-300 animate-pulse">
       <CardHeader>
         <div className="flex gap-4 items-center w-full">
             <Skeleton className="h-24 w-24 rounded-md" />
