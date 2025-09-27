@@ -35,7 +35,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
       console.error('La búsqueda falló:', error);
       toast({
         title: 'Error de Búsqueda',
-        description: 'Algo salió mal al buscar recomendaciones. Por favor, inténtalo de nuevo.',
+        description: 'No pudimos encontrar tus opciones perfectas. Intentémoslo de nuevo en un momento.',
         variant: 'destructive',
       });
     } finally {
@@ -57,10 +57,10 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-center md:text-left">
         <div className="w-full md:w-auto">
           <h2 className="text-3xl md:text-4xl font-bold font-headline tracking-tight">
-            Aquí están tus recomendaciones
+            Tus 3 opciones perfectas
           </h2>
           <p className="text-muted-foreground mt-2">
-            Shoppa ha seleccionado los 3 mejores celulares para ti.
+            Seleccionadas específicamente para tus necesidades y presupuesto. Sin confusión, sin perdida de tiempo.
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
@@ -91,7 +91,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
             <div className="flex justify-center pt-4">
                 <Button onClick={handleSearch} variant="outline" size="lg" suppressHydrationWarning>
                     <Bot className="mr-2 h-5 w-5" />
-                    Generar otras opciones
+                    Buscar 3 opciones diferentes
                 </Button>
             </div>
           </>

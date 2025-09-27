@@ -83,10 +83,10 @@ const LandingPage: React.FC = () => {
                     <div className="container mx-auto px-4 md:px-6 relative z-10">
                         <Badge variant="outline" className="mb-4 border-primary/50 text-primary animate-in fade-in-0 duration-1000 bg-background/50 backdrop-blur-sm">Asesoramiento Inteligente para tus Clientes</Badge>
                         <h1 className="text-4xl font-extrabold tracking-tight md:text-6xl animate-in fade-in-0 slide-in-from-bottom-5 duration-1000">
-                            ¿Tus clientes abandonan el carrito porque no saben qué elegir?
+                            ¿Perdés 75% de tus ventas por carritos abandonados?
                         </h1>
                         <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground animate-in fade-in-0 slide-in-from-bottom-5 duration-1000 delay-200">
-                            Shoppa! convierte clientes indecisos en compradores satisfechos. Nuestro asistente IA los guía desde la confusión hasta la compra en 3 minutos.
+                            Shoppa! elimina la parálisis por análisis presentando exactamente 3 opciones perfectas. Transforma clientes confundidos en compradores seguros en 3 minutos.
                         </p>
                         <div className="mt-8 flex flex-wrap justify-center gap-4 animate-in fade-in-0 slide-in-from-bottom-5 duration-1000 delay-300">
                             <Button size="lg" asChild>
@@ -113,8 +113,8 @@ const LandingPage: React.FC = () => {
                             <div className="relative p-6 rounded-xl border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-primary/20 bg-cover bg-center bg-[url('/background/cards_2.png')]">
                                 <div className="absolute inset-0 bg-primary/10 backdrop-blur-sm rounded-lg"></div>
                                 <div className="relative">
-                                    <p className="text-4xl font-bold text-primary drop-shadow-sm">68%</p>
-                                    <p className="text-sm text-slate-800 dark:text-slate-200 font-medium">de carritos abandonados en e-commerce.</p>
+                                    <p className="text-4xl font-bold text-primary drop-shadow-sm">75%</p>
+                                    <p className="text-sm text-slate-800 dark:text-slate-200 font-medium">de carritos abandonados en LATAM vs 69% global.</p>
                                 </div>
                             </div>
                             <div className="p-6 rounded-xl bg-gradient-to-br from-primary/10 via-white/90 to-primary/5 backdrop-blur-sm border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-primary/20">
@@ -187,9 +187,9 @@ const LandingPage: React.FC = () => {
                             </p>
                         </div>
                         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                           <StatCard icon={BarChart} value="81%" title="Preferencia vs. Sitios Tradicionales" description="Una abrumadora mayoría prefiere la guía de Shoppa! a navegar catálogos complejos." />
-                           <StatCard icon={Zap} value="4.6/5" title="Satisfacción de Cliente" description="Calificación promedio que supera los estándares de la industria del e-commerce." />
-                           <StatCard icon={User} value="9 de cada 10" title="clientes" description="recomendarían activamente la experiencia a otros." />
+                           <StatCard icon={BarChart} value="69%" title="Intención de Compra Inmediata" description="68.75% de usuarios mostró intención probable o decidida de comprar tras usar Shoppa!" />
+                           <StatCard icon={Zap} value="4.8/5" title="Satisfacción de Usuario" description="Calificación promedio que supera ampliamente los estándares del e-commerce tradicional." />
+                           <StatCard icon={User} value="25%" title="Decisión Acelerada" description="de usuarios decidió comprar inmediatamente vs navegar opciones ilimitadas." />
                         </div>
                         <div className="text-center mt-4 text-xs text-muted-foreground">
                             * Métricas validadas sobre una muestra de usuarios en nuestra encuesta de satisfacción.
@@ -208,11 +208,11 @@ const LandingPage: React.FC = () => {
                             </p>
                         </div>
                         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <BenefitCard icon={TrendingUp} title="Más Conversiones">
-                                Clientes que entienden qué compran, compran más. Shoppa! transforma dudas en ventas, reduciendo el abandono de carrito.
+                            <BenefitCard icon={TrendingUp} title="15-25% Menos Abandono">
+                                Reduce el abandono de carrito del 75% actual al 56-64%. Captura hasta USD 150B en valor perdido convirtiendo dudas en decisiones de compra.
                             </BenefitCard>
-                            <BenefitCard icon={Smile} title="Clientes Más Satisfechos">
-                                Una experiencia de compra guiada y sin fricción genera clientes leales. La satisfacción de 4.6/5 se traduce en recompras y recomendaciones.
+                            <BenefitCard icon={Smile} title="60-70% Menos Tiempo">
+                                Reduce el tiempo de decisión de 30+ minutos a 3-5 minutos por compra. Clientes satisfechos (4.8/5) que recomiendan activamente la experiencia.
                             </BenefitCard>
                             <BenefitCard icon={DollarSign} title="Vendedores Optimizados">
                                 Liberá a tu equipo de las preguntas básicas y repetitivas. Dejá que Shoppa! se encargue de la calificación inicial para que tus vendedores se enfoquen en cerrar ventas complejas.
