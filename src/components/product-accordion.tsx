@@ -7,7 +7,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { CheckCircle, HelpCircle, Star } from "lucide-react";
 import type { ProductRecommendation } from "@/ai/schemas/product-recommendation";
 import SmartProductImage from "./smart-product-image";
@@ -21,7 +20,7 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
   product,
 }) => {
   return (
-    <Accordion type="single" collapsible className="w-full glassmorphism-card rounded-2xl transition-all duration-500 hover:glassmorphism-strong hover:scale-[1.02] hover-glow floating-elements">
+    <Accordion type="single" collapsible className="w-full glassmorphism-card rounded-2xl transition-all duration-500 hover:glassmorphism-strong hover:scale-[1.02] hover-glow soft-border">
       <AccordionItem value="item-1" className="border-b-0">
         <AccordionTrigger className="p-4 hover:no-underline">
           <div className="flex flex-col sm:flex-row gap-4 items-center w-full text-center sm:text-left">

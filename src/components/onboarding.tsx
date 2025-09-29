@@ -18,8 +18,8 @@ interface QA {
   answer: string;
 }
 
-const initialQuestion = "¿Qué es lo más importante para ti en un nuevo celular?";
-const maxQuestions = 5; 
+const initialQuestion = "¿Cuál es tu uso principal del celular? (Por ejemplo: fotos familiares, trabajo, gaming, redes sociales)";
+const maxQuestions = 3; 
 
 const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const [qaPairs, setQaPairs] = useState<QA[]>([]);
@@ -112,12 +112,12 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const progressValue = (qaPairs.length / maxQuestions) * 100;
 
   return (
-    <Card className="w-full max-w-2xl mx-auto glassmorphism-strong shadow-2xl transition-all duration-500 hover-glow floating-elements">
+    <Card className="w-full max-w-2xl mx-auto glassmorphism-strong shadow-2xl transition-all duration-500 hover-glow soft-border">
       <CardHeader className="p-4 md:p-6">
-        <CardTitle className="font-headline text-2xl md:text-3xl text-center">
+        <CardTitle className="font-headline text-xl sm:text-2xl md:text-3xl text-center">
             Encontremos tu celular ideal
         </CardTitle>
-        <CardDescription className="text-center">
+        <CardDescription className="text-center text-sm sm:text-base">
             Responde algunas preguntas para recibir una recomendación experta.
         </CardDescription>
         <div className="pt-4">
@@ -128,32 +128,32 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
       <CardContent className="p-4 md:p-6">
         <div className="space-y-6">
           <div className="text-center min-h-[4rem] flex items-center justify-center p-2">
-            <p className="text-lg font-medium text-foreground animate-in fade-in duration-500">
+            <p className="text-base sm:text-lg font-medium text-foreground animate-in fade-in duration-500">
               {currentQuestion}
             </p>
           </div>
 
           <form onSubmit={handleAnswerSubmit} className="space-y-4">
             <div className="flex gap-2">
-              <Button type="button" size="icon" variant="outline" onClick={handleBack} disabled={isLoading || qaPairs.length === 0} className="rounded-full h-10 w-10 md:h-12 md:w-12 flex-shrink-0 glassmorphism transition-all duration-300 hover:scale-110" suppressHydrationWarning>
-                <ArrowLeft />
+              <Button type="button" size="icon" variant="outline" onClick={handleBack} disabled={isLoading || qaPairs.length === 0} className="rounded-full h-10 w-10 md:h-12 md:w-12 flex-shrink-0 glassmorphism transition-all duration-300 hover:scale-110 touch-manipulation" suppressHydrationWarning>
+                <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
                 <span className="sr-only">Atrás</span>
               </Button>
               <Input
                 value={currentAnswer}
                 onChange={(e) => setCurrentAnswer(e.target.value)}
-                placeholder="Ej: 'la cámara' o 'que la batería dure mucho'"
+                placeholder="Ej: 'Fotos para Instagram' o 'Apps de trabajo'"
                 className="h-10 md:h-12 text-sm md:text-base rounded-full px-4 md:px-6 glassmorphism focus-visible:ring-accent flex-grow transition-all duration-300"
                 disabled={isLoading}
                 suppressHydrationWarning
               />
-              <Button type="submit" size="icon" disabled={!currentAnswer.trim() || isLoading} className="rounded-full h-10 w-10 md:h-12 md:w-12 flex-shrink-0 glassmorphism-strong transition-all duration-300 hover:scale-110" suppressHydrationWarning>
-                {isLoading ? <Loader2 className="animate-spin" /> : <ArrowRight />}
+              <Button type="submit" size="icon" disabled={!currentAnswer.trim() || isLoading} className="rounded-full h-10 w-10 md:h-12 md:w-12 flex-shrink-0 glassmorphism-strong transition-all duration-300 hover:scale-110 touch-manipulation" suppressHydrationWarning>
+                {isLoading ? <Loader2 className="animate-spin h-4 w-4 sm:h-5 sm:w-5" /> : <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />}
                 <span className="sr-only">Siguiente</span>
               </Button>
             </div>
             <div className="flex justify-center items-center gap-4 pt-4">
-                <Button onClick={() => handleFinish()} size="lg" variant="ghost" className="rounded-full font-bold glassmorphism transition-all duration-300 hover:scale-105 hover:glassmorphism-strong" disabled={isLoading || qaPairs.length === 0} suppressHydrationWarning>
+                <Button onClick={() => handleFinish()} size="lg" variant="ghost" className="rounded-full font-bold glassmorphism transition-all duration-300 hover:scale-105 hover:glassmorphism-strong text-sm sm:text-base touch-manipulation" disabled={isLoading || qaPairs.length === 0} suppressHydrationWarning>
                     Finalizar y Ver Celulares
                 </Button>
             </div>

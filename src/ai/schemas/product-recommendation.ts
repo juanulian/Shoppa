@@ -12,6 +12,11 @@ export const ProductRecommendationSchema = z.object({
   justification: z.string().describe('Justificación persuasiva que conecta características específicas del producto con las necesidades declaradas del usuario. Debe generar confianza y reducir dudas de compra.'),
   imageUrl: z.string().describe('Una URL a una imagen del producto.'),
   productUrl: z.string().describe('URL de búsqueda en Google para explorar el producto y encontrar opciones de compra.'),
+  matchPercentage: z.number().min(65).max(98).describe('Porcentaje de compatibilidad del producto con las necesidades del usuario (65-98%).'),
+  matchTags: z.array(z.object({
+    tag: z.string().describe('Tag de 1-3 palabras que sintetiza una característica clave que coincide con las necesidades del usuario.'),
+    level: z.enum(['high', 'medium', 'low']).describe('Nivel de match: high (verde), medium (amarillo), low (rojo).')
+  })).min(2).max(4).describe('Array de 2-4 tags que resumen los puntos clave de coincidencia con el usuario.'),
 });
 
 export type ProductRecommendation = z.infer<typeof ProductRecommendationSchema>;

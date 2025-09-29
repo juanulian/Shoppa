@@ -28,9 +28,8 @@ export default function DemoPage() {
   }
 
   return (
-    <div className="relative min-h-screen w-full bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 dark:from-slate-900 dark:via-purple-900 dark:to-indigo-900 overflow-hidden">
-       <div className="absolute inset-0 bg-gradient-to-br from-blue-200/20 via-purple-200/30 to-pink-200/20 dark:from-blue-900/20 dark:via-purple-900/30 dark:to-pink-900/20"></div>
-       <div className="absolute inset-0 bg-grid-slate-900/[0.04] bg-[bottom_1px_center] dark:bg-grid-slate-400/[0.05] dark:bg-bottom mask-image-gradient"></div>
+    <div className="relative min-h-screen w-full overflow-hidden bg-[url('/background/botones.jpg')] bg-cover bg-center">
+       <div className="absolute inset-0 bg-white/50 dark:bg-slate-950/80"></div>
       <main className="flex flex-col items-center justify-center p-4 md:p-8 min-h-screen">
         <div className="absolute top-4 left-4 md:top-8 md:left-8 z-10 animate-in fade-in duration-1000">
           <Logo />

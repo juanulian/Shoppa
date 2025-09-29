@@ -109,6 +109,8 @@ const prompt = ai.definePrompt({
 - qualityScore: 70-98 basado en gama y especificaciones
 - productDescription: Resumen compelling centrado en beneficios
 - justification: Conexión personalizada entre características y necesidades del usuario
+- matchPercentage: Porcentaje de compatibilidad 65-98% basado en coincidencia con necesidades del usuario
+- matchTags: Array de 2-4 tags con nivel (high/medium/low) que sintetizen los puntos de coincidencia más relevantes
 
 **CONTEXTO DE MERCADO LATAM:**
 - Alta sensibilidad al precio

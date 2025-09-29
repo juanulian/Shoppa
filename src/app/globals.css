@@ -89,6 +89,61 @@ body {
   box-shadow: 0 0 30px rgba(147, 51, 234, 0.4);
 }
 
+.soft-border {
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+}
+
+.dark .soft-border {
+  border: 2px solid rgba(148, 163, 184, 0.2);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .glassmorphism,
+  .glassmorphism-strong,
+  .glassmorphism-card {
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+  }
+}
+
+/* Touch-friendly interactions */
+.touch-manipulation {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Improve touch targets on mobile */
+@media (max-width: 768px) {
+  button,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Prevent zoom on input focus on iOS */
+@media screen and (max-width: 768px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="tel"],
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* Better scrolling on mobile */
+.modal-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
 @layer base {
   :root {
     --background: 0 0% 94.1%;
