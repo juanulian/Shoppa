@@ -21,7 +21,7 @@ body {
 .glassmorphism-strong {
   backdrop-filter: blur(20px) saturate(200%) brightness(110%);
   -webkit-backdrop-filter: blur(20px) saturate(200%) brightness(110%);
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.45);
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.45);
 }
@@ -41,7 +41,7 @@ body {
 }
 
 .dark .glassmorphism-strong {
-  background: rgba(15, 23, 42, 0.15);
+  background: rgba(15, 23, 42, 0.45);
   border: 1px solid rgba(148, 163, 184, 0.3);
   box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
 }
