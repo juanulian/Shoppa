@@ -39,12 +39,12 @@ const ProductAccordion: React.FC<ProductAccordionProps> = ({
                     <Badge variant="secondary" className="text-base font-bold py-1 px-3 glassmorphism text-white shadow-lg">
                         {product.price}
                     </Badge>
-                    <div className="flex items-center gap-1 text-yellow-500">
-                        <Star className="w-5 h-5 fill-current" />
-                        <span className="font-bold text-foreground">
-                        {product.qualityScore} <span className="text-sm font-normal text-muted-foreground">/ 100</span>
+                    <Badge variant="outline" className="flex items-center gap-1.5 py-1 px-3 border-yellow-500/50 bg-yellow-500/10 text-yellow-700 dark:text-yellow-400">
+                        <Star className="w-4 h-4 fill-current" />
+                        <span className="font-bold text-sm">
+                          {product.qualityScore} <span className="font-normal opacity-80">/ 100</span>
                         </span>
-                    </div>
+                    </Badge>
                 </div>
             </div>
           </div>
