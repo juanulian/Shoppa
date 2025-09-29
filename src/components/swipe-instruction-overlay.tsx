@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -12,25 +11,23 @@ const SwipeInstructionOverlay: React.FC<SwipeInstructionOverlayProps> = ({ onDis
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Fade in after a short delay
     const fadeInTimer = setTimeout(() => {
       setIsVisible(true);
     }, 300);
 
-    // Automatically dismiss after a few seconds
     const dismissTimer = setTimeout(() => {
       handleDismiss();
-    }, 5000); // 5 seconds
+    }, 5000);
 
     return () => {
       clearTimeout(fadeInTimer);
       clearTimeout(dismissTimer);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleDismiss = () => {
     setIsVisible(false);
-    // Allow animation to finish before calling parent dismiss
     setTimeout(onDismiss, 500);
   };
 
@@ -43,53 +40,21 @@ const SwipeInstructionOverlay: React.FC<SwipeInstructionOverlayProps> = ({ onDis
     >
       <div className="relative w-full h-full flex items-center justify-center text-white">
         {/* Left Side Instruction */}
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1/2 flex flex-col items-center justify-center text-center p-4 animate-pulse-slow">
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1/2 flex flex-col items-center justify-center text-center p-4 animate-pulse">
           <div className="relative">
-            <Hand className="w-10 h-10 transform -scale-x-100" />
-            <div className="absolute inset-0 animate-swipe-left">
-              <Hand className="w-10 h-10 transform -scale-x-100" style={{ animationDelay: '0.1s' }}/>
-            </div>
+            <Hand className="w-10 h-10 transform -scale-x-100 animate-swipe-left" />
           </div>
           <span className="mt-2 font-semibold text-sm">Ver siguiente</span>
         </div>
 
         {/* Right Side Instruction */}
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1/2 flex flex-col items-center justify-center text-center p-4 animate-pulse-slow">
-           <div className="relative">
-             <Hand className="w-10 h-10" />
-            <div className="absolute inset-0 animate-swipe-right">
-              <Hand className="w-10 h-10" style={{ animationDelay: '0.1s' }}/>
-            </div>
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1/2 flex flex-col items-center justify-center text-center p-4 animate-pulse">
+          <div className="relative">
+            <Hand className="w-10 h-10 animate-swipe-right" />
           </div>
           <span className="mt-2 font-semibold text-sm">Ver anterior</span>
         </div>
       </div>
-      <style jsx>{`
-        @keyframes swipe-left {
-          0% { transform: translateX(0); opacity: 1; }
-          50% { transform: translateX(-20px); opacity: 0; }
-          100% { transform: translateX(0); opacity: 0; }
-        }
-        .animate-swipe-left {
-          animation: swipe-left 1.5s ease-in-out infinite;
-        }
-        @keyframes swipe-right {
-          0% { transform: translateX(0); opacity: 1; }
-          50% { transform: translateX(20px); opacity: 0; }
-          100% { transform: translateX(0); opacity: 0; }
-        }
-        .animate-swipe-right {
-          animation: swipe-right 1.5s ease-in-out infinite;
-        }
-        .animate-pulse-slow {
-            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        @keyframes pulse {
-          50% {
-            opacity: .7;
-          }
-        }
-      `}</style>
     </div>
   );
 };
