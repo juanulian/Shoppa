@@ -50,7 +50,7 @@ const SwipeInstructionOverlay: React.FC<SwipeInstructionOverlayProps> = ({ onDis
               <Hand className="w-10 h-10 transform -scale-x-100" style={{ animationDelay: '0.1s' }}/>
             </div>
           </div>
-          <span className="mt-2 font-semibold text-sm">DESCARTAR</span>
+          <span className="mt-2 font-semibold text-sm">Ver siguiente</span>
         </div>
 
         {/* Right Side Instruction */}
@@ -61,7 +61,7 @@ const SwipeInstructionOverlay: React.FC<SwipeInstructionOverlayProps> = ({ onDis
               <Hand className="w-10 h-10" style={{ animationDelay: '0.1s' }}/>
             </div>
           </div>
-          <span className="mt-2 font-semibold text-sm">ME GUSTA</span>
+          <span className="mt-2 font-semibold text-sm">Ver anterior</span>
         </div>
       </div>
       <style jsx>{`
