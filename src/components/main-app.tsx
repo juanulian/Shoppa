@@ -9,9 +9,8 @@ import { Button } from '@/components/ui/button';
 import ProductCarousel from '@/components/product-carousel';
 import AddDetailsModal from '@/components/add-details-modal';
 import RecommendationsLoading from '@/components/recommendations-loading';
-import { RefreshCw, Bot, FileText } from 'lucide-react';
+import { RefreshCw, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import Logo from './icons/logo';
 
 interface MainAppProps {
   userProfileData: string;
