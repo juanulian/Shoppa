@@ -248,7 +248,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
   };
 
   const handleNext = () => {
-    setCurrentIndex(prev => Math.min(totalItems - 1, prev - 1));
+    setCurrentIndex(prev => Math.min(totalItems - 1, prev + 1));
     dismissInstructions();
   };
 

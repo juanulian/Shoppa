@@ -110,18 +110,6 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
                 products={results}
                 onAddMoreDetails={() => setShowAddDetailsModal(true)}
               />
-              <div className="flex justify-center pt-4">
-                <Button
-                  onClick={() => handleSearch()}
-                  variant="outline"
-                  size="lg"
-                  className="glassmorphism-strong transition-all duration-300 hover:scale-105 text-sm sm:text-base touch-manipulation animate-in fade-in delay-300"
-                  suppressHydrationWarning
-                >
-                  <Bot className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  Buscar 3 opciones diferentes
-                </Button>
-              </div>
             </div>
           ) : null}
         </div>

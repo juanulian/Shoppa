@@ -33,7 +33,7 @@ const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
     },
     {
       icon: Sparkles,
-      title: "Aplicando IA avanzada",
+      title: "Shoppa! está evaluando opciones",
       description: "Calculando compatibilidad y puntuaciones de match",
       duration: 2500,
     },
