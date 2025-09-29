@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { ProductRecommendation } from "@/ai/schemas/product-recommendation";
 import ProductDetailModal from './product-detail-modal';
 import { Button } from './ui/button';
@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import SmartProductImage from "./smart-product-image";
 import VerifiedProductLink from "./verified-product-link";
 import { useDeviceType } from '@/hooks/use-device-type';
+import SwipeInstructionOverlay from './swipe-instruction-overlay';
 
 type ProductCarouselProps = {
   products: ProductRecommendation[];
@@ -31,7 +32,9 @@ const ProductCard: React.FC<{
   product: ProductRecommendation;
   onShowDetails: () => void;
   deviceType: ReturnType<typeof useDeviceType>;
-}> = ({ product, onShowDetails, deviceType }) => {
+  showInstructions?: boolean;
+  onDismissInstructions?: () => void;
+}> = ({ product, onShowDetails, deviceType, showInstructions, onDismissInstructions }) => {
   const { isMobile, isTablet } = deviceType;
 
   return (
@@ -57,6 +60,9 @@ const ProductCard: React.FC<{
           className="object-cover w-full h-full"
           fill
         />
+        {showInstructions && onDismissInstructions && (
+          <SwipeInstructionOverlay onDismiss={onDismissInstructions} />
+        )}
         {/* Match Percentage Overlay */}
         <div className={`absolute bg-primary text-primary-foreground rounded-full font-bold ${
           isMobile
@@ -206,20 +212,44 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
   const [startX, setStartX] = useState<number | null>(null);
   const [currentX, setCurrentX] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
 
   const deviceInfo = useDeviceType();
   const { isMobile, isTablet, isTouchDevice } = deviceInfo;
 
+  useEffect(() => {
+    try {
+      const hasSeenInstructions = localStorage.getItem('shoppa-swipe-instructions-seen');
+      if (!hasSeenInstructions) {
+        setShowInstructions(true);
+      }
+    } catch (error) {
+      console.error("Could not access localStorage:", error);
+    }
+  }, []);
+
+  const dismissInstructions = () => {
+    if (showInstructions) {
+      setShowInstructions(false);
+      try {
+        localStorage.setItem('shoppa-swipe-instructions-seen', 'true');
+      } catch (error) {
+        console.error("Could not access localStorage:", error);
+      }
+    }
+  };
   // Include the "add more details" card as the last item
   const totalItems = products.length + 1;
 
   const handlePrevious = () => {
     setCurrentIndex(prev => Math.max(0, prev - 1));
+    dismissInstructions();
   };
 
   const handleNext = () => {
-    setCurrentIndex(prev => Math.min(totalItems - 1, prev + 1));
+    setCurrentIndex(prev => Math.min(totalItems - 1, prev - 1));
+    dismissInstructions();
   };
 
   const handleShowDetails = (product: ProductRecommendation) => {
@@ -231,6 +261,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
     if (!isTouchDevice) return;
     setStartX(e.touches[0].clientX);
     setIsDragging(true);
+    dismissInstructions();
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -269,6 +300,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
     if (isTouchDevice) return;
     setStartX(e.clientX);
     setIsDragging(true);
+    dismissInstructions();
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -370,6 +402,8 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
                   product={product}
                   onShowDetails={() => handleShowDetails(product)}
                   deviceType={deviceInfo}
+                  showInstructions={index === 0 && showInstructions}
+                  onDismissInstructions={dismissInstructions}
                 />
               </div>
             ))}
@@ -445,5 +479,3 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
 };
 
 export default ProductCarousel;
-
-    

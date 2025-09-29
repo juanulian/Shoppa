@@ -8,7 +8,7 @@ import { ProductRecommendation } from '@/ai/schemas/product-recommendation';
 import { Button } from '@/components/ui/button';
 import ProductCarousel from '@/components/product-carousel';
 import AddDetailsModal from '@/components/add-details-modal';
-import ProductCardSkeleton from '@/components/product-card-skeleton';
+import RecommendationsLoading from '@/components/recommendations-loading';
 import { RefreshCw, Bot, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Logo from './icons/logo';
@@ -98,25 +98,33 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
         </div>
       </header>
 
-      <div className="space-y-4">
-        {isLoading &&
-          Array.from({ length: 3 }).map((_, i) => (
-            <ProductCardSkeleton key={i} />
-          ))}
-        {!isLoading && results.length > 0 && (
-          <>
-            <ProductCarousel
-              products={results}
-              onAddMoreDetails={() => setShowAddDetailsModal(true)}
-            />
-            <div className="flex justify-center pt-4">
-                <Button onClick={() => handleSearch()} variant="outline" size="lg" className="glassmorphism-strong transition-all duration-300 hover:scale-105 text-sm sm:text-base touch-manipulation" suppressHydrationWarning>
-                    <Bot className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                    Buscar 3 opciones diferentes
-                </Button>
+      <div className="space-y-4 min-h-[400px] flex items-center justify-center">
+        <div className="w-full transition-all duration-500 ease-in-out">
+          {isLoading ? (
+            <div className="animate-in fade-in duration-500">
+              <RecommendationsLoading userProfileData={currentUserData} />
             </div>
-          </>
-        )}
+          ) : results.length > 0 ? (
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-4">
+              <ProductCarousel
+                products={results}
+                onAddMoreDetails={() => setShowAddDetailsModal(true)}
+              />
+              <div className="flex justify-center pt-4">
+                <Button
+                  onClick={() => handleSearch()}
+                  variant="outline"
+                  size="lg"
+                  className="glassmorphism-strong transition-all duration-300 hover:scale-105 text-sm sm:text-base touch-manipulation animate-in fade-in delay-300"
+                  suppressHydrationWarning
+                >
+                  <Bot className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                  Buscar 3 opciones diferentes
+                </Button>
+              </div>
+            </div>
+          ) : null}
+        </div>
       </div>
 
       {/* Add Details Modal */}
