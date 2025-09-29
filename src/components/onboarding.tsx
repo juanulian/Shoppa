@@ -53,20 +53,35 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
   // Función para precargar preguntas con debounce
   const preloadNextQuestions = useCallback(async (partialAnswer: string) => {
-    if (!partialAnswer.trim() || partialAnswer.length < 15 || isPreloading) return;
+    if (!partialAnswer.trim() || partialAnswer.length < 20 || isPreloading) return;
+
+    // Solo precargar si la respuesta es sustancialmente diferente a la actual
+    if (currentAnswer.length > 0 && partialAnswer.length < currentAnswer.length + 5) return;
 
     setIsPreloading(true);
     try {
-      // Intentar primero con el caché
+      // Intentar primero con el caché solo si es muy específica la respuesta
       const cachedQuestions = questionCache.findCachedQuestions(partialAnswer);
 
       if (cachedQuestions.length > 0) {
-        setPreloadedQuestions(cachedQuestions);
+        // Filtrar preguntas que no estén relacionadas con la pregunta actual
+        const filteredQuestions = cachedQuestions.filter(q =>
+          !q.toLowerCase().includes(currentQuestion.toLowerCase().split('?')[0].slice(0, 10))
+        );
+
+        if (filteredQuestions.length > 0) {
+          setPreloadedQuestions(filteredQuestions);
+          setIsPreloading(false);
+          return;
+        }
+      }
+
+      // Solo generar con IA si es una respuesta completa (más de 25 caracteres)
+      if (partialAnswer.length < 25) {
         setIsPreloading(false);
         return;
       }
 
-      // Si no hay en caché, generar con IA
       const tempQaPair = { question: currentQuestion, answer: partialAnswer };
       const tempQaPairs = [...qaPairs, tempQaPair];
 
@@ -84,23 +99,23 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
     } finally {
       setIsPreloading(false);
     }
-  }, [isPreloading, currentQuestion, qaPairs]);
+  }, [isPreloading, currentQuestion, qaPairs, currentAnswer]);
 
   // Debounce para la respuesta del usuario
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedAnswer(currentAnswer);
-    }, 1000); // 1 segundo de debounce
+    }, 2000); // 2 segundos de debounce para evitar precarga prematura
 
     return () => clearTimeout(timer);
   }, [currentAnswer]);
 
   // Precargar cuando la respuesta debounced cambia
   useEffect(() => {
-    if (debouncedAnswer.length >= 15) {
+    if (debouncedAnswer.length >= 20 && qaPairs.length < maxQuestions - 1) {
       preloadNextQuestions(debouncedAnswer);
     }
-  }, [debouncedAnswer, preloadNextQuestions]);
+  }, [debouncedAnswer, preloadNextQuestions, qaPairs.length]);
 
   const handleAnswerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 import type { ProductRecommendation } from "@/ai/schemas/product-recommendation";
 import ProductDetailModal from './product-detail-modal';
 import { Button } from './ui/button';
-import { ArrowLeft, ArrowRight, Plus, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Plus, Heart } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import SmartProductImage from "./smart-product-image";
 import VerifiedProductLink from "./verified-product-link";
@@ -85,16 +85,16 @@ const ProductCard: React.FC<{
             }`}>
               {product.price}
             </Badge>
-            <div className="flex items-center gap-1 text-yellow-500">
-              <Sparkles className={`fill-current ${
-                isMobile ? 'w-3 h-3' : 'w-4 h-4'
+            <Badge variant="outline" className={`flex items-center gap-1 ${
+              isMobile ? 'text-xs px-1 py-0' : 'text-xs px-2 py-0'
+            } border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950`}>
+              <Heart className={`fill-red-500 text-red-500 ${
+                isMobile ? 'w-2 h-2' : 'w-3 h-3'
               }`} />
-              <span className={`font-bold text-foreground ${
-                isMobile ? 'text-xs' : 'text-sm'
-              }`}>
-                {product.qualityScore}
+              <span className="font-bold text-red-700 dark:text-red-300">
+                {product.qualityScore}/100
               </span>
-            </div>
+            </Badge>
           </div>
         </div>
 

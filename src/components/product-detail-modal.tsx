@@ -1,6 +1,6 @@
 'use client';
 
-import { X, CheckCircle, HelpCircle, Star } from "lucide-react";
+import { X, CheckCircle, HelpCircle, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { ProductRecommendation } from "@/ai/schemas/product-recommendation";
@@ -64,7 +64,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClos
       />
 
       {/* Modal */}
-      <div className={`relative w-full overflow-y-auto modal-scroll glassmorphism-strong soft-border ${
+      <div className={`relative w-full overflow-y-auto modal-scroll bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-white/20 dark:border-gray-800/50 shadow-2xl ${
         isMobile
           ? 'max-h-[95vh] rounded-t-3xl max-w-none'
           : isTablet
@@ -130,18 +130,16 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClos
               }`}>
                 {product.price}
               </Badge>
-              <div className="flex items-center gap-1 text-yellow-500">
-                <Star className={`fill-current ${
-                  isMobile ? 'w-4 h-4' : isTablet ? 'w-5 h-5' : 'w-6 h-6'
+              <Badge variant="outline" className={`flex items-center gap-2 ${
+                isMobile ? 'text-xs px-2 py-1' : 'text-sm px-3 py-1'
+              } border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950`}>
+                <Heart className={`fill-red-500 text-red-500 ${
+                  isMobile ? 'w-3 h-3' : 'w-4 h-4'
                 }`} />
-                <span className={`font-bold text-foreground ${
-                  isMobile ? 'text-sm' : isTablet ? 'text-base' : 'text-lg'
-                }`}>
-                  {product.qualityScore} <span className={`font-normal text-muted-foreground ${
-                    isMobile ? 'text-xs' : 'text-sm'
-                  }`}>/ 100</span>
+                <span className="font-bold text-red-700 dark:text-red-300">
+                  {product.qualityScore}/100
                 </span>
-              </div>
+              </Badge>
             </div>
           </div>
 

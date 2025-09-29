@@ -84,9 +84,10 @@ R: {{{this.answer}}}
 2.  **Si la respuesta es relevante**, analiza todo el historial. Si las respuestas son vagas (ej: "un celular bueno"), tu prioridad es hacer preguntas que clarifiquen el uso y las prioridades.
 3.  **Genera una lista de 1-3 preguntas nuevas**, que no se repitan y que suenen conversacionales, basadas en la estrategia anterior.
 4.  **No pidas información que ya se haya proporcionado** en el historial.
-5.  Formula las preguntas en un tono amigable y natural en español.
+5.  **Formula las preguntas usando solo caracteres ASCII estándar**. Evita acentos, tildes, eñes y caracteres especiales. Usa "que", "mas", "como", "telefono" en lugar de "qué", "más", "cómo", "teléfono".
+6.  Formula las preguntas en un tono amigable y natural en español.
 
-Ejemplo de buena pregunta: *"¡Entendido! Y en cuanto a la cámara, ¿qué valoras más: un zoom potente para fotos a distancia o una gran calidad en retratos y fotos nocturnas?"*
+Ejemplo de buena pregunta: *"Entendido! Y en cuanto a la camara, que valoras mas: un zoom potente para fotos a distancia o una gran calidad en retratos y fotos nocturnas?"*
 `,
 });
 

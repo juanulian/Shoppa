@@ -81,7 +81,7 @@ const AddDetailsModal: React.FC<AddDetailsModalProps> = ({
       />
 
       {/* Modal */}
-      <div className={`relative w-full overflow-y-auto modal-scroll glassmorphism-strong soft-border ${
+      <div className={`relative w-full overflow-y-auto modal-scroll bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-white/20 dark:border-gray-800/50 shadow-2xl ${
         isMobile
           ? 'max-h-[95vh] rounded-t-3xl max-w-none'
           : isTablet
