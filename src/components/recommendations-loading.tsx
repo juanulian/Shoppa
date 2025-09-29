@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent } from '@/components/ui/card';
-import { Bot, Search, Sparkles, CheckCircle, Loader2 } from 'lucide-react';
+import { Search, Sparkles, CheckCircle, Loader2 } from 'lucide-react';
 import { useDeviceType } from '@/hooks/use-device-type';
 
 interface RecommendationsLoadingProps {
@@ -26,7 +26,7 @@ const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
       duration: 2000,
     },
     {
-      icon: Bot,
+      icon: 'shoppa' as const,
       title: "Buscando en el catálogo",
       description: "Explorando miles de opciones disponibles",
       duration: 3000,
@@ -88,7 +88,8 @@ const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
   }, [userProfileData]);
 
   const currentStepData = steps[currentStep] || steps[0];
-  const Icon = currentStepData.icon;
+  const isShoppaIcon = currentStepData.icon === 'shoppa';
+  const Icon = isShoppaIcon ? null : currentStepData.icon;
   const overallProgress = ((currentStep + (progress / 100)) / steps.length) * 100;
 
   // Extraer algunas keywords del perfil del usuario para personalizar
@@ -122,11 +123,17 @@ const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
               <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping"></div>
 
               {/* Main Icon Container */}
-              <div className={`relative bg-primary/10 rounded-full flex items-center justify-center transition-all duration-500 ${
+              <div className={`relative bg-primary rounded-full flex items-center justify-center transition-all duration-500 ${
                 isMobile ? 'w-16 h-16' : 'w-20 h-20'
               }`}>
                 <div className="animate-in zoom-in duration-500" key={`icon-${currentStep}`}>
-                  <Icon className={`text-primary ${isMobile ? 'w-8 h-8' : 'w-10 h-10'}`} />
+                  {isShoppaIcon ? (
+                    <h1 className={`font-headline font-extrabold text-primary-foreground tracking-tight ${
+                      isMobile ? 'text-3xl' : 'text-4xl'
+                    }`}>S!</h1>
+                  ) : Icon && (
+                    <Icon className={`text-primary-foreground ${isMobile ? 'w-8 h-8' : 'w-10 h-10'}`} />
+                  )}
                 </div>
               </div>
 
