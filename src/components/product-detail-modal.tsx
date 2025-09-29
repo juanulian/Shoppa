@@ -202,3 +202,5 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClos
 };
 
 export default ProductDetailModal;
+
+    

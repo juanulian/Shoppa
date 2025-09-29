@@ -167,3 +167,5 @@ const TinderCard: React.FC<TinderCardProps> = ({
 };
 
 export default TinderCard;
+
+    

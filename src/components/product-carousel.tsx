@@ -15,6 +15,18 @@ type ProductCarouselProps = {
   onAddMoreDetails: () => void;
 };
 
+const getTagColor = (level: 'high' | 'medium' | 'low') => {
+  switch (level) {
+    case 'high':
+      return 'bg-green-500/20 text-green-700 border-green-500/30 dark:bg-green-500/30 dark:text-green-200 dark:border-green-500/50';
+    case 'medium':
+      return 'bg-yellow-500/20 text-yellow-700 border-yellow-500/30 dark:bg-yellow-500/30 dark:text-yellow-200 dark:border-yellow-500/50';
+    case 'low':
+      return 'bg-red-500/20 text-red-700 border-red-500/30 dark:bg-red-500/30 dark:text-red-200 dark:border-red-500/50';
+  }
+};
+
+
 const ProductCard: React.FC<{
   product: ProductRecommendation;
   onShowDetails: () => void;
@@ -91,8 +103,7 @@ const ProductCard: React.FC<{
           {product.matchTags.slice(0, 3).map((matchTag, index) => (
             <Badge
               key={index}
-              variant="outline"
-              className="text-xs py-0 px-2"
+              className={`border font-medium text-xs py-0 px-2 ${getTagColor(matchTag.level)}`}
             >
               {matchTag.tag}
             </Badge>
@@ -434,3 +445,5 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
 };
 
 export default ProductCarousel;
+
+    
