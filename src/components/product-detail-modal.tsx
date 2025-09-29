@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import type { ProductRecommendation } from "@/ai/schemas/product-recommendation";
 import SmartProductImage from "./smart-product-image";
 import VerifiedProductLink from "./verified-product-link";
+import { useDeviceType } from '@/hooks/use-device-type';
 
 const KEYWORDS = ['cámara', 'batería', 'rendimiento', 'pantalla', 'gaming', 'fotos', 'trabajo', 'precio', 'calidad', 'diseño', 'procesador', 'memoria', 'almacenamiento', 'zoom', 'noche', 'video', 'autonomía'];
 
@@ -47,28 +48,51 @@ const getTagColor = (level: 'high' | 'medium' | 'low') => {
 };
 
 const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClose }) => {
+  const deviceInfo = useDeviceType();
+  const { isMobile, isTablet } = deviceInfo;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-2 sm:p-4">
+    <div className={`fixed inset-0 z-50 flex justify-center ${
+      isMobile
+        ? 'items-end p-0'
+        : 'items-center p-2 sm:p-4'
+    }`}>
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/70 backdrop-blur-md"
         onClick={onClose}
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto modal-scroll glassmorphism-strong rounded-t-3xl sm:rounded-3xl soft-border">
+      <div className={`relative w-full overflow-y-auto modal-scroll glassmorphism-strong soft-border ${
+        isMobile
+          ? 'max-h-[95vh] rounded-t-3xl max-w-none'
+          : isTablet
+          ? 'max-h-[90vh] max-w-lg rounded-3xl'
+          : 'max-h-[90vh] max-w-2xl rounded-3xl'
+      }`}>
         {/* Close Button */}
         <Button
           variant="ghost"
           size="icon"
-          className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 rounded-full glassmorphism w-8 h-8 sm:w-10 sm:h-10 touch-manipulation"
+          className={`absolute z-10 rounded-full glassmorphism touch-manipulation ${
+            isMobile
+              ? 'top-2 right-2 w-8 h-8'
+              : 'top-4 right-4 w-10 h-10'
+          }`}
           onClick={onClose}
         >
-          <X className="h-4 w-4 sm:h-5 sm:w-5" />
+          <X className={isMobile ? 'h-4 w-4' : 'h-5 w-5'} />
         </Button>
 
         {/* Product Image */}
-        <div className="relative h-60 sm:h-80 overflow-hidden rounded-t-3xl">
+        <div className={`relative overflow-hidden rounded-t-3xl ${
+          isMobile
+            ? 'h-48'
+            : isTablet
+            ? 'h-60'
+            : 'h-80'
+        }`}>
           <SmartProductImage
             src={product.imageUrl}
             alt={product.productName}
@@ -78,24 +102,44 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClos
           />
 
           {/* Match Percentage Overlay */}
-          <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-primary text-primary-foreground px-3 py-1 sm:px-4 sm:py-2 rounded-full font-bold text-lg sm:text-xl shadow-lg">
+          <div className={`absolute bg-primary text-primary-foreground rounded-full font-bold shadow-lg ${
+            isMobile
+              ? 'top-2 left-2 px-2 py-1 text-sm'
+              : 'top-4 left-4 px-4 py-2 text-xl'
+          }`}>
             {product.matchPercentage}% Match
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+        <div className={`space-y-4 ${
+          isMobile ? 'p-4' : isTablet ? 'p-5' : 'p-6'
+        }`}>
           {/* Product Title and Price */}
           <div>
-            <h2 className="font-headline font-bold text-xl sm:text-2xl mb-3 leading-tight">{product.productName}</h2>
+            <h2 className={`font-headline font-bold mb-3 leading-tight ${
+              isMobile ? 'text-lg' : isTablet ? 'text-xl' : 'text-2xl'
+            }`}>{product.productName}</h2>
             <div className="flex items-center justify-between mb-4">
-              <Badge variant="secondary" className="text-lg sm:text-xl font-bold py-1 sm:py-2 px-3 sm:px-4">
+              <Badge variant="secondary" className={`font-bold ${
+                isMobile
+                  ? 'text-sm py-1 px-2'
+                  : isTablet
+                  ? 'text-base py-1 px-3'
+                  : 'text-xl py-2 px-4'
+              }`}>
                 {product.price}
               </Badge>
               <div className="flex items-center gap-1 text-yellow-500">
-                <Star className="w-5 h-5 sm:w-6 sm:h-6 fill-current" />
-                <span className="font-bold text-foreground text-base sm:text-lg">
-                  {product.qualityScore} <span className="text-xs sm:text-sm font-normal text-muted-foreground">/ 100</span>
+                <Star className={`fill-current ${
+                  isMobile ? 'w-4 h-4' : isTablet ? 'w-5 h-5' : 'w-6 h-6'
+                }`} />
+                <span className={`font-bold text-foreground ${
+                  isMobile ? 'text-sm' : isTablet ? 'text-base' : 'text-lg'
+                }`}>
+                  {product.qualityScore} <span className={`font-normal text-muted-foreground ${
+                    isMobile ? 'text-xs' : 'text-sm'
+                  }`}>/ 100</span>
                 </span>
               </div>
             </div>
@@ -103,12 +147,16 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClos
 
           {/* Match Tags */}
           <div>
-            <h3 className="font-semibold mb-3 text-primary">¿Por qué coincide contigo?</h3>
+            <h3 className={`font-semibold mb-3 text-primary ${
+              isMobile ? 'text-sm' : 'text-base'
+            }`}>¿Por qué coincide contigo?</h3>
             <div className="flex flex-wrap gap-2">
               {product.matchTags.map((matchTag, index) => (
                 <Badge
                   key={index}
-                  className={`border font-medium text-sm ${getTagColor(matchTag.level)}`}
+                  className={`border font-medium ${getTagColor(matchTag.level)} ${
+                    isMobile ? 'text-xs' : 'text-sm'
+                  }`}
                 >
                   {matchTag.tag}
                 </Badge>

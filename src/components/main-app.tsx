@@ -6,7 +6,8 @@ import {
 } from '@/ai/flows/intelligent-search-agent';
 import { ProductRecommendation } from '@/ai/schemas/product-recommendation';
 import { Button } from '@/components/ui/button';
-import TinderStack from '@/components/tinder-stack';
+import ProductCarousel from '@/components/product-carousel';
+import AddDetailsModal from '@/components/add-details-modal';
 import ProductCardSkeleton from '@/components/product-card-skeleton';
 import { RefreshCw, Bot, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -20,15 +21,17 @@ interface MainAppProps {
 const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
   const [results, setResults] = useState<IntelligentSearchAgentOutput>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showAddDetailsModal, setShowAddDetailsModal] = useState(false);
+  const [currentUserData, setCurrentUserData] = useState(userProfileData);
   const { toast } = useToast();
 
-  const handleSearch = async () => {
+  const handleSearch = async (searchData?: string) => {
     setIsLoading(true);
     setResults([]);
 
     try {
       const res = await intelligentSearchAgent({
-        userProfileData,
+        userProfileData: searchData || currentUserData,
       });
       setResults(res);
     } catch (error) {
@@ -43,11 +46,31 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
     }
   };
 
+  const handleAddMoreDetails = (additionalDetails: string, selectedTags: string[]) => {
+    // Combinar datos existentes con nuevos detalles
+    let combinedData = currentUserData;
+
+    if (additionalDetails.trim()) {
+      combinedData += `\n\nDetalles adicionales: ${additionalDetails.trim()}`;
+    }
+
+    if (selectedTags.length > 0) {
+      combinedData += `\n\nCaracterísticas importantes: ${selectedTags.join(', ')}`;
+    }
+
+    setCurrentUserData(combinedData);
+    setShowAddDetailsModal(false);
+
+    // Realizar nueva búsqueda con los datos combinados
+    handleSearch(combinedData);
+  };
+
   const handleOpenForm = () => {
     window.open('https://forms.gle/CVdyFmBcASjXRKww7', '_blank');
   };
 
   useEffect(() => {
+    setCurrentUserData(userProfileData);
     handleSearch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userProfileData]);
@@ -82,9 +105,12 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
           ))}
         {!isLoading && results.length > 0 && (
           <>
-            <TinderStack products={results} />
+            <ProductCarousel
+              products={results}
+              onAddMoreDetails={() => setShowAddDetailsModal(true)}
+            />
             <div className="flex justify-center pt-4">
-                <Button onClick={handleSearch} variant="outline" size="lg" className="glassmorphism-strong transition-all duration-300 hover:scale-105 text-sm sm:text-base touch-manipulation" suppressHydrationWarning>
+                <Button onClick={() => handleSearch()} variant="outline" size="lg" className="glassmorphism-strong transition-all duration-300 hover:scale-105 text-sm sm:text-base touch-manipulation" suppressHydrationWarning>
                     <Bot className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                     Buscar 3 opciones diferentes
                 </Button>
@@ -92,6 +118,15 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
           </>
         )}
       </div>
+
+      {/* Add Details Modal */}
+      {showAddDetailsModal && (
+        <AddDetailsModal
+          onClose={() => setShowAddDetailsModal(false)}
+          onSubmit={handleAddMoreDetails}
+          existingUserData={currentUserData}
+        />
+      )}
     </div>
   );
 };

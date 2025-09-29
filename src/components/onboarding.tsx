@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { generateFollowUpQuestions } from '@/ai/flows/dynamic-question-generation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Loader2, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from '@/components/ui/progress';
+import { questionCache } from '@/utils/question-cache';
 
 interface OnboardingProps {
   onComplete: (profileData: string, initialSearchQuery?: string) => void;
@@ -27,25 +28,137 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const [currentAnswer, setCurrentAnswer] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [nextQuestions, setNextQuestions] = useState<string[]>([]);
+  const [preloadedQuestions, setPreloadedQuestions] = useState<string[]>([]);
+  const [isPreloading, setIsPreloading] = useState(false);
+  const [processingState, setProcessingState] = useState<'idle' | 'analyzing' | 'generating' | 'finishing'>('idle');
+  const [debouncedAnswer, setDebouncedAnswer] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
     if (nextQuestions.length > 0) {
-      // Tomar una pregunta aleatoria de las generadas
-      const nextQ = nextQuestions[Math.floor(Math.random() * nextQuestions.length)];
+      // Usar pregunta precargada si está disponible, sino la generada
+      let nextQ = nextQuestions[Math.floor(Math.random() * nextQuestions.length)];
+
+      // Si tenemos preguntas precargadas, usar una de ellas si es apropiada
+      if (preloadedQuestions.length > 0) {
+        nextQ = preloadedQuestions[0];
+        setPreloadedQuestions(prev => prev.slice(1));
+      }
+
       setCurrentQuestion(nextQ);
       setNextQuestions([]);
+      setProcessingState('idle');
     }
-  }, [nextQuestions]);
+  }, [nextQuestions, preloadedQuestions]);
+
+  // Función para precargar preguntas con debounce
+  const preloadNextQuestions = useCallback(async (partialAnswer: string) => {
+    if (!partialAnswer.trim() || partialAnswer.length < 15 || isPreloading) return;
+
+    setIsPreloading(true);
+    try {
+      // Intentar primero con el caché
+      const cachedQuestions = questionCache.findCachedQuestions(partialAnswer);
+
+      if (cachedQuestions.length > 0) {
+        setPreloadedQuestions(cachedQuestions);
+        setIsPreloading(false);
+        return;
+      }
+
+      // Si no hay en caché, generar con IA
+      const tempQaPair = { question: currentQuestion, answer: partialAnswer };
+      const tempQaPairs = [...qaPairs, tempQaPair];
+
+      const res = await generateFollowUpQuestions({
+        initialAnswer: tempQaPairs[0].answer,
+        priorQuestionsAndAnswers: tempQaPairs
+      });
+
+      if (res.questions && res.questions.length > 0) {
+        setPreloadedQuestions(res.questions);
+      }
+    } catch (error) {
+      // Silently fail - this is just preloading
+      console.log("Preload failed (non-critical):", error);
+    } finally {
+      setIsPreloading(false);
+    }
+  }, [isPreloading, currentQuestion, qaPairs]);
+
+  // Debounce para la respuesta del usuario
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedAnswer(currentAnswer);
+    }, 1000); // 1 segundo de debounce
+
+    return () => clearTimeout(timer);
+  }, [currentAnswer]);
+
+  // Precargar cuando la respuesta debounced cambia
+  useEffect(() => {
+    if (debouncedAnswer.length >= 15) {
+      preloadNextQuestions(debouncedAnswer);
+    }
+  }, [debouncedAnswer, preloadNextQuestions]);
 
   const handleAnswerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentAnswer.trim() || isLoading) return;
 
     setIsLoading(true);
+    setProcessingState('analyzing');
+
     const newQaPair = { question: currentQuestion, answer: currentAnswer };
     const newQaPairs = [...qaPairs, newQaPair];
-    
+
+    // Si tenemos preguntas precargadas que coinciden con esta respuesta, usarlas inmediatamente
+    if (preloadedQuestions.length > 0) {
+      setQaPairs(newQaPairs);
+      setCurrentAnswer('');
+
+      if (newQaPairs.length >= maxQuestions) {
+        setProcessingState('finishing');
+        setTimeout(() => handleFinish(newQaPairs), 500);
+        return;
+      }
+
+      // Usar pregunta precargada inmediatamente
+      const nextQ = preloadedQuestions[0];
+      setPreloadedQuestions(prev => prev.slice(1));
+      setCurrentQuestion(nextQ);
+      setIsLoading(false);
+      setProcessingState('idle');
+      return;
+    }
+
+    // Intentar primero con el caché antes de generar con IA
+    setProcessingState('analyzing');
+
+    // Buscar en caché basado en la respuesta actual
+    const cachedQuestions = questionCache.findCachedQuestions(currentAnswer);
+
+    if (cachedQuestions.length > 0) {
+      setQaPairs(newQaPairs);
+      setCurrentAnswer('');
+
+      if (newQaPairs.length >= maxQuestions) {
+        setProcessingState('finishing');
+        setTimeout(() => handleFinish(newQaPairs), 500);
+        return;
+      }
+
+      // Usar pregunta del caché
+      const nextQ = cachedQuestions[0];
+      setCurrentQuestion(nextQ);
+      setIsLoading(false);
+      setProcessingState('idle');
+      return;
+    }
+
+    // Solo generar con IA si no hay en caché
+    setProcessingState('generating');
+
     try {
       const res = await generateFollowUpQuestions({
         initialAnswer: newQaPairs[0].answer,
@@ -59,17 +172,19 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
           variant: "destructive",
         });
         setIsLoading(false);
-        return; 
+        setProcessingState('idle');
+        return;
       }
 
       setQaPairs(newQaPairs);
       setCurrentAnswer('');
 
       if (newQaPairs.length >= maxQuestions || !res.questions || res.questions.length === 0) {
-        handleFinish(newQaPairs);
+        setProcessingState('finishing');
+        setTimeout(() => handleFinish(newQaPairs), 500);
         return;
       }
-      
+
       if (res.questions && res.questions.length > 0) {
         setNextQuestions(res.questions);
       } else {
@@ -111,6 +226,41 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   
   const progressValue = (qaPairs.length / maxQuestions) * 100;
 
+  const getProcessingMessage = () => {
+    switch (processingState) {
+      case 'analyzing':
+        return 'Analizando tu respuesta...';
+      case 'generating':
+        return 'Generando la siguiente pregunta...';
+      case 'finishing':
+        return 'Preparando tus recomendaciones...';
+      default:
+        return '';
+    }
+  };
+
+  const getStatusIndicator = () => {
+    if (isPreloading) {
+      return (
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+          <span>Preparando siguiente pregunta...</span>
+        </div>
+      );
+    }
+
+    if (preloadedQuestions.length > 0) {
+      return (
+        <div className="flex items-center gap-2 text-xs text-green-600">
+          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+          <span>Siguiente pregunta lista ✓</span>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <Card className="w-full max-w-2xl mx-auto glassmorphism-strong shadow-2xl transition-all duration-500 hover-glow soft-border">
       <CardHeader className="p-4 md:p-6">
@@ -122,15 +272,29 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
         </CardDescription>
         <div className="pt-4">
             <Progress value={progressValue} className="w-full" />
-            <p className="text-xs text-center mt-1 text-muted-foreground">Pregunta {qaPairs.length + 1} de {maxQuestions}</p>
+            <div className="flex justify-between items-center mt-2">
+              <p className="text-xs text-muted-foreground">Pregunta {qaPairs.length + 1} de {maxQuestions}</p>
+              {getStatusIndicator()}
+            </div>
         </div>
       </CardHeader>
       <CardContent className="p-4 md:p-6">
         <div className="space-y-6">
           <div className="text-center min-h-[4rem] flex items-center justify-center p-2">
-            <p className="text-base sm:text-lg font-medium text-foreground animate-in fade-in duration-500">
-              {currentQuestion}
-            </p>
+            {processingState !== 'idle' ? (
+              <div className="space-y-2">
+                <div className="flex justify-center">
+                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                </div>
+                <p className="text-sm text-muted-foreground animate-pulse">
+                  {getProcessingMessage()}
+                </p>
+              </div>
+            ) : (
+              <p className="text-base sm:text-lg font-medium text-foreground animate-in fade-in duration-500">
+                {currentQuestion}
+              </p>
+            )}
           </div>
 
           <form onSubmit={handleAnswerSubmit} className="space-y-4">
@@ -147,8 +311,16 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                 disabled={isLoading}
                 suppressHydrationWarning
               />
-              <Button type="submit" size="icon" disabled={!currentAnswer.trim() || isLoading} className="rounded-full h-10 w-10 md:h-12 md:w-12 flex-shrink-0 glassmorphism-strong transition-all duration-300 hover:scale-110 touch-manipulation" suppressHydrationWarning>
-                {isLoading ? <Loader2 className="animate-spin h-4 w-4 sm:h-5 sm:w-5" /> : <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />}
+              <Button type="submit" disabled={!currentAnswer.trim() || isLoading} className={`rounded-full h-10 w-10 md:h-12 md:w-12 flex-shrink-0 glassmorphism-strong transition-all duration-300 hover:scale-110 touch-manipulation ${
+                preloadedQuestions.length > 0 ? 'ring-2 ring-green-400' : ''
+              }`} suppressHydrationWarning>
+                {isLoading ? (
+                  <Loader2 className="animate-spin h-4 w-4 sm:h-5 sm:w-5" />
+                ) : preloadedQuestions.length > 0 ? (
+                  <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
+                ) : (
+                  <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
+                )}
                 <span className="sr-only">Siguiente</span>
               </Button>
             </div>
