@@ -28,8 +28,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="font-body antialiased bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-slate-900 dark:via-purple-900 dark:to-blue-900 min-h-screen">
-        <div className="fixed inset-0 bg-gradient-to-br from-blue-100/30 via-purple-100/20 to-pink-100/30 dark:from-blue-900/30 dark:via-purple-900/20 dark:to-pink-900/30 pointer-events-none"></div>
+      <body className="font-body antialiased bg-slate-50 dark:bg-slate-950">
         <div className="relative z-10">
           {children}
         </div>
