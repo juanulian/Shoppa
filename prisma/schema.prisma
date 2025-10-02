@@ -1,0 +1,682 @@
+// Shoppa! Marketplace - Complete Database Schema
+// PostgreSQL via Prisma ORM
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USERS & AUTHENTICATION
+// ============================================
+
+enum UserRole {
+  BUYER
+  SELLER
+  ADMIN
+}
+
+enum SellerStatus {
+  PENDING_VERIFICATION
+  VERIFIED
+  SUSPENDED
+  REJECTED
+}
+
+enum SellerTier {
+  BASIC      // Pay-per-transaction (5%)
+  PREMIUM    // $99/month subscription (2.5%)
+  ENTERPRISE // Custom pricing
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  phone         String?
+  passwordHash  String
+  role          UserRole  @default(BUYER)
+
+  firstName     String?
+  lastName      String?
+  avatarUrl     String?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastLoginAt   DateTime?
+
+  // Relations
+  buyerProfile  BuyerProfile?
+  sellerProfile SellerProfile?
+  sessions      Session[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@map("sessions")
+}
+
+model BuyerProfile {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+
+  // Onboarding data
+  onboardingData   Json?    // Stores Q&A from intelligent onboarding
+  preferences      Json?    // User preferences, browsing history
+
+  // Shipping addresses
+  addresses        Address[]
+
+  // Purchase history
+  orders           Order[]
+  reviews          Review[]
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("buyer_profiles")
+}
+
+model SellerProfile {
+  id                  String        @id @default(cuid())
+  userId              String        @unique
+
+  // Business info
+  businessName        String
+  businessType        String        // "individual", "company", "cooperative"
+  taxId               String        @unique // CUIT/CUIL
+  businessAddress     String
+  businessPhone       String
+  businessEmail       String
+
+  // Banking info (for payouts)
+  bankName            String?
+  bankAccountNumber   String?
+  bankAccountType     String?       // "savings", "checking"
+
+  // Stripe Connect
+  stripeAccountId     String?       @unique
+  stripeOnboarded     Boolean       @default(false)
+
+  // Verification
+  status              SellerStatus  @default(PENDING_VERIFICATION)
+  verifiedAt          DateTime?
+  rejectionReason     String?
+
+  // Subscription tier
+  tier                SellerTier    @default(BASIC)
+  subscriptionId      String?       // Stripe subscription ID
+  subscriptionStatus  String?       // "active", "past_due", "canceled"
+  subscriptionEndsAt  DateTime?
+
+  // Reputation metrics
+  totalSales          Int           @default(0)
+  totalRevenue        Decimal       @default(0) @db.Decimal(15, 2)
+  averageRating       Decimal?      @db.Decimal(3, 2)
+  totalReviews        Int           @default(0)
+  responseTime        Int?          // Average in hours
+  onTimeDelivery      Decimal?      @db.Decimal(5, 2) // Percentage
+
+  // Settings
+  autoAcceptOrders    Boolean       @default(true)
+
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  user                User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products            Product[]
+  orders              Order[]
+  reviews             Review[]
+  payouts             Payout[]
+
+  @@index([status])
+  @@index([tier])
+  @@map("seller_profiles")
+}
+
+model Address {
+  id              String   @id @default(cuid())
+  buyerProfileId  String
+
+  label           String   // "Home", "Work", etc.
+  recipientName   String
+  street          String
+  number          String
+  apartment       String?
+  neighborhood    String?
+  city            String
+  state           String
+  zipCode         String
+  country         String   @default("AR")
+  phone           String
+
+  isDefault       Boolean  @default(false)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  buyerProfile    BuyerProfile @relation(fields: [buyerProfileId], references: [id], onDelete: Cascade)
+  orders          Order[]
+
+  @@index([buyerProfileId])
+  @@map("addresses")
+}
+
+// ============================================
+// PRODUCTS & CATALOG
+// ============================================
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  OUT_OF_STOCK
+  ARCHIVED
+}
+
+enum ProductCondition {
+  NEW
+  REFURBISHED
+  USED_EXCELLENT
+  USED_GOOD
+  USED_FAIR
+}
+
+model Product {
+  id                String           @id @default(cuid())
+  sellerProfileId   String
+
+  // Basic info
+  name              String
+  slug              String           @unique
+  description       String           @db.Text
+  aiEnhancedDesc    String?          @db.Text // AI-generated for Premium sellers
+
+  // Pricing
+  price             Decimal          @db.Decimal(15, 2)
+  compareAtPrice    Decimal?         @db.Decimal(15, 2) // Original price for discounts
+  currency          String           @default("ARS")
+
+  // Inventory
+  stock             Int              @default(0)
+  sku               String?          @unique
+
+  // Classification
+  category          String
+  subcategory       String?
+  brand             String
+  model             String?
+  condition         ProductCondition @default(NEW)
+
+  // Media
+  images            ProductImage[]
+  videos            ProductVideo[]
+
+  // Specifications (flexible JSON)
+  specifications    Json?            // { "processor": "Snapdragon 8 Gen 3", "ram": "12GB", ... }
+
+  // SEO
+  metaTitle         String?
+  metaDescription   String?
+
+  // Status
+  status            ProductStatus    @default(DRAFT)
+  publishedAt       DateTime?
+
+  // Metrics
+  viewCount         Int              @default(0)
+  favoriteCount     Int              @default(0)
+
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  seller            SellerProfile    @relation(fields: [sellerProfileId], references: [id], onDelete: Cascade)
+  orderItems        OrderItem[]
+  reviews           Review[]
+
+  @@index([sellerProfileId])
+  @@index([status])
+  @@index([category])
+  @@index([slug])
+  @@map("products")
+}
+
+model ProductImage {
+  id          String   @id @default(cuid())
+  productId   String
+
+  url         String
+  altText     String?
+  position    Int      @default(0)
+
+  createdAt   DateTime @default(now())
+
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@map("product_images")
+}
+
+model ProductVideo {
+  id          String   @id @default(cuid())
+  productId   String
+
+  url         String
+  thumbnailUrl String?
+  duration    Int?     // in seconds
+  position    Int      @default(0)
+
+  createdAt   DateTime @default(now())
+
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@map("product_videos")
+}
+
+// ============================================
+// ORDERS & TRANSACTIONS
+// ============================================
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAYMENT_PROCESSING
+  PAID
+  PREPARING
+  READY_FOR_PICKUP
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  DEBIT_CARD
+  BANK_TRANSFER
+  MERCADOPAGO
+}
+
+enum PaymentStatus {
+  PENDING
+  AUTHORIZED
+  CAPTURED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum ShippingMethod {
+  PICKUP
+  COURIER_STANDARD
+  COURIER_EXPRESS
+}
+
+model Order {
+  id                String         @id @default(cuid())
+  orderNumber       String         @unique // Human-readable: ORD-2024-00001
+
+  buyerProfileId    String
+  sellerProfileId   String
+  addressId         String?
+
+  // Amounts
+  subtotal          Decimal        @db.Decimal(15, 2)
+  shippingCost      Decimal        @db.Decimal(15, 2) @default(0)
+  tax               Decimal        @db.Decimal(15, 2) @default(0)
+  total             Decimal        @db.Decimal(15, 2)
+
+  // Platform fees
+  platformFee       Decimal        @db.Decimal(15, 2) // Shoppa! commission
+  platformFeePercent Decimal       @db.Decimal(5, 2)  // 5.00 = 5%
+  paymentProcessingFee Decimal     @db.Decimal(15, 2) // Stripe/MP fee
+  sellerPayout      Decimal        @db.Decimal(15, 2) // Amount seller receives
+
+  // Payment
+  paymentMethod     PaymentMethod
+  paymentStatus     PaymentStatus  @default(PENDING)
+  paymentIntentId   String?        @unique // Stripe Payment Intent ID
+  paidAt            DateTime?
+
+  // Payment in installments
+  installments      Int?           @default(1)
+  installmentAmount Decimal?       @db.Decimal(15, 2)
+  sellerWantsAdvance Boolean       @default(false) // Does seller want advance on installments?
+
+  // Shipping
+  shippingMethod    ShippingMethod?
+  trackingNumber    String?
+  trackingUrl       String?
+  carrierName       String?
+
+  // Status tracking
+  status            OrderStatus    @default(PENDING_PAYMENT)
+  statusHistory     OrderStatusHistory[]
+
+  // Timestamps
+  preparedAt        DateTime?
+  shippedAt         DateTime?
+  deliveredAt       DateTime?
+  cancelledAt       DateTime?
+
+  // Notes
+  buyerNotes        String?        @db.Text
+  sellerNotes       String?        @db.Text
+
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  // Relations
+  buyer             BuyerProfile   @relation(fields: [buyerProfileId], references: [id])
+  seller            SellerProfile  @relation(fields: [sellerProfileId], references: [id])
+  address           Address?       @relation(fields: [addressId], references: [id])
+  items             OrderItem[]
+  invoice           Invoice?
+
+  @@index([buyerProfileId])
+  @@index([sellerProfileId])
+  @@index([status])
+  @@index([orderNumber])
+  @@map("orders")
+}
+
+model OrderItem {
+  id            String   @id @default(cuid())
+  orderId       String
+  productId     String
+
+  quantity      Int      @default(1)
+  unitPrice     Decimal  @db.Decimal(15, 2)
+  totalPrice    Decimal  @db.Decimal(15, 2)
+
+  // Snapshot of product data at time of purchase
+  productName   String
+  productImage  String?
+  productSpecs  Json?
+
+  createdAt     DateTime @default(now())
+
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product       Product  @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
+}
+
+model OrderStatusHistory {
+  id        String      @id @default(cuid())
+  orderId   String
+
+  status    OrderStatus
+  notes     String?     @db.Text
+
+  createdAt DateTime    @default(now())
+
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@map("order_status_history")
+}
+
+// ============================================
+// INVOICING (AFIP Integration)
+// ============================================
+
+enum InvoiceStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  SENT
+  FAILED
+}
+
+model Invoice {
+  id                String        @id @default(cuid())
+  orderId           String        @unique
+
+  invoiceNumber     String        @unique // CAE from AFIP
+  invoiceType       String        // "B", "C", etc.
+
+  // AFIP data
+  afipCAE           String?       // Código de Autorización Electrónico
+  afipCAEExpiration DateTime?
+  afipStatus        String?
+  afipResponse      Json?
+
+  // Amounts
+  subtotal          Decimal       @db.Decimal(15, 2)
+  tax               Decimal       @db.Decimal(15, 2)
+  total             Decimal       @db.Decimal(15, 2)
+
+  // Parties
+  sellerTaxId       String
+  buyerTaxId        String?
+
+  // PDF
+  pdfUrl            String?
+
+  status            InvoiceStatus @default(DRAFT)
+
+  issuedAt          DateTime?
+  sentAt            DateTime?
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  order             Order         @relation(fields: [orderId], references: [id])
+
+  @@index([orderId])
+  @@index([invoiceNumber])
+  @@map("invoices")
+}
+
+// ============================================
+// PAYOUTS TO SELLERS
+// ============================================
+
+enum PayoutStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model Payout {
+  id                String        @id @default(cuid())
+  sellerProfileId   String
+
+  amount            Decimal       @db.Decimal(15, 2)
+  currency          String        @default("ARS")
+
+  // Stripe payout
+  stripePayoutId    String?       @unique
+
+  status            PayoutStatus  @default(PENDING)
+
+  // Timing
+  scheduledFor      DateTime
+  processedAt       DateTime?
+  completedAt       DateTime?
+
+  failureReason     String?       @db.Text
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  seller            SellerProfile @relation(fields: [sellerProfileId], references: [id])
+
+  @@index([sellerProfileId])
+  @@index([status])
+  @@map("payouts")
+}
+
+// ============================================
+// REVIEWS & REPUTATION
+// ============================================
+
+model Review {
+  id              String        @id @default(cuid())
+  orderId         String?       // Optional if reviewing just seller
+  productId       String?
+  buyerProfileId  String
+  sellerProfileId String
+
+  // Ratings (1-5)
+  overallRating   Int           // Required
+  productRating   Int?          // Optional: rate product separately
+  sellerRating    Int?          // Optional: rate seller separately
+
+  // Review text
+  title           String?
+  comment         String?       @db.Text
+
+  // Media
+  images          ReviewImage[]
+
+  // Seller response
+  sellerResponse  String?       @db.Text
+  respondedAt     DateTime?
+
+  // Moderation
+  isVerified      Boolean       @default(false) // Verified purchase
+  isHidden        Boolean       @default(false)
+
+  // Helpful votes
+  helpfulCount    Int           @default(0)
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  buyer           BuyerProfile  @relation(fields: [buyerProfileId], references: [id])
+  seller          SellerProfile @relation(fields: [sellerProfileId], references: [id])
+  product         Product?      @relation(fields: [productId], references: [id])
+
+  @@index([buyerProfileId])
+  @@index([sellerProfileId])
+  @@index([productId])
+  @@map("reviews")
+}
+
+model ReviewImage {
+  id        String   @id @default(cuid())
+  reviewId  String
+
+  url       String
+  position  Int      @default(0)
+
+  createdAt DateTime @default(now())
+
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@map("review_images")
+}
+
+// ============================================
+// NOTIFICATIONS
+// ============================================
+
+enum NotificationType {
+  ORDER_CREATED
+  ORDER_PAID
+  ORDER_PREPARING
+  ORDER_SHIPPED
+  ORDER_DELIVERED
+  ORDER_CANCELLED
+  REVIEW_RECEIVED
+  PAYOUT_COMPLETED
+  VERIFICATION_APPROVED
+  VERIFICATION_REJECTED
+  SUBSCRIPTION_ENDING
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+  WHATSAPP
+  IN_APP
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+model Notification {
+  id          String              @id @default(cuid())
+  userId      String
+
+  type        NotificationType
+  channel     NotificationChannel
+  status      NotificationStatus  @default(PENDING)
+
+  // Content
+  title       String
+  message     String              @db.Text
+  data        Json?               // Additional metadata
+
+  // Delivery
+  sentAt      DateTime?
+  readAt      DateTime?
+
+  // External IDs (for tracking)
+  externalId  String?             // Email ID, SMS ID, etc.
+
+  createdAt   DateTime            @default(now())
+
+  @@index([userId])
+  @@index([status])
+  @@index([type])
+  @@map("notifications")
+}
+
+// ============================================
+// ANALYTICS & METRICS
+// ============================================
+
+model AnalyticsEvent {
+  id            String   @id @default(cuid())
+
+  // Event info
+  eventType     String   // "product_view", "add_to_cart", "purchase", etc.
+  userId        String?
+  sessionId     String?
+
+  // Context
+  productId     String?
+  orderId       String?
+
+  // Metadata
+  metadata      Json?
+
+  // Request info
+  ipAddress     String?
+  userAgent     String?
+  referrer      String?
+
+  createdAt     DateTime @default(now())
+
+  @@index([eventType])
+  @@index([userId])
+  @@index([productId])
+  @@index([createdAt])
+  @@map("analytics_events")
+}

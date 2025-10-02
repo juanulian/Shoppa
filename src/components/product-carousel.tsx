@@ -133,7 +133,13 @@ const ProductCard: React.FC<{
           >
             {isMobile ? "Detalles" : "Ver Detalles"}
           </Button>
-          <VerifiedProductLink className="w-full" />
+          <VerifiedProductLink
+            className="w-full"
+            productId={product.productName}
+            productName={product.productName}
+            productPrice={product.price}
+            productImage={product.imageUrl}
+          />
         </div>
       </div>
     </div>
