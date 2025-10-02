@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { generateFollowUpQuestions } from '@/ai/flows/dynamic-question-generation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +10,7 @@ import { Loader2, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from '@/components/ui/progress';
 import { questionCache } from '@/utils/question-cache';
+import { useSearchParams } from 'next/navigation';
 
 interface OnboardingProps {
   onComplete: (profileData: string, initialSearchQuery?: string) => void;
@@ -23,6 +25,9 @@ const initialQuestion = "¿Cuál es tu uso principal del celular? (Por ejemplo: 
 const maxQuestions = 3; 
 
 const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
+  const searchParams = useSearchParams();
+  const initialSearchQuery = useMemo(() => searchParams.get('q') || '', [searchParams]);
+
   const [qaPairs, setQaPairs] = useState<QA[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(initialQuestion);
   const [currentAnswer, setCurrentAnswer] = useState('');
@@ -35,11 +40,23 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const { toast } = useToast();
 
   useEffect(() => {
+    // If there's an initial search query, use it as the answer to the first question.
+    if (initialSearchQuery && qaPairs.length === 0) {
+      const firstAnswer = initialSearchQuery;
+      setCurrentAnswer(firstAnswer);
+      const newQaPair = { question: initialQuestion, answer: firstAnswer };
+      
+      // We'll proceed as if the user just submitted this answer.
+      // We need to wrap this in a timeout to let the state update before proceeding.
+      setTimeout(() => handleAnswerSubmit(new Event('submit'), firstAnswer), 100);
+    }
+  }, [initialSearchQuery]);
+
+
+  useEffect(() => {
     if (nextQuestions.length > 0) {
-      // Usar pregunta precargada si está disponible, sino la generada
       let nextQ = nextQuestions[Math.floor(Math.random() * nextQuestions.length)];
 
-      // Si tenemos preguntas precargadas, usar una de ellas si es apropiada
       if (preloadedQuestions.length > 0) {
         nextQ = preloadedQuestions[0];
         setPreloadedQuestions(prev => prev.slice(1));
@@ -51,20 +68,15 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
     }
   }, [nextQuestions, preloadedQuestions]);
 
-  // Función para precargar preguntas con debounce
   const preloadNextQuestions = useCallback(async (partialAnswer: string) => {
     if (!partialAnswer.trim() || partialAnswer.length < 20 || isPreloading) return;
-
-    // Solo precargar si la respuesta es sustancialmente diferente a la actual
     if (currentAnswer.length > 0 && partialAnswer.length < currentAnswer.length + 5) return;
 
     setIsPreloading(true);
     try {
-      // Intentar primero con el caché solo si es muy específica la respuesta
       const cachedQuestions = questionCache.findCachedQuestions(partialAnswer);
 
       if (cachedQuestions.length > 0) {
-        // Filtrar preguntas que no estén relacionadas con la pregunta actual
         const filteredQuestions = cachedQuestions.filter(q =>
           !q.toLowerCase().includes(currentQuestion.toLowerCase().split('?')[0].slice(0, 10))
         );
@@ -76,7 +88,6 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
         }
       }
 
-      // Solo generar con IA si es una respuesta completa (más de 25 caracteres)
       if (partialAnswer.length < 25) {
         setIsPreloading(false);
         return;
@@ -94,51 +105,47 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
         setPreloadedQuestions(res.questions);
       }
     } catch (error) {
-      // Silently fail - this is just preloading
       console.log("Preload failed (non-critical):", error);
     } finally {
       setIsPreloading(false);
     }
   }, [isPreloading, currentQuestion, qaPairs, currentAnswer]);
 
-  // Debounce para la respuesta del usuario
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedAnswer(currentAnswer);
-    }, 2000); // 2 segundos de debounce para evitar precarga prematura
-
+    }, 2000); 
     return () => clearTimeout(timer);
   }, [currentAnswer]);
 
-  // Precargar cuando la respuesta debounced cambia
   useEffect(() => {
     if (debouncedAnswer.length >= 20 && qaPairs.length < maxQuestions - 1) {
       preloadNextQuestions(debouncedAnswer);
     }
   }, [debouncedAnswer, preloadNextQuestions, qaPairs.length]);
 
-  const handleAnswerSubmit = async (e: React.FormEvent) => {
+  const handleAnswerSubmit = async (e: React.FormEvent | Event, explicitAnswer?: string) => {
     e.preventDefault();
-    if (!currentAnswer.trim() || isLoading) return;
+    const answerToSubmit = explicitAnswer ?? currentAnswer;
+
+    if (!answerToSubmit.trim() || isLoading) return;
 
     setIsLoading(true);
     setProcessingState('analyzing');
 
-    const newQaPair = { question: currentQuestion, answer: currentAnswer };
+    const newQaPair = { question: currentQuestion, answer: answerToSubmit };
     const newQaPairs = [...qaPairs, newQaPair];
 
-    // Si tenemos preguntas precargadas que coinciden con esta respuesta, usarlas inmediatamente
+    setQaPairs(newQaPairs);
+    setCurrentAnswer('');
+
+    if (newQaPairs.length >= maxQuestions) {
+      setProcessingState('finishing');
+      setTimeout(() => handleFinish(newQaPairs), 500);
+      return;
+    }
+
     if (preloadedQuestions.length > 0) {
-      setQaPairs(newQaPairs);
-      setCurrentAnswer('');
-
-      if (newQaPairs.length >= maxQuestions) {
-        setProcessingState('finishing');
-        setTimeout(() => handleFinish(newQaPairs), 500);
-        return;
-      }
-
-      // Usar pregunta precargada inmediatamente
       const nextQ = preloadedQuestions[0];
       setPreloadedQuestions(prev => prev.slice(1));
       setCurrentQuestion(nextQ);
@@ -146,38 +153,19 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
       setProcessingState('idle');
       return;
     }
-
-    // Intentar primero con el caché antes de generar con IA
-    setProcessingState('analyzing');
-
-    // Buscar en caché basado en la respuesta actual
-    const cachedQuestions = questionCache.findCachedQuestions(currentAnswer);
-
-    if (cachedQuestions.length > 0) {
-      setQaPairs(newQaPairs);
-      setCurrentAnswer('');
-
-      if (newQaPairs.length >= maxQuestions) {
-        setProcessingState('finishing');
-        setTimeout(() => handleFinish(newQaPairs), 500);
-        return;
-      }
-
-      // Usar pregunta del caché
-      const nextQ = cachedQuestions[0];
-      setCurrentQuestion(nextQ);
-      setIsLoading(false);
-      setProcessingState('idle');
-      return;
-    }
-
-    // Solo generar con IA si no hay en caché
+    
     setProcessingState('generating');
 
     try {
+      // Include the initial search query in the context for the AI
+      const initialContext = initialSearchQuery ? `El usuario buscó inicialmente: "${initialSearchQuery}".\n\n` : '';
+      const finalQaPairs = initialContext 
+        ? [{ question: "Búsqueda inicial del usuario", answer: initialSearchQuery }, ...newQaPairs]
+        : newQaPairs;
+
       const res = await generateFollowUpQuestions({
-        initialAnswer: newQaPairs[0].answer,
-        priorQuestionsAndAnswers: newQaPairs
+        initialAnswer: finalQaPairs[0].answer,
+        priorQuestionsAndAnswers: finalQaPairs
       });
 
       if (!res.isAnswerRelevant) {
@@ -188,15 +176,9 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
         });
         setIsLoading(false);
         setProcessingState('idle');
-        return;
-      }
-
-      setQaPairs(newQaPairs);
-      setCurrentAnswer('');
-
-      if (newQaPairs.length >= maxQuestions || !res.questions || res.questions.length === 0) {
-        setProcessingState('finishing');
-        setTimeout(() => handleFinish(newQaPairs), 500);
+        // revert the last question
+        setQaPairs(qaPairs);
+        setCurrentAnswer(answerToSubmit);
         return;
       }
 
@@ -217,6 +199,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
     }
   };
 
+
   const handleBack = () => {
     if (qaPairs.length === 0) return;
     const lastQa = qaPairs[qaPairs.length - 1];
@@ -227,7 +210,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
   const handleFinish = (finalQaPairs?: QA[]) => {
     const pairsToProcess = finalQaPairs || qaPairs;
-    if (pairsToProcess.length === 0) {
+    if (pairsToProcess.length === 0 && !initialSearchQuery) {
       toast({
         title: "Espera un momento",
         description: "Por favor, responde al menos una pregunta para que podamos ayudarte.",
@@ -235,22 +218,23 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
       });
       return;
     }
-    const profileData = pairsToProcess.map(qa => `P: ${qa.question}\nR: ${qa.answer}`).join('\n\n');
-    onComplete(profileData);
+    
+    let profileData = pairsToProcess.map(qa => `P: ${qa.question}\nR: ${qa.answer}`).join('\n\n');
+    if (initialSearchQuery) {
+        profileData = `El usuario buscó inicialmente: "${initialSearchQuery}"\n\n${profileData}`;
+    }
+
+    onComplete(profileData, initialSearchQuery);
   };
   
   const progressValue = (qaPairs.length / maxQuestions) * 100;
 
   const getProcessingMessage = () => {
     switch (processingState) {
-      case 'analyzing':
-        return 'Analizando tu respuesta...';
-      case 'generating':
-        return 'Generando la siguiente pregunta...';
-      case 'finishing':
-        return 'Preparando tus recomendaciones...';
-      default:
-        return '';
+      case 'analyzing': return 'Analizando tu respuesta...';
+      case 'generating': return 'Generando la siguiente pregunta...';
+      case 'finishing': return 'Preparando tus recomendaciones...';
+      default: return '';
     }
   };
 
@@ -340,7 +324,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
               </Button>
             </div>
             <div className="flex justify-center items-center gap-4 pt-4">
-                <Button onClick={() => handleFinish()} size="lg" variant="ghost" className="rounded-full font-bold glassmorphism transition-all duration-300 hover:scale-105 hover:glassmorphism-strong text-sm sm:text-base touch-manipulation" disabled={isLoading || qaPairs.length === 0} suppressHydrationWarning>
+                <Button onClick={() => handleFinish()} size="lg" variant="ghost" className="rounded-full font-bold glassmorphism transition-all duration-300 hover:scale-105 hover:glassmorphism-strong text-sm sm:text-base touch-manipulation" disabled={isLoading || (qaPairs.length === 0 && !initialSearchQuery)} suppressHydrationWarning>
                     Finalizar y Ver Celulares
                 </Button>
             </div>
