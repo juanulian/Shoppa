@@ -104,8 +104,11 @@ const ROICalculator: React.FC = () => {
 
 export default function SellersLandingPage() {
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-            <header className="border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md">
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 relative">
+            {/* Timeline que recorre toda la página */}
+            <ScrollTimeline />
+
+            <header className="border-b border-slate-200 dark:border-slate-800 sticky top-0 z-[110] bg-white/80 dark:bg-slate-950/80 backdrop-blur-md">
                 <div className="container mx-auto px-4 py-4 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2">
                         <Logo />
@@ -203,18 +206,20 @@ export default function SellersLandingPage() {
                     </div>
                 </section>
 
-                <section className="bg-[url('/background/cards.png')] bg-cover bg-center relative">
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-50/50 to-transparent dark:via-slate-950/50"></div>
-                    <div className="relative">
-                        <div className="container mx-auto px-4 py-20 text-center">
-                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-slate-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
-                                Tu viaje hacia mejores ventas
-                            </h2>
-                            <p className="text-base sm:text-lg md:text-xl text-muted-foreground [text-shadow:0_1px_2px_rgba(0,0,0,0.1)] mb-12">
-                                Seguí el recorrido: problema → solución → resultado.
+                <section className="bg-[url('/background/cards.png')] bg-cover bg-center py-20 sm:py-28 transition-all duration-700">
+                    <div className="container mx-auto px-4 text-center">
+                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-slate-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
+                            Tu viaje hacia mejores ventas
+                        </h2>
+                        <p className="text-base sm:text-lg md:text-xl text-muted-foreground [text-shadow:0_1px_2px_rgba(0,0,0,0.1)] mb-12">
+                            Seguí el recorrido: problema → solución → resultado.
+                        </p>
+                        {/* Las cards aparecen como overlays fixed mientras el usuario hace scroll */}
+                        <div className="py-32 text-center">
+                            <p className="text-sm text-muted-foreground">
+                                👇 Hacé scroll para seguir el recorrido
                             </p>
                         </div>
-                        <ScrollTimeline />
                     </div>
                 </section>
 
