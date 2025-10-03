@@ -59,7 +59,6 @@ export default function BuyerLandingPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
       <header className="bg-[url('/background/header_footer.png')] bg-cover bg-center border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
         <div className="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -74,23 +73,21 @@ export default function BuyerLandingPage() {
         </div>
       </header>
 
-      {/* Hero Section */}
       <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center">
         <div className="container mx-auto px-4 pt-20 pb-16 text-center">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-7xl font-bold font-headline tracking-tight mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 text-slate-900 dark:text-slate-100 [text-shadow:0_1px_2px_rgba(255,255,255,0.2)]">
+            <h1 className="text-5xl md:text-7xl font-bold font-headline tracking-tight mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 text-slate-900 dark:text-slate-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
               Encontrá tu celular perfecto
               <br />
               <span className="text-primary">en 3 minutos</span>
             </h1>
 
-            <p className="text-xl text-slate-700 dark:text-slate-300 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 [text-shadow:0_1px_2px_rgba(255,255,255,0.1)]">
+            <p className="text-xl text-slate-700 dark:text-slate-300 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
               Sin perderte en 500 opciones. Sin arrepentimientos.
               <br />
               Shoppa! te recomienda exactamente lo que necesitás.
             </p>
 
-            {/* Search Bar */}
             <form
               onSubmit={handleSearch}
               className="max-w-2xl mx-auto mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200"
@@ -112,12 +109,11 @@ export default function BuyerLandingPage() {
                   />
                 </div>
                 <Button type="submit" size="lg" className="h-14 px-8 rounded-full text-lg">
-                  Buscar
+                  S!
                 </Button>
               </div>
             </form>
 
-            {/* Categories */}
             <div className="mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
               <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-6">
                 O explorá por categoría
@@ -175,7 +171,6 @@ export default function BuyerLandingPage() {
         </div>
       </section>
 
-      {/* How it Works */}
       <section className="bg-[url('/background/cards.png')] bg-cover bg-center py-20">
         <div className="bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm py-16">
           <div className="container mx-auto px-4">
@@ -214,7 +209,6 @@ export default function BuyerLandingPage() {
         </div>
       </section>
 
-      {/* Final CTA */}
       <section className="bg-[url('/background/header_footer.png')] bg-cover bg-center py-20">
         <div className="bg-primary/95 backdrop-blur-sm py-16">
           <div className="container mx-auto px-4 text-center">
@@ -241,7 +235,6 @@ export default function BuyerLandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="bg-[url('/background/header_footer.png')] bg-cover bg-center border-t border-slate-200 dark:border-slate-800">
         <div className="bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm py-8">
           <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
