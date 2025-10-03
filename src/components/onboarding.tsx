@@ -41,16 +41,10 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
   useEffect(() => {
     // If there's an initial search query, use it as the answer to the first question.
-    if (initialSearchQuery && qaPairs.length === 0) {
-      const firstAnswer = initialSearchQuery;
-      setCurrentAnswer(firstAnswer);
-      const newQaPair = { question: initialQuestion, answer: firstAnswer };
-      
-      // We'll proceed as if the user just submitted this answer.
-      // We need to wrap this in a timeout to let the state update before proceeding.
-      setTimeout(() => handleAnswerSubmit(new Event('submit'), firstAnswer), 100);
+    if (initialSearchQuery && qaPairs.length === 0 && currentAnswer === '') {
+      setCurrentAnswer(initialSearchQuery);
     }
-  }, [initialSearchQuery]);
+  }, [initialSearchQuery, qaPairs.length, currentAnswer]);
 
 
   useEffect(() => {
@@ -157,15 +151,9 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
     setProcessingState('generating');
 
     try {
-      // Include the initial search query in the context for the AI
-      const initialContext = initialSearchQuery ? `El usuario buscó inicialmente: "${initialSearchQuery}".\n\n` : '';
-      const finalQaPairs = initialContext 
-        ? [{ question: "Búsqueda inicial del usuario", answer: initialSearchQuery }, ...newQaPairs]
-        : newQaPairs;
-
       const res = await generateFollowUpQuestions({
-        initialAnswer: finalQaPairs[0].answer,
-        priorQuestionsAndAnswers: finalQaPairs
+        initialAnswer: newQaPairs[0].answer,
+        priorQuestionsAndAnswers: newQaPairs.slice(1)
       });
 
       if (!res.isAnswerRelevant) {
@@ -210,7 +198,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
   const handleFinish = (finalQaPairs?: QA[]) => {
     const pairsToProcess = finalQaPairs || qaPairs;
-    if (pairsToProcess.length === 0 && !initialSearchQuery) {
+    if (pairsToProcess.length === 0) {
       toast({
         title: "Espera un momento",
         description: "Por favor, responde al menos una pregunta para que podamos ayudarte.",
@@ -218,11 +206,8 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
       });
       return;
     }
-    
-    let profileData = pairsToProcess.map(qa => `P: ${qa.question}\nR: ${qa.answer}`).join('\n\n');
-    if (initialSearchQuery) {
-        profileData = `El usuario buscó inicialmente: "${initialSearchQuery}"\n\n${profileData}`;
-    }
+
+    const profileData = pairsToProcess.map(qa => `P: ${qa.question}\nR: ${qa.answer}`).join('\n\n');
 
     onComplete(profileData, initialSearchQuery);
   };
@@ -324,7 +309,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
               </Button>
             </div>
             <div className="flex justify-center items-center gap-4 pt-4">
-                <Button onClick={() => handleFinish()} size="lg" variant="ghost" className="rounded-full font-bold glassmorphism transition-all duration-300 hover:scale-105 hover:glassmorphism-strong text-sm sm:text-base touch-manipulation" disabled={isLoading || (qaPairs.length === 0 && !initialSearchQuery)} suppressHydrationWarning>
+                <Button onClick={() => handleFinish()} size="lg" variant="ghost" className="rounded-full font-bold glassmorphism transition-all duration-300 hover:scale-105 hover:glassmorphism-strong text-sm sm:text-base touch-manipulation" disabled={isLoading || qaPairs.length === 0} suppressHydrationWarning>
                     Finalizar y Ver Celulares
                 </Button>
             </div>

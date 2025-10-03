@@ -165,7 +165,7 @@ export default function BuyerLandingPage() {
                 </div>
                 <h3 className="text-xl font-bold mb-2">Respondé 3 preguntas</h3>
                 <p className="text-muted-foreground">
-                  Contanos qué necesitás.
+                  Contanos qué necesitás
                 </p>
               </div>
 
@@ -175,7 +175,7 @@ export default function BuyerLandingPage() {
                 </div>
                 <h3 className="text-xl font-bold mb-2">Te mostramos 3 opciones</h3>
                 <p className="text-muted-foreground">
-                  Shoppa! selecciona las 3 mejores opciones para vos. Ni más, ni menos.
+                  Shoppa! selecciona las 3 mejores opciones para vos. Ni más, ni menos
                 </p>
               </div>
 
@@ -185,7 +185,7 @@ export default function BuyerLandingPage() {
                 </div>
                 <h3 className="text-xl font-bold mb-2">Comprás sin dudas</h3>
                 <p className="text-muted-foreground">
-                  Elegís la que más te gusta y listo.
+                  Elegís la que más te gusta y listo
                 </p>
               </div>
             </div>
