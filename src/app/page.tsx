@@ -100,7 +100,7 @@ export default function BuyerLandingPage() {
               onSubmit={handleSearch}
               className="max-w-2xl mx-auto mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200"
             >
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex flex-row gap-3">
                 <div className="relative flex-1">
                   <Search
                     aria-hidden="true"
