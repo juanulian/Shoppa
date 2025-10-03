@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import SimulatedCheckout from '@/components/checkout/simulated-checkout';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [product, setProduct] = useState<any>(null);
@@ -53,5 +53,17 @@ export default function CheckoutPage() {
         <SimulatedCheckout product={product} onSuccess={handleSuccess} />
       </div>
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Cargando...</p>
+      </div>
+    }>
+      <CheckoutContent />
+    </Suspense>
   );
 }
