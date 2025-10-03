@@ -33,30 +33,49 @@ const StepContent = ({ step, index }: { step: Step; index: number }) => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ['start end', 'end start'],
+    offset: ['start 0.8', 'end 0.6'], // Animate when element is in view
   });
 
-  const opacity = useTransform(scrollYProgress, [0.1, 0.3, 0.7, 0.9], [0, 1, 1, 0]);
-  const scale = useTransform(scrollYProgress, [0.1, 0.3], [0.8, 1]);
-  const y = useTransform(scrollYProgress, [0.1, 0.3], ['20px', '0px']);
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1]);
+  const y = useTransform(scrollYProgress, [0, 0.5], ['30px', '0px']);
 
   const Icon = step.icon;
   const isEven = index % 2 === 0;
 
   return (
-    <motion.div
-      ref={ref}
-      style={{ opacity, scale, y }}
-      className={`relative flex items-start gap-6 sm:gap-8 z-10 my-16 ${isEven ? 'flex-row' : 'flex-row-reverse'}`}
-    >
-      <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center">
-        <Icon className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
-      </div>
-      <div className={`flex-grow ${isEven ? 'text-left' : 'text-right'}`}>
+    <div ref={ref} className="relative grid grid-cols-[1fr_auto_1fr] items-start gap-4 sm:gap-8 my-16">
+      {/* Content for even/left side */}
+      <motion.div
+        style={{ opacity, scale, y }}
+        className={`flex-grow text-right ${!isEven ? 'md:hidden' : 'block'}`}
+      >
         <h3 className="text-xl sm:text-2xl font-bold mb-2">{step.title}</h3>
         <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">{step.description}</p>
+      </motion.div>
+      
+      {/* Mobile view content */}
+      <div className="md:hidden col-start-1 col-span-3 text-center my-4">
+        <motion.div style={{ opacity, scale, y }}>
+          <h3 className="text-xl font-bold mb-2">{step.title}</h3>
+          <p className="text-muted-foreground text-base leading-relaxed">{step.description}</p>
+        </motion.div>
       </div>
-    </motion.div>
+
+      {/* Center Icon */}
+      <motion.div style={{ opacity, scale }} className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center z-10 mx-auto md:mx-0">
+        <Icon className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
+      </motion.div>
+
+      {/* Content for odd/right side */}
+      <motion.div
+        style={{ opacity, scale, y }}
+        className={`flex-grow text-left ${isEven ? 'md:hidden' : 'block'}`}
+      >
+        <h3 className="text-xl sm:text-2xl font-bold mb-2">{step.title}</h3>
+        <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">{step.description}</p>
+      </motion.div>
+    </div>
   );
 };
 
@@ -82,22 +101,12 @@ export default function InteractiveTimeline() {
         </div>
         
         <div className="max-w-4xl mx-auto relative">
-          <svg width="100%" height="100%" viewBox="0 0 400 900" preserveAspectRatio="none" className="absolute top-0 left-1/2 -translate-x-1/2 h-full w-auto">
-            <motion.path
-              d="M 200 0 V 900"
-              fill="none"
-              stroke="hsl(var(--primary))"
-              strokeWidth="3"
-              strokeOpacity="0.2"
-            />
-            <motion.path
-              d="M 200 0 V 900"
-              fill="none"
-              stroke="hsl(var(--primary))"
-              strokeWidth="3"
-              style={{ pathLength }}
-            />
-          </svg>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 h-full w-px bg-primary/20">
+              <motion.div 
+                className="h-full w-full bg-primary origin-top"
+                style={{ scaleY: pathLength }}
+              />
+          </div>
           
           <div className="relative">
             {steps.map((step, index) => (

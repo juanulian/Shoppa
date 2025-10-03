@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Calculator, ArrowRight, Zap, Target, ShoppingCart } from 'lucide-react';
+import { Calculator, ArrowRight, Zap, ShoppingCart } from 'lucide-react';
 import Logo from '@/components/icons/logo';
 import InteractiveTimeline from '@/components/landing/interactive-timeline';
 
@@ -88,23 +88,21 @@ const ROICalculator: React.FC = () => {
 export default function SellersLandingPage() {
     return (
         <div className="min-h-screen">
-            <header className="bg-[url('/background/header_footer.png')] bg-cover bg-center border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
-                <div className="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md">
-                    <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-                        <Link href="/" className="flex items-center gap-2">
-                            <Logo />
+            <header className="border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
+                <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+                    <Link href="/" className="flex items-center gap-2">
+                        <Logo />
+                    </Link>
+                    <Button variant="outline" asChild className="rounded-full">
+                        <Link href="/">
+                            ← Volver a Comprar
                         </Link>
-                        <Button variant="outline" asChild className="rounded-full">
-                            <Link href="/">
-                                ← Volver a Comprar
-                            </Link>
-                        </Button>
-                    </div>
+                    </Button>
                 </div>
             </header>
 
             <main className="flex-1">
-                <section className="bg-[url('/background/header_footer.png')] bg-cover bg-center py-20 sm:py-28">
+                <section className="py-20 sm:py-28">
                     <div className="container mx-auto px-4 text-center">
                         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 leading-tight">
                             ¿Perdés 75% de tus ventas
@@ -132,7 +130,7 @@ export default function SellersLandingPage() {
                     </div>
                 </section>
 
-                <section className="bg-[url('/background/cards.png')] bg-cover bg-center py-20 sm:py-28">
+                <section className="py-20 sm:py-28">
                     <div className="container mx-auto px-4">
                         <div className="text-center max-w-3xl mx-auto mb-16">
                             <ShoppingCart className="h-16 w-16 text-primary mx-auto mb-6" />
@@ -174,14 +172,14 @@ export default function SellersLandingPage() {
 
                 <InteractiveTimeline />
                 
-                <section className="bg-[url('/background/cards.png')] bg-cover bg-center py-20 sm:py-28">
+                <section className="py-20 sm:py-28">
                     <div className="container mx-auto px-4 max-w-3xl">
                         <ROICalculator />
                     </div>
                 </section>
 
-                <section className="bg-[url('/background/header_footer.png')] bg-cover bg-center py-20 sm:py-28">
-                    <div className="bg-primary/95 backdrop-blur-sm py-16 sm:py-20">
+                <section className="py-20 sm:py-28">
+                    <div className="py-16 sm:py-20">
                         <div className="container mx-auto px-4 text-center">
                             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-8 text-primary-foreground">
                                 ¿Listo para dejar de perder clientes?
@@ -200,8 +198,8 @@ export default function SellersLandingPage() {
                 </section>
             </main>
 
-            <footer className="bg-[url('/background/header_footer.png')] bg-cover bg-center border-t border-slate-200 dark:border-slate-800">
-                <div className="bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm py-10">
+            <footer className="border-t border-slate-200 dark:border-slate-800">
+                <div className="py-10">
                     <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
                         <p className="mb-4 text-base">© 2025 Shoppa! Todos los derechos reservados.</p>
                         <div className="flex justify-center gap-8 text-base">
