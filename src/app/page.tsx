@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -108,7 +109,7 @@ export default function BuyerLandingPage() {
                     aria-label="Buscar celulares"
                   />
                 </div>
-                <Button type="submit" size="lg" className="h-14 w-14 rounded-full text-2xl font-extrabold border-2 border-primary/50">
+                <Button type="submit" className="h-14 w-14 rounded-full text-2xl font-extrabold border-2 border-primary/50 text-white">
                   S!
                 </Button>
               </div>
