@@ -8,7 +8,7 @@ import type { LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { Smartphone, Laptop, Headphones, Search, ArrowRight, Zap } from 'lucide-react';
+import { Smartphone, Laptop, Home, Search, ArrowRight, Zap } from 'lucide-react';
 import Logo from '@/components/icons/logo';
 import {
   Tooltip,
@@ -42,9 +42,9 @@ const categories: Category[] = [
     description: 'Próximamente',
   },
   {
-    id: 'audio',
-    name: 'Audio',
-    icon: Headphones,
+    id: 'appliances',
+    name: 'Electrodomésticos',
+    icon: Home,
     active: false,
     description: 'Próximamente',
   },
