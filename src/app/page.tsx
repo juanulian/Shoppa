@@ -88,14 +88,13 @@ export default function BuyerLandingPage() {
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-7xl font-bold font-headline tracking-tight mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 text-slate-900 dark:text-slate-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
-              El celular perfecto.
+              Lo que buscás.
               <br />
               <span className="text-primary">En 3 minutos.</span>
             </h1>
 
             <p className="text-2xl md:text-3xl text-slate-700 dark:text-slate-300 mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)] font-light">
-              Respondé 3 preguntas. <br className="hidden sm:block" />
-              Te mostramos 3 opciones.
+              3 preguntas. 3 opciones perfectas.
             </p>
 
             <form
@@ -227,56 +226,25 @@ export default function BuyerLandingPage() {
               ))}
             </div>
 
-            <div className="text-center mt-12">
-              <Button size="lg" onClick={() => router.push('/demo')} className="rounded-full px-10 h-14 text-lg shadow-xl hover:scale-105 transition-transform">
-                <Zap className="mr-2 h-5 w-5" />
-                Probalo ahora
-              </Button>
-            </div>
-
-            {/* Trust signals */}
-            <div className="mt-20 pt-12 border-t border-slate-200 dark:border-slate-800">
-              <p className="text-center text-sm text-muted-foreground mb-8 uppercase tracking-wider">
-                Por qué funciona
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-primary mb-2">3</div>
-                  <p className="text-sm font-medium">Opciones perfectas</p>
-                  <p className="text-xs text-muted-foreground mt-1">Ni más, ni menos</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-primary mb-2">100%</div>
-                  <p className="text-sm font-medium">Gratis para compradores</p>
-                  <p className="text-xs text-muted-foreground mt-1">Siempre</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-primary mb-2">0</div>
-                  <p className="text-sm font-medium">Arrepentimientos</p>
-                  <p className="text-xs text-muted-foreground mt-1">Comprás seguro</p>
-                </div>
-              </div>
-            </div>
         </div>
       </section>
 
-      <section className="bg-[url('/background/header_footer.png')] bg-cover bg-center py-20 transition-all duration-700">
-        <div className="bg-primary/95 backdrop-blur-md py-16">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-4xl md:text-6xl font-bold mb-6 text-primary-foreground">
-              Encontrá tu celular ideal.
-            </h2>
-            <p className="text-xl md:text-2xl mb-12 text-primary-foreground/90 font-light">
-              Gratis. En 3 minutos.
-            </p>
+      <section className="relative bg-[url('/background/header_footer.png')] bg-cover bg-center py-20 transition-all duration-700">
+        <div className="absolute inset-0 bg-primary/90"></div>
+        <div className="relative container mx-auto px-4 text-center py-16">
+          <h2 className="text-4xl md:text-6xl font-bold mb-6 text-primary-foreground">
+            Encontrá lo que buscás.
+          </h2>
+          <p className="text-xl md:text-2xl mb-12 text-primary-foreground/90 font-light">
+            Gratis. En 3 minutos.
+          </p>
 
-            <Button asChild size="lg" variant="secondary" className="rounded-full px-16 h-16 text-xl shadow-2xl hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] transition-all font-semibold">
-              <Link href="/demo">
-                Empezar
-                <ArrowRight className="ml-2 h-6 w-6" />
-              </Link>
-            </Button>
-          </div>
+          <Button asChild size="lg" variant="secondary" className="rounded-full px-16 h-16 text-xl shadow-2xl hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] transition-all font-semibold">
+            <Link href="/demo">
+              Empezar
+              <ArrowRight className="ml-2 h-6 w-6" />
+            </Link>
+          </Button>
         </div>
       </section>
 
