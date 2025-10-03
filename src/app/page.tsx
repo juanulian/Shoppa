@@ -10,6 +10,13 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Smartphone, Laptop, Headphones, Search, ArrowRight, Zap } from 'lucide-react';
 import Logo from '@/components/icons/logo';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+
 
 type Category = {
   id: string;
@@ -109,9 +116,18 @@ export default function BuyerLandingPage() {
                     aria-label="Buscar celulares"
                   />
                 </div>
-                <Button type="submit" className="h-14 w-14 rounded-full text-2xl font-extrabold border-2 border-primary/50 text-white">
-                  S!
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button type="submit" className="h-14 w-14 rounded-full text-2xl font-extrabold border-2 border-primary/50 text-white">
+                        S!
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Buscar</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </form>
 
