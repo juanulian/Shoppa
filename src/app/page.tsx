@@ -81,7 +81,7 @@ export default function BuyerLandingPage() {
         </div>
       </header>
 
-      <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center py-20 sm:py-28">
+      <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center py-20 sm:py-28 transition-all duration-700">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-7xl font-bold font-headline tracking-tight mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 text-slate-900 dark:text-slate-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
@@ -134,10 +134,10 @@ export default function BuyerLandingPage() {
         </div>
       </section>
 
-      <section className="bg-[url('/background/cards.png')] bg-cover bg-center py-20 sm:py-28">
+      <section className="bg-[url('/background/cards.png')] bg-cover bg-center py-20 sm:py-28 transition-all duration-700">
         <div className="container mx-auto px-4">
           <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-              <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-6">
+              <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-6 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
                 O explorá por categoría
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -153,8 +153,8 @@ export default function BuyerLandingPage() {
                       className={[
                         'p-6 sm:p-8 transition-all duration-300 border-2',
                         disabled
-                          ? 'opacity-50 cursor-not-allowed bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm'
-                          : 'cursor-pointer hover:border-primary hover:shadow-lg hover:scale-105 bg-gradient-to-br from-primary/10 to-transparent bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm',
+                          ? 'opacity-50 cursor-not-allowed bg-slate-100/90 dark:bg-slate-900/90 backdrop-blur-md'
+                          : 'cursor-pointer hover:border-primary hover:shadow-lg hover:scale-105 bg-gradient-to-br from-primary/10 to-transparent bg-white/90 dark:bg-slate-950/90 backdrop-blur-md',
                       ].join(' ')}
                       onClick={() => handleCategoryClick(category.active)}
                       onKeyDown={(e) => {
@@ -192,14 +192,14 @@ export default function BuyerLandingPage() {
         </div>
       </section>
 
-      <section className="bg-slate-50 dark:bg-slate-900 py-20">
+      <section className="bg-slate-50 dark:bg-slate-900 py-20 transition-all duration-700">
         <div className="container mx-auto px-4">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-5xl font-bold mb-4">¿Cómo funciona?</h2>
               <p className="text-xl text-muted-foreground">Simple, rápido, sin vueltas</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto" role="list">
               {[
                 { step: 1, title: 'Respondé 3 preguntas', desc: 'Contanos qué necesitás' },
                 {
@@ -209,8 +209,17 @@ export default function BuyerLandingPage() {
                 },
                 { step: 3, title: 'Comprás sin dudas', desc: 'Elegís la que más te gusta y listo' },
               ].map(({ step, title, desc }) => (
-                <div key={step} className="text-center p-4">
-                  <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+                <div
+                  key={step}
+                  className="text-center p-4"
+                  role="listitem"
+                  aria-label={`Paso ${step}: ${title}`}
+                >
+                  <div
+                    className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold mx-auto mb-4"
+                    aria-label={`Paso número ${step}`}
+                    role="img"
+                  >
                     {step}
                   </div>
                   <h3 className="text-xl font-bold mb-2">{title}</h3>
@@ -228,8 +237,8 @@ export default function BuyerLandingPage() {
         </div>
       </section>
 
-      <section className="bg-[url('/background/header_footer.png')] bg-cover bg-center py-20">
-        <div className="bg-primary/95 backdrop-blur-sm py-16">
+      <section className="bg-[url('/background/header_footer.png')] bg-cover bg-center py-20 transition-all duration-700">
+        <div className="bg-primary/95 backdrop-blur-md py-16">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-4xl md:text-6xl font-bold mb-6 text-primary-foreground">
               ¿Listo para encontrar tu celular ideal?

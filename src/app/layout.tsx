@@ -21,12 +21,33 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <head>
+        {/* Preconnect to font providers - Endava pattern */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+
+        {/* Preload critical font weights */}
+        <link
+          rel="preload"
+          as="font"
+          type="font/woff2"
+          href="https://fonts.gstatic.com/s/nunito/v26/XRXI3I6Li01BKofiOc5wtlZ2di8HDLshdTQ3j77e.woff2"
+          crossOrigin="anonymous"
+        />
+
+        {/* Load fonts stylesheet with display=swap for better performance */}
         <link
           href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap"
           rel="stylesheet"
+          media="print"
+          // @ts-ignore
+          onLoad="this.media='all'"
         />
+        <noscript>
+          <link
+            href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap"
+            rel="stylesheet"
+          />
+        </noscript>
       </head>
       <body className="font-body antialiased bg-slate-50 dark:bg-slate-950">
         <div className="relative z-10">

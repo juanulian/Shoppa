@@ -2,6 +2,7 @@
 'use client';
 
 import React from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,8 +10,25 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calculator, ArrowRight, Zap, ShoppingCart } from 'lucide-react';
 import Logo from '@/components/icons/logo';
-import InteractiveTimelineCurved from '@/components/landing/interactive-timeline-curved';
 import { Footer } from '@/components/landing/footer';
+
+// Lazy load InteractiveTimeline - Endava pattern (islands architecture)
+const InteractiveTimelineCurved = dynamic(
+  () => import('@/components/landing/interactive-timeline-curved'),
+  {
+    ssr: false,
+    loading: () => (
+      <section className="bg-[url('/background/cards.png')] bg-cover bg-center py-20 sm:py-28">
+        <div className="container mx-auto px-4 text-center">
+          <div className="animate-pulse">
+            <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded w-64 mx-auto mb-4"></div>
+            <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-96 mx-auto"></div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+);
 
 const ROICalculator: React.FC = () => {
     const [monthlyRevenue, setMonthlyRevenue] = React.useState<number | ''>(10000000);
@@ -103,14 +121,14 @@ export default function SellersLandingPage() {
             </header>
 
             <main className="flex-1">
-                <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center py-20 sm:py-28">
+                <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center py-20 sm:py-28 transition-all duration-700">
                     <div className="container mx-auto px-4 text-center">
-                        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 leading-tight">
+                        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 leading-tight text-slate-900 dark:text-slate-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
                             ¿Perdés 75% de tus ventas
                             <br />
                             <span className="text-primary">por carritos abandonados?</span>
                         </h1>
-                        <p className="mx-auto mt-6 max-w-3xl text-lg sm:text-xl md:text-2xl text-slate-700 dark:text-slate-300 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 leading-relaxed">
+                        <p className="mx-auto mt-6 max-w-3xl text-lg sm:text-xl md:text-2xl text-slate-700 dark:text-slate-300 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 leading-relaxed [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
                             Shoppa! elimina la parálisis por análisis presentando exactamente <span className="font-bold text-primary">3 opciones perfectas</span>.
                             <br />
                             Transforma clientes confundidos en compradores seguros en 3 minutos.
@@ -131,38 +149,54 @@ export default function SellersLandingPage() {
                     </div>
                 </section>
 
-                <section className="bg-[url('/background/cards.png')] bg-cover bg-center py-20 sm:py-28">
+                <section className="bg-[url('/background/cards.png')] bg-cover bg-center py-20 sm:py-28 transition-all duration-700">
                     <div className="container mx-auto px-4">
                         <div className="text-center max-w-3xl mx-auto mb-16">
                             <ShoppingCart className="h-16 w-16 text-primary mx-auto mb-6" />
-                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
+                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-slate-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
                                 El costo oculto de la indecisión del cliente
                             </h2>
-                            <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed">
+                            <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
                                 Competir por precio ya no es suficiente. El verdadero problema es la <span className="font-semibold text-foreground">parálisis por análisis</span> que sufren tus clientes frente a productos complejos.
                             </p>
                         </div>
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 max-w-6xl mx-auto">
-                            <Card className="p-6 sm:p-8 bg-slate-50/80 dark:bg-slate-800/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
-                                <p className="text-5xl sm:text-6xl font-bold text-primary mb-3">75%</p>
+                            <Card
+                              className="p-6 sm:p-8 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md hover:scale-105 transition-transform duration-300 shadow-xl"
+                              role="article"
+                              aria-label="Estadística: 75% de carritos abandonados"
+                            >
+                                <p className="text-5xl sm:text-6xl font-bold text-primary mb-3" aria-label="75 por ciento">75%</p>
                                 <p className="text-sm sm:text-base font-medium text-muted-foreground leading-snug">
                                     de carritos abandonados en LATAM vs 69% global
                                 </p>
                             </Card>
-                            <Card className="p-6 sm:p-8 bg-slate-50/80 dark:bg-slate-800/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
-                                <p className="text-5xl sm:text-6xl font-bold text-primary mb-3">30+</p>
+                            <Card
+                              className="p-6 sm:p-8 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md hover:scale-105 transition-transform duration-300 shadow-xl"
+                              role="article"
+                              aria-label="Estadística: Más de 30 minutos comparando productos"
+                            >
+                                <p className="text-5xl sm:text-6xl font-bold text-primary mb-3" aria-label="Más de 30">30+</p>
                                 <p className="text-sm sm:text-base font-medium text-muted-foreground leading-snug">
                                     minutos comparando sin decidirse a comprar
                                 </p>
                             </Card>
-                            <Card className="p-6 sm:p-8 bg-slate-50/80 dark:bg-slate-800/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
-                                <p className="text-5xl sm:text-6xl font-bold text-primary mb-3">50%</p>
+                            <Card
+                              className="p-6 sm:p-8 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md hover:scale-105 transition-transform duration-300 shadow-xl"
+                              role="article"
+                              aria-label="Estadística: 50% del tiempo de vendedores en consultas"
+                            >
+                                <p className="text-5xl sm:text-6xl font-bold text-primary mb-3" aria-label="50 por ciento">50%</p>
                                 <p className="text-sm sm:text-base font-medium text-muted-foreground leading-snug">
                                     del tiempo de tus vendedores en consultas repetitivas
                                 </p>
                             </Card>
-                            <Card className="p-6 sm:p-8 bg-slate-50/80 dark:bg-slate-800/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
-                                <p className="text-5xl sm:text-6xl font-bold text-primary mb-3">↓</p>
+                            <Card
+                              className="p-6 sm:p-8 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md hover:scale-105 transition-transform duration-300 shadow-xl"
+                              role="article"
+                              aria-label="Estadística: Reducción del margen de ganancia"
+                            >
+                                <p className="text-5xl sm:text-6xl font-bold text-primary mb-3" aria-label="En descenso">↓</p>
                                 <p className="text-sm sm:text-base font-medium text-muted-foreground leading-snug">
                                     Margen de ganancia al competir solo por precio
                                 </p>
@@ -172,14 +206,14 @@ export default function SellersLandingPage() {
                 </section>
 
                 <InteractiveTimelineCurved />
-                
-                <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center py-20 sm:py-28">
+
+                <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center py-20 sm:py-28 transition-all duration-700">
                     <div className="container mx-auto px-4 max-w-3xl">
                         <ROICalculator />
                     </div>
                 </section>
 
-                <section className="py-20 sm:py-28 bg-primary">
+                <section className="py-20 sm:py-28 bg-primary transition-all duration-700">
                     <div className="container mx-auto px-4 text-center">
                         <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-8 text-primary-foreground">
                             ¿Listo para dejar de perder clientes?

@@ -27,38 +27,49 @@ export default function InteractiveTimelineCurved() {
                 S 200 560, 200 660`;
 
   return (
-    <section ref={ref} className="py-20 sm:py-28 relative overflow-hidden bg-slate-50 dark:bg-slate-950">
+    <section
+      ref={ref}
+      className="bg-[url('/background/cards.png')] bg-cover bg-center py-20 sm:py-28 relative overflow-hidden transition-all duration-700"
+      aria-label="Cronología interactiva: Tu viaje hacia mejores ventas"
+      role="region"
+    >
       <div className="container mx-auto px-4 relative max-w-5xl">
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-24">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">Un camino claro para vender</h2>
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-slate-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
+            Tu viaje hacia mejores ventas
+          </h2>
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
             Seguí el recorrido: problema → solución → resultado.
           </p>
         </div>
 
         <div className="relative grid grid-cols-1 md:grid-cols-[1fr_320px] gap-10">
           {/* Columna izquierda: camino + pelotita */}
-          <div className="relative min-h-[760px] md:min-h-[900px]">
+          <div className="relative min-h-[760px] md:min-h-[900px]" role="presentation">
             <svg
               className="absolute inset-0 w-full h-full"
               viewBox="0 0 260 700"
               preserveAspectRatio="xMidYMid meet"
-              aria-hidden="true"
+              aria-label="Línea de progreso que conecta los pasos del viaje de ventas"
+              role="img"
             >
+              <title>Ruta de navegación visual</title>
               <motion.path
                 d={PATH}
                 fill="none"
                 stroke="currentColor"
-                className="text-primary/25"
-                strokeWidth={4}
+                className="text-primary/30"
+                strokeWidth={6}
                 style={{ opacity: pathOpacity }}
+                aria-label="Camino curvo que representa el flujo del proceso"
               />
             </svg>
 
             {/* Pelotita que recorre el PATH */}
             <motion.div
-              aria-hidden="true"
-              className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-primary shadow-lg ring-4 ring-primary/15"
+              role="presentation"
+              aria-label="Indicador de progreso que se mueve con el scroll"
+              className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-primary shadow-xl ring-4 ring-primary/20"
               style={{
                 offsetPath: `path('${PATH}')`,
                 offsetDistance,
@@ -102,7 +113,7 @@ function StepCard({
     <motion.div
       ref={cardRef}
       style={{ opacity: o, y, scale: s }}
-      className="bg-white/70 dark:bg-slate-950/70 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm"
+      className="bg-white/90 dark:bg-slate-950/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xl"
       role="group"
       aria-label={`Paso ${index + 1}: ${title}`}
     >
