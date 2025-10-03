@@ -36,48 +36,42 @@ const StepContent = ({ step, index }: { step: Step; index: number }) => {
     offset: ['start 0.8', 'end 0.6'], // Animate when element is in view
   });
 
-  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [0.95, 1]);
   const y = useTransform(scrollYProgress, [0, 0.5], ['30px', '0px']);
 
   const Icon = step.icon;
   const isEven = index % 2 === 0;
 
   return (
-    <div ref={ref} className="relative grid grid-cols-[1fr_auto_1fr] items-start gap-4 sm:gap-8 my-16">
-      {/* Content for even/left side */}
-      <motion.div
-        style={{ opacity, scale, y }}
-        className={`flex-grow text-right ${!isEven ? 'md:hidden' : 'block'}`}
-      >
-        <h3 className="text-xl sm:text-2xl font-bold mb-2">{step.title}</h3>
-        <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">{step.description}</p>
-      </motion.div>
-      
-      {/* Mobile view content */}
-      <div className="md:hidden col-start-1 col-span-3 text-center my-4">
-        <motion.div style={{ opacity, scale, y }}>
-          <h3 className="text-xl font-bold mb-2">{step.title}</h3>
-          <p className="text-muted-foreground text-base leading-relaxed">{step.description}</p>
+    <div ref={ref} className={`relative flex items-center gap-8 ${isEven ? 'md:flex-row-reverse' : 'md:flex-row'}`}>
+        {/* Content Block */}
+        <motion.div
+            style={{ opacity, y, scale }}
+            className="w-full md:w-1/2"
+        >
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800">
+                <div className="flex items-center gap-4 mb-3">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-bold">{step.title}</h3>
+                </div>
+                <p className="text-muted-foreground leading-relaxed">{step.description}</p>
+            </div>
         </motion.div>
-      </div>
 
-      {/* Center Icon */}
-      <motion.div style={{ opacity, scale }} className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center z-10 mx-auto md:mx-0">
-        <Icon className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
-      </motion.div>
+        {/* Timeline Dot */}
+        <div className="w-8 h-8 rounded-full bg-primary border-4 border-slate-50 dark:border-slate-950 flex-shrink-0 z-10 hidden md:flex items-center justify-center">
+             <div className="w-3 h-3 bg-white rounded-full"></div>
+        </div>
 
-      {/* Content for odd/right side */}
-      <motion.div
-        style={{ opacity, scale, y }}
-        className={`flex-grow text-left ${isEven ? 'md:hidden' : 'block'}`}
-      >
-        <h3 className="text-xl sm:text-2xl font-bold mb-2">{step.title}</h3>
-        <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">{step.description}</p>
-      </motion.div>
+        {/* Spacer */}
+        <div className="w-full md:w-1/2 hidden md:block"></div>
     </div>
   );
 };
+
 
 export default function InteractiveTimeline() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -101,14 +95,14 @@ export default function InteractiveTimeline() {
         </div>
         
         <div className="max-w-4xl mx-auto relative">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 h-full w-px bg-primary/20">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 h-full w-px bg-primary/20 hidden md:block">
               <motion.div 
                 className="h-full w-full bg-primary origin-top"
                 style={{ scaleY: pathLength }}
               />
           </div>
           
-          <div className="relative">
+          <div className="relative flex flex-col gap-16">
             {steps.map((step, index) => (
               <StepContent key={index} step={step} index={index} />
             ))}

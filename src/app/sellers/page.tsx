@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calculator, ArrowRight, Zap, ShoppingCart } from 'lucide-react';
 import Logo from '@/components/icons/logo';
-import InteractiveTimeline from '@/components/landing/interactive-timeline';
+import InteractiveTimelineCurved from '@/components/landing/interactive-timeline-curved';
 
 const ROICalculator: React.FC = () => {
     const [monthlyRevenue, setMonthlyRevenue] = React.useState<number | ''>(10000000);
@@ -87,8 +87,8 @@ const ROICalculator: React.FC = () => {
 
 export default function SellersLandingPage() {
     return (
-        <div className="min-h-screen">
-            <header className="border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+            <header className="border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md">
                 <div className="container mx-auto px-4 py-4 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2">
                         <Logo />
@@ -130,7 +130,7 @@ export default function SellersLandingPage() {
                     </div>
                 </section>
 
-                <section className="py-20 sm:py-28">
+                <section className="py-20 sm:py-28 bg-white dark:bg-slate-900">
                     <div className="container mx-auto px-4">
                         <div className="text-center max-w-3xl mx-auto mb-16">
                             <ShoppingCart className="h-16 w-16 text-primary mx-auto mb-6" />
@@ -142,25 +142,25 @@ export default function SellersLandingPage() {
                             </p>
                         </div>
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 max-w-6xl mx-auto">
-                            <Card className="p-6 sm:p-8 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
+                            <Card className="p-6 sm:p-8 bg-slate-50 dark:bg-slate-800/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
                                 <p className="text-5xl sm:text-6xl font-bold text-primary mb-3">75%</p>
                                 <p className="text-sm sm:text-base font-medium text-muted-foreground leading-snug">
                                     de carritos abandonados en LATAM vs 69% global
                                 </p>
                             </Card>
-                            <Card className="p-6 sm:p-8 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
+                            <Card className="p-6 sm:p-8 bg-slate-50 dark:bg-slate-800/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
                                 <p className="text-5xl sm:text-6xl font-bold text-primary mb-3">30+</p>
                                 <p className="text-sm sm:text-base font-medium text-muted-foreground leading-snug">
                                     minutos comparando sin decidirse a comprar
                                 </p>
                             </Card>
-                            <Card className="p-6 sm:p-8 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
+                            <Card className="p-6 sm:p-8 bg-slate-50 dark:bg-slate-800/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
                                 <p className="text-5xl sm:text-6xl font-bold text-primary mb-3">50%</p>
                                 <p className="text-sm sm:text-base font-medium text-muted-foreground leading-snug">
                                     del tiempo de tus vendedores en consultas repetitivas
                                 </p>
                             </Card>
-                            <Card className="p-6 sm:p-8 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
+                            <Card className="p-6 sm:p-8 bg-slate-50 dark:bg-slate-800/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
                                 <p className="text-5xl sm:text-6xl font-bold text-primary mb-3">↓</p>
                                 <p className="text-sm sm:text-base font-medium text-muted-foreground leading-snug">
                                     Margen de ganancia al competir solo por precio
@@ -170,7 +170,7 @@ export default function SellersLandingPage() {
                     </div>
                 </section>
 
-                <InteractiveTimeline />
+                <InteractiveTimelineCurved />
                 
                 <section className="py-20 sm:py-28">
                     <div className="container mx-auto px-4 max-w-3xl">
@@ -178,27 +178,25 @@ export default function SellersLandingPage() {
                     </div>
                 </section>
 
-                <section className="py-20 sm:py-28">
-                    <div className="py-16 sm:py-20">
-                        <div className="container mx-auto px-4 text-center">
-                            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-8 text-primary-foreground">
-                                ¿Listo para dejar de perder clientes?
-                            </h2>
-                            <p className="text-lg sm:text-xl md:text-2xl mb-12 text-primary-foreground/90 max-w-2xl mx-auto leading-relaxed">
-                                Probá Shoppa! sin compromiso. La implementación es rápida y te acompañamos en cada paso.
-                            </p>
-                            <Button size="lg" variant="secondary" asChild className="rounded-full px-12 h-16 text-xl shadow-2xl hover:scale-105 transition-transform">
-                                <Link href="mailto:juanulian@gmail.com?subject=Solicitud%20de%20Reuni%C3%B3n%20-%20Shoppa!&body=Hola!%20Me%20gustar%C3%ADa%20coordinar%20una%20reuni%C3%B3n%20para%20ver%20c%C3%B3mo%20implementar%20Shoppa!%20en%20mi%20negocio.">
-                                    Quiero Probarlo
-                                    <ArrowRight className="ml-3 h-6 w-6" />
-                                </Link>
-                            </Button>
-                        </div>
+                <section className="py-20 sm:py-28 bg-primary">
+                    <div className="container mx-auto px-4 text-center">
+                        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-8 text-primary-foreground">
+                            ¿Listo para dejar de perder clientes?
+                        </h2>
+                        <p className="text-lg sm:text-xl md:text-2xl mb-12 text-primary-foreground/90 max-w-2xl mx-auto leading-relaxed">
+                            Probá Shoppa! sin compromiso. La implementación es rápida y te acompañamos en cada paso.
+                        </p>
+                        <Button size="lg" variant="secondary" asChild className="rounded-full px-12 h-16 text-xl shadow-2xl hover:scale-105 transition-transform">
+                            <Link href="mailto:juanulian@gmail.com?subject=Solicitud%20de%20Reuni%C3%B3n%20-%20Shoppa!&body=Hola!%20Me%20gustar%C3%ADa%20coordinar%20una%20reuni%C3%B3n%20para%20ver%20c%C3%B3mo%20implementar%20Shoppa!%20en%20mi%20negocio.">
+                                Quiero Probarlo
+                                <ArrowRight className="ml-3 h-6 w-6" />
+                            </Link>
+                        </Button>
                     </div>
                 </section>
             </main>
 
-            <footer className="border-t border-slate-200 dark:border-slate-800">
+            <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
                 <div className="py-10">
                     <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
                         <p className="mb-4 text-base">© 2025 Shoppa! Todos los derechos reservados.</p>
