@@ -81,11 +81,11 @@ export default function BuyerLandingPage() {
         </div>
       </header>
 
-      <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center">
-        <div className="container mx-auto px-4 pt-20 pb-16 text-center">
+      <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center py-20 sm:py-28">
+        <div className="container mx-auto px-4 text-center">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-7xl font-bold font-headline tracking-tight mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 text-slate-900 dark:text-slate-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
-              Encontrá tu celular perfecto
+              Encontrá lo que buscás
               <br />
               <span className="text-primary">en 3 minutos</span>
             </h1>
@@ -113,7 +113,7 @@ export default function BuyerLandingPage() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="h-14 pl-12 pr-4 text-lg rounded-full border-2 focus-visible:ring-primary"
-                    aria-label="Buscar celulares"
+                    aria-label="Buscar productos"
                   />
                 </div>
                 <TooltipProvider>
@@ -130,8 +130,13 @@ export default function BuyerLandingPage() {
                 </TooltipProvider>
               </div>
             </form>
+          </div>
+        </div>
+      </section>
 
-            <div className="mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+      <section className="bg-[url('/background/cards.png')] bg-cover bg-center py-20 sm:py-28">
+        <div className="container mx-auto px-4">
+          <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
               <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-6">
                 O explorá por categoría
               </h2>
@@ -184,13 +189,11 @@ export default function BuyerLandingPage() {
                 })}
               </div>
             </div>
-          </div>
         </div>
       </section>
 
-      <section className="bg-[url('/background/cards.png')] bg-cover bg-center py-20">
-        <div className="bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm py-16">
-          <div className="container mx-auto px-4">
+      <section className="bg-slate-50 dark:bg-slate-900 py-20">
+        <div className="container mx-auto px-4">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-5xl font-bold mb-4">¿Cómo funciona?</h2>
               <p className="text-xl text-muted-foreground">Simple, rápido, sin vueltas</p>
@@ -222,7 +225,6 @@ export default function BuyerLandingPage() {
                 Empezar ahora
               </Button>
             </div>
-          </div>
         </div>
       </section>
 
