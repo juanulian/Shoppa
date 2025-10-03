@@ -109,7 +109,7 @@ export default function BuyerLandingPage() {
                   <Input
                     type="text"
                     inputMode="search"
-                    placeholder="Ej: "celular para fotos", "iPhone bajo presupuesto"…"
+                    placeholder='Ej: "celular para fotos", "iPhone bajo presupuesto"…'
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="h-14 pl-12 pr-4 text-lg rounded-full border-2 focus-visible:ring-primary"
