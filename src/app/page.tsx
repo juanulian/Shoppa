@@ -74,9 +74,12 @@ export default function BuyerLandingPage() {
               <Logo />
             </Link>
 
-            <Button variant="outline" asChild className="rounded-full">
-              <Link href="/sellers">Quiero Vender →</Link>
-            </Button>
+            <Link
+              href="/sellers"
+              className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-primary transition-colors"
+            >
+              Para vendedores
+            </Link>
           </div>
         </div>
       </header>
@@ -84,17 +87,15 @@ export default function BuyerLandingPage() {
       <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center py-20 sm:py-28 transition-all duration-700">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-7xl font-bold font-headline tracking-tight mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 text-slate-900 dark:text-slate-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
-              Dejá de perder tiempo.
+            <h1 className="text-5xl md:text-7xl font-bold font-headline tracking-tight mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 text-slate-900 dark:text-slate-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
+              El celular perfecto.
               <br />
-              <span className="text-primary">Comprá seguro.</span>
+              <span className="text-primary">En 3 minutos.</span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-slate-700 dark:text-slate-300 mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)] font-medium">
-              3 preguntas. 3 opciones perfectas. 3 minutos.
-            </p>
-            <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
-              Sin perderte en 500 opciones. Sin arrepentimientos.
+            <p className="text-2xl md:text-3xl text-slate-700 dark:text-slate-300 mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)] font-light">
+              Respondé 3 preguntas. <br className="hidden sm:block" />
+              Te mostramos 3 opciones.
             </p>
 
             <form
@@ -117,18 +118,14 @@ export default function BuyerLandingPage() {
                     aria-label="Buscar productos"
                   />
                 </div>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button type="submit" className="h-14 w-14 rounded-full text-2xl font-extrabold border-2 border-primary/50 text-white">
-                        S!
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Buscar</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="h-14 px-8 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
+                >
+                  Buscar
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
               </div>
             </form>
 
@@ -197,8 +194,8 @@ export default function BuyerLandingPage() {
       <section className="bg-slate-50 dark:bg-slate-900 py-20 transition-all duration-700">
         <div className="container mx-auto px-4">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-bold mb-4">Tan simple que asusta</h2>
-              <p className="text-xl text-muted-foreground">3 pasos. Cero dudas.</p>
+              <h2 className="text-3xl md:text-5xl font-bold mb-4">Cómo funciona</h2>
+              <p className="text-xl text-muted-foreground">Simple. Claro. Rápido.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto" role="list">
@@ -267,15 +264,16 @@ export default function BuyerLandingPage() {
         <div className="bg-primary/95 backdrop-blur-md py-16">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-4xl md:text-6xl font-bold mb-6 text-primary-foreground">
-              La vida es muy corta para elegir mal.
+              Encontrá tu celular ideal.
             </h2>
-            <p className="text-xl md:text-2xl mb-8 text-primary-foreground/90 font-medium">
-              Probá Shoppa! gratis. Sin compromiso. Sin perder tiempo.
+            <p className="text-xl md:text-2xl mb-12 text-primary-foreground/90 font-light">
+              Gratis. En 3 minutos.
             </p>
 
-            <Button asChild size="lg" variant="secondary" className="rounded-full px-12 h-16 text-xl shadow-2xl hover:scale-105 transition-transform font-bold">
+            <Button asChild size="lg" variant="secondary" className="rounded-full px-16 h-16 text-xl shadow-2xl hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] transition-all font-semibold">
               <Link href="/demo">
-                Empezar ahora
+                Empezar
+                <ArrowRight className="ml-2 h-6 w-6" />
               </Link>
             </Button>
           </div>

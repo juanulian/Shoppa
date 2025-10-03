@@ -96,11 +96,12 @@ export default function SellersLandingPage() {
                     <Link href="/" className="flex items-center gap-2">
                         <Logo />
                     </Link>
-                    <Button variant="outline" asChild className="rounded-full">
-                        <Link href="/">
-                            ← Volver a Comprar
-                        </Link>
-                    </Button>
+                    <Link
+                        href="/"
+                        className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-primary transition-colors"
+                    >
+                        Para compradores
+                    </Link>
                 </div>
             </header>
 
