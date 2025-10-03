@@ -190,38 +190,33 @@ export default function BuyerLandingPage() {
         </div>
       </section>
 
-      <section className="bg-slate-50 dark:bg-slate-900 py-20 transition-all duration-700">
-        <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-bold mb-4">Cómo funciona</h2>
-              <p className="text-xl text-muted-foreground">Simple. Claro. Rápido.</p>
+      {/* Cómo funciona - Estilo Apple minimalista */}
+      <section className="py-32 bg-white dark:bg-slate-950">
+        <div className="container mx-auto px-4 max-w-5xl">
+            <div className="text-center mb-24">
+              <h2 className="text-5xl md:text-7xl font-light mb-6 text-slate-900 dark:text-slate-100 tracking-tight">Cómo funciona</h2>
+              <p className="text-2xl md:text-3xl text-slate-600 dark:text-slate-400 font-light">En 3 pasos.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto" role="list">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-20" role="list">
               {[
                 { step: 1, title: 'Respondé 3 preguntas', desc: 'Contanos qué necesitás' },
                 {
                   step: 2,
                   title: 'Te mostramos 3 opciones',
-                  desc: 'Shoppa! selecciona las 3 mejores opciones para vos. Ni más, ni menos',
+                  desc: 'Ni más, ni menos',
                 },
-                { step: 3, title: 'Comprás sin dudas', desc: 'Elegís la que más te gusta y listo' },
+                { step: 3, title: 'Comprás', desc: 'Sin dudas' },
               ].map(({ step, title, desc }) => (
                 <div
                   key={step}
-                  className="text-center p-4"
+                  className="text-center"
                   role="listitem"
                   aria-label={`Paso ${step}: ${title}`}
                 >
-                  <div
-                    className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold mx-auto mb-4"
-                    aria-label={`Paso número ${step}`}
-                    role="img"
-                  >
-                    {step}
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">{title}</h3>
-                  <p className="text-muted-foreground">{desc}</p>
+                  <div className="text-7xl md:text-8xl font-light text-primary mb-8">{step}</div>
+                  <h3 className="text-2xl font-light mb-3 text-slate-900 dark:text-slate-100">{title}</h3>
+                  <p className="text-lg text-slate-600 dark:text-slate-400 font-light">{desc}</p>
                 </div>
               ))}
             </div>
