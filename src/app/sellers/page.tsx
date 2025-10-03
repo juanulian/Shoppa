@@ -314,6 +314,31 @@ export default function SellersLandingPage() {
                     </div>
                 </section>
 
+                <section className="bg-slate-50 dark:bg-slate-900 py-16 transition-all duration-700">
+                    <div className="container mx-auto px-4">
+                        <div className="text-center max-w-2xl mx-auto">
+                            <p className="text-sm text-muted-foreground uppercase tracking-wider mb-6">
+                                Respaldados por
+                            </p>
+                            <div className="flex items-center justify-center gap-3">
+                                <img
+                                    src="/logo/acelerado.png"
+                                    alt="Emprelatam Logo"
+                                    className="h-16 w-auto opacity-80 hover:opacity-100 transition-opacity"
+                                />
+                                <div className="text-left">
+                                    <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                                        Acelerados por Emprelatam
+                                    </p>
+                                    <p className="text-sm text-muted-foreground">
+                                        La aceleradora #1 de LATAM
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <section className="py-20 sm:py-28 bg-primary transition-all duration-700">
                     <div className="container mx-auto px-4 text-center">
                         <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-8 text-primary-foreground">
