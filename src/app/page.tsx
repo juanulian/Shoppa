@@ -108,7 +108,7 @@ export default function BuyerLandingPage() {
                     aria-label="Buscar celulares"
                   />
                 </div>
-                <Button type="submit" size="lg" className="h-14 px-8 rounded-full text-lg">
+                <Button type="submit" size="lg" className="h-14 w-14 rounded-full text-2xl font-extrabold border-2 border-primary/50">
                   S!
                 </Button>
               </div>
