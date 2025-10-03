@@ -54,10 +54,10 @@ export default function BuyerLandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[url('/background/cards_2.png')] bg-cover bg-center">
-      <div className="min-h-screen bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm">
-        {/* Header */}
-        <header className="border-b border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 sticky top-0 z-50">
+    <div className="min-h-screen">
+      {/* Header */}
+      <header className="bg-[url('/background/header_footer.png')] bg-cover bg-center border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
+        <div className="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
               <Logo />
@@ -69,10 +69,13 @@ export default function BuyerLandingPage() {
               </Link>
             </Button>
           </div>
-        </header>
+        </div>
+      </header>
 
-        {/* Hero Section */}
-        <section className="container mx-auto px-4 pt-20 pb-16 text-center">
+      {/* Hero Section con fondo cards_2.png */}
+      <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center">
+        <div className="bg-white/85 dark:bg-slate-950/85 backdrop-blur-sm">
+          <div className="container mx-auto px-4 pt-20 pb-16 text-center">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-7xl font-bold font-headline tracking-tight mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
               Encontrá tu celular perfecto
@@ -148,10 +151,12 @@ export default function BuyerLandingPage() {
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* How it Works */}
-        <section className="bg-slate-100/70 dark:bg-slate-900/70 py-20">
+      {/* How it Works con fondo cards.png */}
+      <section className="bg-[url('/background/cards.png')] bg-cover bg-center py-20">
+        <div className="bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm py-16">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-5xl font-bold mb-4">¿Cómo funciona?</h2>
@@ -197,43 +202,47 @@ export default function BuyerLandingPage() {
               </Button>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* CTA Final */}
-        <section className="py-20 bg-primary text-primary-foreground">
+      {/* CTA Final con fondo header_footer.png */}
+      <section className="bg-[url('/background/header_footer.png')] bg-cover bg-center py-20">
+        <div className="bg-primary/95 backdrop-blur-sm py-16">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-4xl md:text-6xl font-bold mb-6">
+            <h2 className="text-4xl md:text-6xl font-bold mb-6 text-primary-foreground">
               ¿Listo para encontrar tu celular ideal?
             </h2>
-            <p className="text-xl mb-8 opacity-90">
+            <p className="text-xl mb-8 text-primary-foreground/90">
               Tomá 3 minutos ahora y olvidate de las dudas
             </p>
             <Button
               size="lg"
               variant="secondary"
               onClick={() => router.push('/demo')}
-              className="rounded-full px-12 text-lg"
+              className="rounded-full px-12 text-lg shadow-xl hover:scale-105 transition-transform"
             >
               Empezar ahora →
             </Button>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Footer */}
-        <footer className="border-t border-slate-200 dark:border-slate-800 py-8">
+      {/* Footer con fondo header_footer.png */}
+      <footer className="bg-[url('/background/header_footer.png')] bg-cover bg-center border-t border-slate-200 dark:border-slate-800">
+        <div className="bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm py-8">
           <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
             <p className="mb-4">© 2025 Shoppa! Todos los derechos reservados.</p>
             <div className="flex justify-center gap-6">
-              <Link href="/sellers" className="hover:text-primary">
+              <Link href="/sellers" className="hover:text-primary transition-colors">
                 Quiero Vender
               </Link>
-              <Link href="mailto:juanulian@gmail.com" className="hover:text-primary">
+              <Link href="mailto:juanulian@gmail.com" className="hover:text-primary transition-colors">
                 Contacto
               </Link>
             </div>
           </div>
-        </footer>
-      </div>
+        </div>
+      </footer>
     </div>
   );
 }

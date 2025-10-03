@@ -10,36 +10,39 @@ import { Calculator, TrendingUp, Clock, Users, ArrowRight, Zap, Target, Shopping
 import Logo from '@/components/icons/logo';
 
 const ROICalculator: React.FC = () => {
-    const [units, setUnits] = useState<number | ''>(100);
-    const [unitPrice, setUnitPrice] = useState<number | ''>(100000);
-    const [potentialGain, setPotentialGain] = useState({ min: 0, max: 0, current: 0 });
+    const [monthlyRevenue, setMonthlyRevenue] = useState<number | ''>(10000000);
+    const [potentialGain, setPotentialGain] = useState({ min: 0, max: 0 });
 
     const calculateGain = () => {
-        if (!units || !unitPrice || units <= 0 || unitPrice <= 0) {
-            setPotentialGain({ min: 0, max: 0, current: 0 });
+        if (!monthlyRevenue || monthlyRevenue <= 0) {
+            setPotentialGain({ min: 0, max: 0 });
             return;
         }
 
-        const currentSales = Number(units) * Number(unitPrice);
-        const totalPotentialClients = Number(units) / 0.25;
-        const newAbandonmentMin = 0.56;
-        const newAbandonmentMax = 0.64;
-        const newBuyersMin = totalPotentialClients * (0.753 - newAbandonmentMin);
-        const newBuyersMax = totalPotentialClients * (0.753 - newAbandonmentMax);
-        const minGain = newBuyersMin * Number(unitPrice);
-        const maxGain = newBuyersMax * Number(unitPrice);
+        // Con 75.3% de abandono, solo capturamos 24.7% del potencial
+        // Facturación actual = 24.7% del potencial total
+        const totalPotential = Number(monthlyRevenue) / 0.247;
+
+        // Con Shoppa! reducimos abandono a 56-64%
+        // Nuevo abandono 64% = capturamos 36% (mejor caso: menos abandono)
+        // Nuevo abandono 56% = capturamos 44% (mejor caso: aún menos abandono)
+        const newRevenueMin = totalPotential * 0.36; // 64% abandono
+        const newRevenueMax = totalPotential * 0.44; // 56% abandono
+
+        // Ganancia adicional
+        const minGain = newRevenueMin - Number(monthlyRevenue);
+        const maxGain = newRevenueMax - Number(monthlyRevenue);
 
         setPotentialGain({
             min: minGain,
-            max: maxGain,
-            current: currentSales
+            max: maxGain
         });
     };
 
     React.useEffect(() => {
         calculateGain();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [units, unitPrice]);
+    }, [monthlyRevenue]);
 
     const formatCurrency = (value: number) => {
         return new Intl.NumberFormat('es-AR', {
@@ -58,54 +61,30 @@ const ROICalculator: React.FC = () => {
                 <p className="text-muted-foreground mt-2">Al reducir el abandono de carrito del 75.3% al 56-64%</p>
             </CardHeader>
             <CardContent className="p-0 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="units" className="font-semibold text-base">Unidades Vendidas/Mes</Label>
-                        <Input
-                            id="units"
-                            type="text"
-                            value={units === '' ? '' : units.toLocaleString('es-AR')}
-                            onChange={(e) => {
-                                const value = e.target.value.replace(/\D/g, '');
-                                setUnits(value === '' ? '' : Number(value));
-                            }}
-                            className="h-12 text-xl font-semibold text-center"
-                            placeholder="Ej: 100"
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="unitPrice" className="font-semibold text-base">Precio Unitario (ARS)</Label>
-                        <Input
-                            id="unitPrice"
-                            type="text"
-                            value={unitPrice === '' ? '' : unitPrice.toLocaleString('es-AR')}
-                            onChange={(e) => {
-                                const value = e.target.value.replace(/\D/g, '');
-                                setUnitPrice(value === '' ? '' : Number(value));
-                            }}
-                            className="h-12 text-xl font-semibold text-center"
-                            placeholder="Ej: 100000"
-                        />
-                    </div>
+                <div className="space-y-2">
+                    <Label htmlFor="monthlyRevenue" className="font-semibold text-base">Facturación Aproximada Mensual (ARS)</Label>
+                    <Input
+                        id="monthlyRevenue"
+                        type="text"
+                        value={monthlyRevenue === '' ? '' : monthlyRevenue.toLocaleString('es-AR')}
+                        onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, '');
+                            setMonthlyRevenue(value === '' ? '' : Number(value));
+                        }}
+                        className="h-14 text-2xl font-bold text-center"
+                        placeholder="Ej: 10.000.000"
+                    />
                 </div>
 
                 {(potentialGain.min > 0 || potentialGain.max > 0) && (
-                    <div className="space-y-4 pt-6 border-t-2 border-primary/20 animate-in fade-in duration-500">
-                        <div className="text-center">
-                            <p className="text-sm text-muted-foreground mb-1">Tus ventas actuales:</p>
-                            <p className="text-2xl font-bold text-slate-700 dark:text-slate-300">
-                                {formatCurrency(potentialGain.current)}
-                            </p>
-                        </div>
-                        <div className="text-center bg-green-50 dark:bg-green-950/30 p-6 rounded-xl border-2 border-green-200 dark:border-green-800">
-                            <p className="text-lg text-green-800 dark:text-green-200 font-semibold mb-2">💰 Con Shoppa! podrías ganar:</p>
-                            <p className="text-3xl md:text-5xl font-bold text-green-600 dark:text-green-400 my-2">
-                                {formatCurrency(potentialGain.min)} - {formatCurrency(potentialGain.max)}
-                            </p>
-                            <p className="text-sm text-green-700 dark:text-green-300 font-medium">
-                                más por mes en ventas recuperadas
-                            </p>
-                        </div>
+                    <div className="text-center bg-green-50 dark:bg-green-950/30 p-6 rounded-xl border-2 border-green-200 dark:border-green-800 animate-in fade-in duration-500">
+                        <p className="text-lg text-green-800 dark:text-green-200 font-semibold mb-2">🔥 Con Shoppa! podrías ganar:</p>
+                        <p className="text-3xl md:text-5xl font-bold text-green-600 dark:text-green-400 my-2">
+                            {formatCurrency(potentialGain.min)} - {formatCurrency(potentialGain.max)}
+                        </p>
+                        <p className="text-sm text-green-700 dark:text-green-300 font-medium">
+                            más por mes en ventas recuperadas
+                        </p>
                     </div>
                 )}
             </CardContent>
