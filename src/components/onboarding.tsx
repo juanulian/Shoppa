@@ -40,11 +40,39 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // If there's an initial search query, use it as the answer to the first question.
-    if (initialSearchQuery && qaPairs.length === 0 && currentAnswer === '') {
-      setCurrentAnswer(initialSearchQuery);
+    // If there's an initial search query, automatically generate first question based on it
+    if (initialSearchQuery && qaPairs.length === 0 && currentAnswer === '' && !isLoading) {
+      const generateInitialQuestion = async () => {
+        setIsLoading(true);
+        setProcessingState('generating');
+
+        try {
+          const res = await generateFollowUpQuestions({
+            initialAnswer: initialSearchQuery,
+            priorQuestionsAndAnswers: []
+          });
+
+          if (res.questions && res.questions.length > 0) {
+            // Set the first generated question and store the search as first QA
+            setCurrentQuestion(res.questions[0]);
+            setQaPairs([{ question: "Búsqueda inicial", answer: initialSearchQuery }]);
+          } else {
+            // Fallback: use default question and pre-fill answer
+            setCurrentAnswer(initialSearchQuery);
+          }
+        } catch (error) {
+          console.error("Error generating initial question:", error);
+          // Fallback: use default question and pre-fill answer
+          setCurrentAnswer(initialSearchQuery);
+        } finally {
+          setIsLoading(false);
+          setProcessingState('idle');
+        }
+      };
+
+      generateInitialQuestion();
     }
-  }, [initialSearchQuery, qaPairs.length, currentAnswer]);
+  }, [initialSearchQuery, qaPairs.length, currentAnswer, isLoading]);
 
 
   useEffect(() => {
