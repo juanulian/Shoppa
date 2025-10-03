@@ -156,6 +156,15 @@ body {
   }
 }
 
+/* For curved timeline animation */
+.motion-path-marker {
+  offset-path: path(var(--motion-path));
+  offset-rotate: 0deg;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 
 @layer base {
   :root {
@@ -216,3 +225,5 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+    

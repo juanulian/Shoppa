@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Calculator, ArrowRight, Zap, ShoppingCart } from 'lucide-react';
 import Logo from '@/components/icons/logo';
 import InteractiveTimelineCurved from '@/components/landing/interactive-timeline-curved';
+import { Footer } from '@/components/landing/footer';
 
 const ROICalculator: React.FC = () => {
     const [monthlyRevenue, setMonthlyRevenue] = React.useState<number | ''>(10000000);
@@ -102,7 +103,7 @@ export default function SellersLandingPage() {
             </header>
 
             <main className="flex-1">
-                <section className="py-20 sm:py-28">
+                <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center py-20 sm:py-28">
                     <div className="container mx-auto px-4 text-center">
                         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 leading-tight">
                             ¿Perdés 75% de tus ventas
@@ -130,7 +131,7 @@ export default function SellersLandingPage() {
                     </div>
                 </section>
 
-                <section className="py-20 sm:py-28 bg-white dark:bg-slate-900">
+                <section className="bg-[url('/background/cards.png')] bg-cover bg-center py-20 sm:py-28">
                     <div className="container mx-auto px-4">
                         <div className="text-center max-w-3xl mx-auto mb-16">
                             <ShoppingCart className="h-16 w-16 text-primary mx-auto mb-6" />
@@ -142,25 +143,25 @@ export default function SellersLandingPage() {
                             </p>
                         </div>
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 max-w-6xl mx-auto">
-                            <Card className="p-6 sm:p-8 bg-slate-50 dark:bg-slate-800/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
+                            <Card className="p-6 sm:p-8 bg-slate-50/80 dark:bg-slate-800/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
                                 <p className="text-5xl sm:text-6xl font-bold text-primary mb-3">75%</p>
                                 <p className="text-sm sm:text-base font-medium text-muted-foreground leading-snug">
                                     de carritos abandonados en LATAM vs 69% global
                                 </p>
                             </Card>
-                            <Card className="p-6 sm:p-8 bg-slate-50 dark:bg-slate-800/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
+                            <Card className="p-6 sm:p-8 bg-slate-50/80 dark:bg-slate-800/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
                                 <p className="text-5xl sm:text-6xl font-bold text-primary mb-3">30+</p>
                                 <p className="text-sm sm:text-base font-medium text-muted-foreground leading-snug">
                                     minutos comparando sin decidirse a comprar
                                 </p>
                             </Card>
-                            <Card className="p-6 sm:p-8 bg-slate-50 dark:bg-slate-800/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
+                            <Card className="p-6 sm:p-8 bg-slate-50/80 dark:bg-slate-800/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
                                 <p className="text-5xl sm:text-6xl font-bold text-primary mb-3">50%</p>
                                 <p className="text-sm sm:text-base font-medium text-muted-foreground leading-snug">
                                     del tiempo de tus vendedores en consultas repetitivas
                                 </p>
                             </Card>
-                            <Card className="p-6 sm:p-8 bg-slate-50 dark:bg-slate-800/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
+                            <Card className="p-6 sm:p-8 bg-slate-50/80 dark:bg-slate-800/50 backdrop-blur-sm hover:scale-105 transition-transform duration-300 shadow-xl">
                                 <p className="text-5xl sm:text-6xl font-bold text-primary mb-3">↓</p>
                                 <p className="text-sm sm:text-base font-medium text-muted-foreground leading-snug">
                                     Margen de ganancia al competir solo por precio
@@ -172,7 +173,7 @@ export default function SellersLandingPage() {
 
                 <InteractiveTimelineCurved />
                 
-                <section className="py-20 sm:py-28">
+                <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center py-20 sm:py-28">
                     <div className="container mx-auto px-4 max-w-3xl">
                         <ROICalculator />
                     </div>
@@ -196,17 +197,9 @@ export default function SellersLandingPage() {
                 </section>
             </main>
 
-            <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-                <div className="py-10">
-                    <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-                        <p className="mb-4 text-base">© 2025 Shoppa! Todos los derechos reservados.</p>
-                        <div className="flex justify-center gap-8 text-base">
-                            <Link href="/" className="hover:text-primary transition-colors font-medium">Comprar</Link>
-                            <Link href="mailto:juanulian@gmail.com" className="hover:text-primary transition-colors font-medium">Contacto</Link>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+            <Footer />
         </div>
     );
 }
+
+    
