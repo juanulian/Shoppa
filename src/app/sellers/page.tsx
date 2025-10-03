@@ -12,20 +12,18 @@ import { Calculator, ArrowRight, Zap, ShoppingCart } from 'lucide-react';
 import Logo from '@/components/icons/logo';
 import { Footer } from '@/components/landing/footer';
 
-// Lazy load InteractiveTimeline - Endava pattern (islands architecture)
-const InteractiveTimelineCurved = dynamic(
-  () => import('@/components/landing/interactive-timeline-curved'),
+// Lazy load ScrollTimeline - Endava pattern (islands architecture)
+const ScrollTimeline = dynamic(
+  () => import('@/components/landing/scroll-timeline'),
   {
     ssr: false,
     loading: () => (
-      <section className="bg-[url('/background/cards.png')] bg-cover bg-center py-20 sm:py-28">
-        <div className="container mx-auto px-4 text-center">
-          <div className="animate-pulse">
-            <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded w-64 mx-auto mb-4"></div>
-            <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-96 mx-auto"></div>
-          </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-pulse">
+          <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded w-64 mx-auto mb-4"></div>
+          <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-96 mx-auto"></div>
         </div>
-      </section>
+      </div>
     )
   }
 );
@@ -194,9 +192,9 @@ export default function SellersLandingPage() {
                             <Card
                               className="p-6 sm:p-8 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md hover:scale-105 transition-transform duration-300 shadow-xl"
                               role="article"
-                              aria-label="Estadística: Reducción del margen de ganancia"
+                              aria-label="Estadística: Bajo margen de ganancia"
                             >
-                                <p className="text-5xl sm:text-6xl font-bold text-primary mb-3" aria-label="En descenso">↓</p>
+                                <p className="text-5xl sm:text-6xl font-bold text-primary mb-3" aria-label="Bajo">Bajo</p>
                                 <p className="text-sm sm:text-base font-medium text-muted-foreground leading-snug">
                                     Margen de ganancia al competir solo por precio
                                 </p>
@@ -205,7 +203,131 @@ export default function SellersLandingPage() {
                     </div>
                 </section>
 
-                <InteractiveTimelineCurved />
+                <section className="bg-[url('/background/cards.png')] bg-cover bg-center relative">
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-50/50 to-transparent dark:via-slate-950/50"></div>
+                    <div className="relative">
+                        <div className="container mx-auto px-4 py-20 text-center">
+                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-slate-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
+                                Tu viaje hacia mejores ventas
+                            </h2>
+                            <p className="text-base sm:text-lg md:text-xl text-muted-foreground [text-shadow:0_1px_2px_rgba(0,0,0,0.1)] mb-12">
+                                Seguí el recorrido: problema → solución → resultado.
+                            </p>
+                        </div>
+                        <ScrollTimeline />
+                    </div>
+                </section>
+
+                <section className="bg-slate-50 dark:bg-slate-900 py-20 sm:py-28 transition-all duration-700">
+                    <div className="container mx-auto px-4">
+                        <div className="text-center max-w-4xl mx-auto mb-16">
+                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
+                                Comparativa: Shoppa! vs MercadoLibre
+                            </h2>
+                            <p className="text-lg text-muted-foreground">
+                                Analizá los costos reales y descubrí cómo podés maximizar tu margen
+                            </p>
+                        </div>
+
+                        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                            {/* MercadoLibre */}
+                            <Card className="p-8 bg-slate-100 dark:bg-slate-800 border-2">
+                                <CardHeader className="p-0 mb-6">
+                                    <CardTitle className="text-2xl flex items-center gap-3">
+                                        <div className="w-12 h-12 rounded-xl bg-yellow-400 flex items-center justify-center">
+                                            <span className="text-2xl font-bold text-yellow-900">ML</span>
+                                        </div>
+                                        MercadoLibre
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="p-0 space-y-4">
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between items-start">
+                                            <span className="text-sm font-medium">Cargo por vender (Celulares)</span>
+                                            <span className="text-lg font-bold text-yellow-600">11.80% - 17.14%</span>
+                                        </div>
+                                        <div className="flex justify-between items-start">
+                                            <span className="text-sm font-medium">Costo fijo adicional</span>
+                                            <span className="text-lg font-bold text-yellow-600">$1.115 - $2.810</span>
+                                        </div>
+                                        <div className="flex justify-between items-start">
+                                            <span className="text-sm font-medium">Cuotas con interés bajo</span>
+                                            <span className="text-lg font-bold text-yellow-600">+4%</span>
+                                        </div>
+                                        <div className="flex justify-between items-start">
+                                            <span className="text-sm font-medium">12 cuotas sin interés</span>
+                                            <span className="text-lg font-bold text-yellow-600">+32.70%</span>
+                                        </div>
+                                    </div>
+                                    <div className="pt-4 border-t border-slate-300 dark:border-slate-700">
+                                        <div className="flex justify-between items-center">
+                                            <span className="font-semibold">Total estimado</span>
+                                            <span className="text-2xl font-bold text-yellow-600">15.80% - 49.84%</span>
+                                        </div>
+                                        <p className="text-xs text-muted-foreground mt-2">
+                                            *Más costos de envío, impuestos y retenciones
+                                        </p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            {/* Shoppa! */}
+                            <Card className="p-8 bg-gradient-to-br from-primary/10 to-accent/10 border-2 border-primary shadow-xl relative overflow-hidden">
+                                <div className="absolute top-4 right-4 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full">
+                                    RECOMENDADO
+                                </div>
+                                <CardHeader className="p-0 mb-6">
+                                    <CardTitle className="text-2xl flex items-center gap-3">
+                                        <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
+                                            <span className="text-2xl font-bold text-white">S!</span>
+                                        </div>
+                                        Shoppa!
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="p-0 space-y-4">
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between items-start">
+                                            <span className="text-sm font-medium">Comisión por venta</span>
+                                            <span className="text-lg font-bold text-primary">8% - 12%</span>
+                                        </div>
+                                        <div className="flex justify-between items-start">
+                                            <span className="text-sm font-medium">Costo fijo adicional</span>
+                                            <span className="text-lg font-bold text-green-600">$0</span>
+                                        </div>
+                                        <div className="flex justify-between items-start">
+                                            <span className="text-sm font-medium">Financiación incluida</span>
+                                            <span className="text-lg font-bold text-green-600">Sin cargo extra</span>
+                                        </div>
+                                        <div className="flex justify-between items-start">
+                                            <span className="text-sm font-medium">Cuotas flexibles</span>
+                                            <span className="text-lg font-bold text-green-600">Incluido</span>
+                                        </div>
+                                    </div>
+                                    <div className="pt-4 border-t border-primary/20">
+                                        <div className="flex justify-between items-center">
+                                            <span className="font-semibold">Total</span>
+                                            <span className="text-2xl font-bold text-primary">8% - 12%</span>
+                                        </div>
+                                        <p className="text-xs text-muted-foreground mt-2">
+                                            *Todo incluido, sin sorpresas
+                                        </p>
+                                    </div>
+                                    <div className="bg-green-50 dark:bg-green-950/30 p-4 rounded-xl mt-4">
+                                        <p className="text-sm font-semibold text-green-800 dark:text-green-200 text-center">
+                                            💰 Ahorrá entre 3.80% y 37.84% por venta
+                                        </p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+
+                        <div className="text-center mt-12">
+                            <p className="text-sm text-muted-foreground mb-4">
+                                *Datos de MercadoLibre actualizados a Enero 2025. Categoría: Celulares y Smartphones
+                            </p>
+                        </div>
+                    </div>
+                </section>
 
                 <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center py-20 sm:py-28 transition-all duration-700">
                     <div className="container mx-auto px-4 max-w-3xl">
