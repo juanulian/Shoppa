@@ -38,16 +38,7 @@ export default function RootLayout({
         <link
           href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap"
           rel="stylesheet"
-          media="print"
-          // @ts-ignore
-          onLoad="this.media='all'"
         />
-        <noscript>
-          <link
-            href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap"
-            rel="stylesheet"
-          />
-        </noscript>
       </head>
       <body className="font-body antialiased bg-slate-50 dark:bg-slate-950">
         <div className="relative z-10">
