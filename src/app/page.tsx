@@ -78,13 +78,13 @@ export default function BuyerLandingPage() {
       <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center">
         <div className="container mx-auto px-4 pt-20 pb-16 text-center">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-7xl font-bold font-headline tracking-tight mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 text-white [text-shadow:0_2px_4px_rgba(0,0,0,0.5)]">
+            <h1 className="text-5xl md:text-7xl font-bold font-headline tracking-tight mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700 text-slate-900 dark:text-slate-100 [text-shadow:0_1px_2px_rgba(255,255,255,0.2)]">
               Encontrá tu celular perfecto
               <br />
               <span className="text-primary">en 3 minutos</span>
             </h1>
 
-            <p className="text-xl text-slate-100 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 [text-shadow:0_1px_3px_rgba(0,0,0,0.5)]">
+            <p className="text-xl text-slate-700 dark:text-slate-300 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 [text-shadow:0_1px_2px_rgba(255,255,255,0.1)]">
               Sin perderte en 500 opciones. Sin arrepentimientos.
               <br />
               Shoppa! te recomienda exactamente lo que necesitás.
@@ -119,7 +119,7 @@ export default function BuyerLandingPage() {
 
             {/* Categories */}
             <div className="mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-              <h2 className="text-sm font-semibold text-slate-200 uppercase tracking-wider mb-6 [text-shadow:0_1px_2px_rgba(0,0,0,0.5)]">
+              <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-6">
                 O explorá por categoría
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -135,7 +135,7 @@ export default function BuyerLandingPage() {
                       className={[
                         'p-6 sm:p-8 transition-all duration-300 border-2',
                         disabled
-                          ? 'opacity-50 cursor-not-allowed bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-sm'
+                          ? 'opacity-50 cursor-not-allowed bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm'
                           : 'cursor-pointer hover:border-primary hover:shadow-lg hover:scale-105 bg-gradient-to-br from-primary/10 to-transparent bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm',
                       ].join(' ')}
                       onClick={() => handleCategoryClick(category.active)}
