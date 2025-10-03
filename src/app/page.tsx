@@ -98,7 +98,7 @@ export default function BuyerLandingPage() {
 
             <form
               onSubmit={handleSearch}
-              className="max-w-2xl mx-auto mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200"
+              className="max-w-2xl mx-auto mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200"
             >
               <div className="flex flex-row gap-3">
                 <div className="relative flex-1">
@@ -109,7 +109,7 @@ export default function BuyerLandingPage() {
                   <Input
                     type="text"
                     inputMode="search"
-                    placeholder="Ej: “celular para fotos”, “iPhone bajo presupuesto”…"
+                    placeholder="Ej: "celular para fotos", "iPhone bajo presupuesto"…"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="h-14 pl-12 pr-4 text-lg rounded-full border-2 focus-visible:ring-primary"
@@ -130,17 +130,18 @@ export default function BuyerLandingPage() {
                 </TooltipProvider>
               </div>
             </form>
-          </div>
-        </div>
-      </section>
 
-      <section className="bg-[url('/background/cards.png')] bg-cover bg-center py-20 sm:py-28 transition-all duration-700">
-        <div className="container mx-auto px-4">
-          <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-              <h2 className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-6 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
+            {/* Conector visual */}
+            <div className="flex items-center justify-center gap-4 mb-8 animate-in fade-in duration-700 delay-300">
+              <div className="h-px w-24 bg-gradient-to-r from-transparent to-slate-300 dark:to-slate-700"></div>
+              <span className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider px-4">
                 O explorá por categoría
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              </span>
+              <div className="h-px w-24 bg-gradient-to-l from-transparent to-slate-300 dark:to-slate-700"></div>
+            </div>
+
+            {/* Categorías en la misma sección */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-400">
                 {categories.map((category) => {
                   const Icon = category.icon;
                   const disabled = !category.active;
@@ -187,8 +188,8 @@ export default function BuyerLandingPage() {
                     </Card>
                   );
                 })}
-              </div>
             </div>
+          </div>
         </div>
       </section>
 
