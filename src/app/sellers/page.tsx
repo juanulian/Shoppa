@@ -1,20 +1,21 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Calculator, TrendingUp, Clock, Users, ArrowRight, Zap, Target, ShoppingCart } from 'lucide-react';
+import { Calculator, ArrowRight, Zap, Target, ShoppingCart } from 'lucide-react';
 import Logo from '@/components/icons/logo';
+import InteractiveTimeline from '@/components/landing/interactive-timeline';
 
 const ROICalculator: React.FC = () => {
-    const [monthlyRevenue, setMonthlyRevenue] = useState<number | ''>(10000000);
-    const [potentialGain, setPotentialGain] = useState({ min: 0, max: 0 });
+    const [monthlyRevenue, setMonthlyRevenue] = React.useState<number | ''>(10000000);
+    const [potentialGain, setPotentialGain] = React.useState({ min: 0, max: 0 });
 
-    const calculateGain = () => {
+    const calculateGain = React.useCallback(() => {
         if (!monthlyRevenue || monthlyRevenue <= 0) {
             setPotentialGain({ min: 0, max: 0 });
             return;
@@ -30,12 +31,11 @@ const ROICalculator: React.FC = () => {
             min: minGain,
             max: maxGain
         });
-    };
+    }, [monthlyRevenue]);
 
     React.useEffect(() => {
         calculateGain();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [monthlyRevenue]);
+    }, [monthlyRevenue, calculateGain]);
 
     const formatCurrency = (value: number) => {
         return new Intl.NumberFormat('es-AR', {
@@ -172,121 +172,8 @@ export default function SellersLandingPage() {
                     </div>
                 </section>
 
-                <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center py-20 sm:py-28">
-                    <div className="container mx-auto px-4">
-                        <div className="text-center mb-20 max-w-3xl mx-auto">
-                            <Target className="h-16 w-16 text-primary mx-auto mb-6" />
-                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
-                                La Solución: Tu Asesor Digital 24/7
-                            </h2>
-                            <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed">
-                                Shoppa! replica a tu mejor vendedor, pero a escala digital. <span className="font-semibold text-foreground">Guía, entiende y recomienda</span>, convirtiendo la duda en una venta segura.
-                            </p>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16 max-w-6xl mx-auto">
-                            <div className="text-center space-y-4">
-                                <div className="text-7xl sm:text-8xl font-bold text-slate-200 dark:text-slate-800 mb-6">1</div>
-                                <h3 className="text-2xl sm:text-3xl font-bold mb-4">Cliente llega confundido</h3>
-                                <p className="text-muted-foreground text-lg leading-relaxed">
-                                    Abrumado por opciones y especificaciones técnicas que no entiende.
-                                </p>
-                            </div>
-                            <div className="text-center space-y-4 relative">
-                                <div className="absolute -inset-4 bg-primary/5 rounded-3xl"></div>
-                                <div className="relative">
-                                    <div className="text-6xl sm:text-7xl font-bold text-primary mb-6">S!</div>
-                                    <h3 className="text-2xl sm:text-3xl font-bold mb-4">Shoppa! hace preguntas simples</h3>
-                                    <p className="text-muted-foreground text-lg leading-relaxed">
-                                        Entiende la necesidad real del cliente en su lenguaje. 3 preguntas, 3 minutos.
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="text-center space-y-4">
-                                <div className="text-7xl sm:text-8xl font-bold text-slate-200 dark:text-slate-800 mb-6">3</div>
-                                <h3 className="text-2xl sm:text-3xl font-bold mb-4">Recibe 3 opciones perfectas</h3>
-                                <p className="text-muted-foreground text-lg leading-relaxed">
-                                    Recomendaciones claras con justificaciones que generan confianza y cierran la venta.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section className="bg-[url('/background/cards.png')] bg-cover bg-center py-20 sm:py-28">
-                    <div className="container mx-auto px-4">
-                        <div className="text-center mb-16 max-w-3xl mx-auto">
-                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
-                                Resultados Reales, No Promesas Vacías
-                            </h2>
-                            <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed">
-                                Los datos de nuestra prueba piloto hablan por sí solos. Los clientes no solo están satisfechos, <span className="font-semibold text-foreground">están listos para comprar</span>.
-                            </p>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                            <Card className="p-8 sm:p-10 text-center bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-xl">
-                                <p className="text-6xl sm:text-7xl font-bold text-primary mb-4">69%</p>
-                                <h3 className="text-xl sm:text-2xl font-bold mb-3">Intención de Compra Inmediata</h3>
-                                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                                    68.75% de usuarios mostró intención probable o decidida de comprar tras usar Shoppa!
-                                </p>
-                            </Card>
-                            <Card className="p-8 sm:p-10 text-center bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-xl">
-                                <p className="text-6xl sm:text-7xl font-bold text-primary mb-4">4.8/5</p>
-                                <h3 className="text-xl sm:text-2xl font-bold mb-3">Satisfacción de Usuario</h3>
-                                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                                    Calificación promedio que supera ampliamente los estándares del e-commerce tradicional
-                                </p>
-                            </Card>
-                            <Card className="p-8 sm:p-10 text-center bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-xl">
-                                <p className="text-6xl sm:text-7xl font-bold text-primary mb-4">25%</p>
-                                <h3 className="text-xl sm:text-2xl font-bold mb-3">Decisión Acelerada</h3>
-                                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                                    de usuarios decidió comprar inmediatamente vs navegar opciones ilimitadas
-                                </p>
-                            </Card>
-                        </div>
-                        <p className="text-center text-xs sm:text-sm text-muted-foreground mt-10 italic max-w-2xl mx-auto">
-                            * Métricas validadas sobre una muestra de usuarios en nuestra encuesta de satisfacción.
-                        </p>
-                    </div>
-                </section>
-
-                <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center py-20 sm:py-28">
-                    <div className="container mx-auto px-4">
-                        <div className="text-center mb-16 max-w-3xl mx-auto">
-                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
-                                Los Resultados que Obtenés en Tu Negocio
-                            </h2>
-                            <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed">
-                                Implementar Shoppa! no es un gasto, es una <span className="font-semibold text-foreground">inversión directa</span> en el crecimiento de tu negocio.
-                            </p>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                            <Card className="p-8 sm:p-10 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-shadow">
-                                <TrendingUp className="h-14 w-14 text-primary mb-6" />
-                                <h3 className="text-2xl sm:text-3xl font-bold mb-4">15-25% Menos Abandono</h3>
-                                <p className="text-muted-foreground text-base leading-relaxed">
-                                    Reduce el abandono de carrito del <span className="font-semibold">75% actual al 56-64%</span>. Captura hasta USD 150B en valor perdido convirtiendo dudas en decisiones de compra.
-                                </p>
-                            </Card>
-                            <Card className="p-8 sm:p-10 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-shadow">
-                                <Clock className="h-14 w-14 text-primary mb-6" />
-                                <h3 className="text-2xl sm:text-3xl font-bold mb-4">60-70% Menos Tiempo</h3>
-                                <p className="text-muted-foreground text-base leading-relaxed">
-                                    Reduce el tiempo de decisión de <span className="font-semibold">30+ minutos a 3-5 minutos</span> por compra. Clientes satisfechos (4.8/5) que recomiendan activamente la experiencia.
-                                </p>
-                            </Card>
-                            <Card className="p-8 sm:p-10 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-shadow">
-                                <Users className="h-14 w-14 text-primary mb-6" />
-                                <h3 className="text-2xl sm:text-3xl font-bold mb-4">Vendedores Optimizados</h3>
-                                <p className="text-muted-foreground text-base leading-relaxed">
-                                    Liberá a tu equipo de las preguntas básicas y repetitivas. Dejá que Shoppa! se encargue de la <span className="font-semibold">calificación inicial</span> para que tus vendedores se enfoquen en cerrar ventas complejas.
-                                </p>
-                            </Card>
-                        </div>
-                    </div>
-                </section>
-
+                <InteractiveTimeline />
+                
                 <section className="bg-[url('/background/cards.png')] bg-cover bg-center py-20 sm:py-28">
                     <div className="container mx-auto px-4 max-w-3xl">
                         <ROICalculator />
