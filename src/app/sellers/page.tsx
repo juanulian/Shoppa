@@ -108,14 +108,14 @@ export default function SellersLandingPage() {
                 <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center py-20 sm:py-28 transition-all duration-700">
                     <div className="container mx-auto px-4 text-center">
                         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 leading-tight text-slate-900 dark:text-slate-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
-                            ¿Perdés 75% de tus ventas
+                            Dejá de competir por precio.
                             <br />
-                            <span className="text-primary">por carritos abandonados?</span>
+                            <span className="text-primary">Competí por claridad.</span>
                         </h1>
                         <p className="mx-auto mt-6 max-w-3xl text-lg sm:text-xl md:text-2xl text-slate-700 dark:text-slate-300 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 leading-relaxed [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
-                            Shoppa! elimina la parálisis por análisis presentando exactamente <span className="font-bold text-primary">3 opciones perfectas</span>.
+                            75% de tus clientes abandonan el carrito porque <span className="font-bold text-primary">no saben qué elegir</span>.
                             <br />
-                            Transforma clientes confundidos en compradores seguros en 3 minutos.
+                            Shoppa! les da <span className="font-bold">3 opciones perfectas</span> y convierte en 3 minutos.
                         </p>
                         <div className="mt-12 flex flex-col sm:flex-row flex-wrap justify-center gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
                             <Button size="lg" asChild className="rounded-full px-10 h-14 text-lg shadow-xl hover:shadow-2xl transition-all">
@@ -247,7 +247,7 @@ export default function SellersLandingPage() {
                             {/* Shoppa! */}
                             <Card className="p-8 bg-gradient-to-br from-primary/10 to-accent/10 border-2 border-primary shadow-xl relative overflow-hidden">
                                 <div className="absolute top-4 right-4 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full">
-                                    RECOMENDADO
+                                    SIMPLE Y CLARO
                                 </div>
                                 <CardHeader className="p-0 mb-6">
                                     <CardTitle className="text-2xl flex items-center gap-3">
@@ -261,7 +261,10 @@ export default function SellersLandingPage() {
                                     <div className="space-y-3">
                                         <div className="flex justify-between items-start">
                                             <span className="text-sm font-medium">Comisión por venta</span>
-                                            <span className="text-lg font-bold text-primary">8% - 12%</span>
+                                            <div className="text-right">
+                                                <span className="text-2xl font-bold text-primary block">6%</span>
+                                                <span className="text-xs text-muted-foreground">fijo, todo incluido</span>
+                                            </div>
                                         </div>
                                         <div className="flex justify-between items-start">
                                             <span className="text-sm font-medium">Costo fijo adicional</span>
@@ -269,25 +272,28 @@ export default function SellersLandingPage() {
                                         </div>
                                         <div className="flex justify-between items-start">
                                             <span className="text-sm font-medium">Financiación incluida</span>
-                                            <span className="text-lg font-bold text-green-600">Sin cargo extra</span>
+                                            <span className="text-lg font-bold text-green-600">✓</span>
                                         </div>
                                         <div className="flex justify-between items-start">
                                             <span className="text-sm font-medium">Cuotas flexibles</span>
-                                            <span className="text-lg font-bold text-green-600">Incluido</span>
+                                            <span className="text-lg font-bold text-green-600">✓</span>
                                         </div>
                                     </div>
                                     <div className="pt-4 border-t border-primary/20">
-                                        <div className="flex justify-between items-center">
-                                            <span className="font-semibold">Total</span>
-                                            <span className="text-2xl font-bold text-primary">8% - 12%</span>
+                                        <div className="flex justify-between items-center mb-2">
+                                            <span className="font-semibold">Total siempre</span>
+                                            <span className="text-3xl font-bold text-primary">6%</span>
                                         </div>
-                                        <p className="text-xs text-muted-foreground mt-2">
-                                            *Todo incluido, sin sorpresas
+                                        <p className="text-xs text-muted-foreground">
+                                            *Sin letra chica. Sin costos ocultos.
                                         </p>
                                     </div>
-                                    <div className="bg-green-50 dark:bg-green-950/30 p-4 rounded-xl mt-4">
-                                        <p className="text-sm font-semibold text-green-800 dark:text-green-200 text-center">
-                                            💰 Ahorrá entre 3.80% y 37.84% por venta
+                                    <div className="bg-green-50 dark:bg-green-950/30 p-4 rounded-xl">
+                                        <p className="text-sm font-semibold text-green-800 dark:text-green-200 text-center mb-2">
+                                            💰 Ahorrá hasta 43.84% vs MercadoLibre
+                                        </p>
+                                        <p className="text-xs text-green-700 dark:text-green-300 text-center">
+                                            Vendés +$10M/mes? Bajamos a <span className="font-bold">5%</span>
                                         </p>
                                     </div>
                                 </CardContent>
@@ -311,17 +317,23 @@ export default function SellersLandingPage() {
                 <section className="py-20 sm:py-28 bg-primary transition-all duration-700">
                     <div className="container mx-auto px-4 text-center">
                         <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-8 text-primary-foreground">
-                            ¿Listo para dejar de perder clientes?
+                            Los mejores vendedores no compiten por precio.
                         </h2>
-                        <p className="text-lg sm:text-xl md:text-2xl mb-12 text-primary-foreground/90 max-w-2xl mx-auto leading-relaxed">
-                            Probá Shoppa! sin compromiso. La implementación es rápida y te acompañamos en cada paso.
+                        <p className="text-lg sm:text-xl md:text-2xl mb-4 text-primary-foreground font-semibold max-w-2xl mx-auto">
+                            Compiten por claridad.
                         </p>
-                        <Button size="lg" variant="secondary" asChild className="rounded-full px-12 h-16 text-xl shadow-2xl hover:scale-105 transition-transform">
-                            <Link href="mailto:juanulian@gmail.com?subject=Solicitud%20de%20Reuni%C3%B3n%20-%20Shoppa!&body=Hola!%20Me%20gustar%C3%ADa%20coordinar%20una%20reuni%C3%B3n%20para%20ver%20c%C3%B3mo%20implementar%20Shoppa!%20en%20mi%20negocio.">
-                                Quiero Probarlo
+                        <p className="text-base sm:text-lg mb-12 text-primary-foreground/80 max-w-xl mx-auto">
+                            Implementación en 48hs. Sin compromiso. Sin costos fijos.
+                        </p>
+                        <Button size="lg" variant="secondary" asChild className="rounded-full px-12 h-16 text-xl shadow-2xl hover:scale-105 transition-transform font-bold">
+                            <Link href="mailto:juanulian@gmail.com?subject=Solicitud%20de%20Reuni%C3%B3n%20-%20Shoppa!&body=Hola!%20Quiero%20vender%20con%20Shoppa!%20y%20pagar%20solo%206%25%20de%20comisi%C3%B3n.%0A%0AFacturaci%C3%B3n%20mensual%20aproximada%3A%20%0ACategor%C3%ADa%20principal%3A%20">
+                                Empezar ahora
                                 <ArrowRight className="ml-3 h-6 w-6" />
                             </Link>
                         </Button>
+                        <p className="text-sm text-primary-foreground/70 mt-6">
+                            Primeros 30 días gratis para probar. Luego, solo 6% por venta.
+                        </p>
                     </div>
                 </section>
             </main>
