@@ -72,7 +72,7 @@ export default function BuyerLandingPage() {
         </div>
       </header>
 
-      {/* Hero Section con fondo cards_2.png */}
+      {/* Hero Section */}
       <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center">
         <div className="bg-white/85 dark:bg-slate-950/85 backdrop-blur-sm">
           <div className="container mx-auto px-4 pt-20 pb-16 text-center">
@@ -154,7 +154,7 @@ export default function BuyerLandingPage() {
         </div>
       </section>
 
-      {/* How it Works con fondo cards.png */}
+      {/* How it Works */}
       <section className="bg-[url('/background/cards.png')] bg-cover bg-center py-20">
         <div className="bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm py-16">
           <div className="container mx-auto px-4">
@@ -205,7 +205,7 @@ export default function BuyerLandingPage() {
         </div>
       </section>
 
-      {/* CTA Final con fondo header_footer.png */}
+      {/* Final CTA */}
       <section className="bg-[url('/background/header_footer.png')] bg-cover bg-center py-20">
         <div className="bg-primary/95 backdrop-blur-sm py-16">
           <div className="container mx-auto px-4 text-center">
@@ -218,16 +218,16 @@ export default function BuyerLandingPage() {
             <Button
               size="lg"
               variant="secondary"
-              onClick={() => router.push('/demo')}
+              onClick={() => window.location.href="mailto:juanulian@gmail.com?subject=Solicitud%20de%20Reuni%C3%B3n%20-%20Shoppa!&body=Hola!%20Me%20gustar%C3%ADa%20coordinar%20una%20reuni%C3%B3n%20para%20ver%20c%C3%B3mo%20implementar%20Shoppa!%20en%20mi%20negocio."}
               className="rounded-full px-12 text-lg shadow-xl hover:scale-105 transition-transform"
             >
-              Empezar ahora →
+              Lo quiero probar
             </Button>
           </div>
         </div>
       </section>
 
-      {/* Footer con fondo header_footer.png */}
+      {/* Footer */}
       <footer className="bg-[url('/background/header_footer.png')] bg-cover bg-center border-t border-slate-200 dark:border-slate-800">
         <div className="bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-sm py-8">
           <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
