@@ -40,31 +40,31 @@ const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
   }, [userProfileData]);
 
   return (
-    <div className="w-full min-h-screen flex items-center justify-center px-4">
-      <div className="glassmorphism-card rounded-3xl soft-border shadow-2xl p-8 md:p-12 max-w-lg w-full text-center">
+    <div className="fixed inset-0 flex items-center justify-center px-4">
+      <div className="glassmorphism-card rounded-3xl soft-border shadow-2xl p-10 md:p-12 max-w-md w-full text-center">
         {/* Giant S! logo with pulse */}
-        <div className="mb-12">
+        <div className="mb-10">
           <h1 className="font-headline text-8xl md:text-9xl font-extrabold text-slate-900 dark:text-white animate-pulse">
             S<span className="text-primary">!</span>
           </h1>
         </div>
 
         {/* Loading text with fade transition */}
-        <div className="mb-8 h-14">
+        <div className="mb-8 h-12">
           <p
             key={currentStep}
-            className="text-2xl md:text-3xl font-light text-slate-700 dark:text-slate-300 animate-in fade-in duration-700"
+            className="text-xl md:text-2xl font-light text-slate-700 dark:text-slate-300 animate-in fade-in duration-700"
           >
             {steps[currentStep]}
           </p>
         </div>
 
         {/* Progress indicator - completa hacia adelante */}
-        <div className="flex justify-center gap-3">
+        <div className="flex justify-center gap-2">
           {steps.map((_, index) => (
             <div
               key={index}
-              className={`h-1.5 w-16 rounded-full transition-all duration-700 ${
+              className={`h-1.5 w-14 rounded-full transition-all duration-700 ${
                 completedSteps.includes(index)
                   ? 'bg-primary opacity-100'
                   : index === currentStep

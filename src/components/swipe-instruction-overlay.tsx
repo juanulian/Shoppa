@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface SwipeInstructionOverlayProps {
   onDismiss: () => void;
@@ -17,7 +16,7 @@ const SwipeInstructionOverlay: React.FC<SwipeInstructionOverlayProps> = ({ onDis
 
     const dismissTimer = setTimeout(() => {
       handleDismiss();
-    }, 4000);
+    }, 5000);
 
     return () => {
       clearTimeout(fadeInTimer);
@@ -33,32 +32,25 @@ const SwipeInstructionOverlay: React.FC<SwipeInstructionOverlayProps> = ({ onDis
 
   return (
     <div
-      className={`absolute inset-0 z-10 transition-opacity duration-300 ${
+      className={`absolute inset-0 z-10 flex transition-opacity duration-300 ${
         isVisible ? 'opacity-100' : 'opacity-0'
       }`}
       onClick={handleDismiss}
     >
-      {/* Left indicator */}
-      <div className="absolute left-8 top-1/2 -translate-y-1/2 animate-pulse">
-        <div className="glassmorphism-strong rounded-full p-4 soft-border">
-          <ChevronLeft className="w-12 h-12 text-primary" strokeWidth={1.5} />
-        </div>
+      {/* Left half - Previous */}
+      <div className="w-1/2 flex flex-col items-center justify-center gap-4 bg-black/40 backdrop-blur-sm border-r-2 border-dashed border-white/30">
+        <div className="text-6xl animate-pulse">👈</div>
+        <p className="text-white font-semibold text-lg uppercase tracking-wide">
+          Anterior
+        </p>
       </div>
 
-      {/* Right indicator */}
-      <div className="absolute right-8 top-1/2 -translate-y-1/2 animate-pulse">
-        <div className="glassmorphism-strong rounded-full p-4 soft-border">
-          <ChevronRight className="w-12 h-12 text-primary" strokeWidth={1.5} />
-        </div>
-      </div>
-
-      {/* Centered instruction text */}
-      <div className="absolute bottom-32 left-0 right-0 flex justify-center px-4">
-        <div className="glassmorphism-strong rounded-full px-8 py-3 soft-border">
-          <p className="text-lg font-light text-slate-900 dark:text-white">
-            Deslizá para navegar
-          </p>
-        </div>
+      {/* Right half - Next */}
+      <div className="w-1/2 flex flex-col items-center justify-center gap-4 bg-black/40 backdrop-blur-sm border-l-2 border-dashed border-white/30">
+        <div className="text-6xl animate-pulse">👉</div>
+        <p className="text-white font-semibold text-lg uppercase tracking-wide">
+          Siguiente
+        </p>
       </div>
     </div>
   );
