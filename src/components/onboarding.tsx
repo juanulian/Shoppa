@@ -273,6 +273,18 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
     return null;
   };
 
+  const parseQuestion = (question: string) => {
+    // Split question from tips if format is "Question\nTips: examples"
+    const parts = question.split(/\n(?=Tips?:|Ejemplos?:)/i);
+    if (parts.length > 1) {
+      return {
+        main: parts[0].trim(),
+        tips: parts.slice(1).join('\n').trim()
+      };
+    }
+    return { main: question, tips: null };
+  };
+
   return (
     <Card className="w-full max-w-2xl mx-auto glassmorphism-strong shadow-2xl transition-all duration-500 hover-glow soft-border">
       <CardHeader className="p-4 md:p-6">
@@ -292,7 +304,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
       </CardHeader>
       <CardContent className="p-4 md:p-6">
         <div className="space-y-6">
-          <div className="text-center min-h-[4rem] flex items-center justify-center p-2">
+          <div className="text-center min-h-[4rem] flex flex-col items-center justify-center p-2 space-y-3">
             {processingState !== 'idle' ? (
               <div className="space-y-2">
                 <div className="flex justify-center">
@@ -303,9 +315,16 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                 </p>
               </div>
             ) : (
-              <p className="text-base sm:text-lg font-medium text-foreground animate-in fade-in duration-500">
-                {currentQuestion}
-              </p>
+              <>
+                <p className="text-base sm:text-lg font-medium text-foreground animate-in fade-in duration-500">
+                  {parseQuestion(currentQuestion).main}
+                </p>
+                {parseQuestion(currentQuestion).tips && (
+                  <p className="text-xs sm:text-sm text-muted-foreground font-light animate-in fade-in duration-500 delay-100">
+                    {parseQuestion(currentQuestion).tips}
+                  </p>
+                )}
+              </>
             )}
           </div>
 
