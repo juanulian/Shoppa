@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import Onboarding from '@/components/onboarding';
 import MainApp from '@/components/main-app';
 import Logo from '@/components/icons/logo';
@@ -38,7 +38,9 @@ export default function DemoPage() {
         <div className={`w-full max-w-2xl mx-auto z-10 ${appState === 'search' ? 'pt-16 md:pt-0' : ''}`}>
           {appState === 'onboarding' && (
             <div className="animate-in fade-in-0 zoom-in-95 duration-500">
-              <Onboarding onComplete={handleOnboardingComplete} />
+              <Suspense fallback={<div className="text-center p-8">Cargando...</div>}>
+                <Onboarding onComplete={handleOnboardingComplete} />
+              </Suspense>
             </div>
           )}
           {appState === 'search' && userProfile !== null && (
