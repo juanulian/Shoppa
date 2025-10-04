@@ -21,7 +21,7 @@ interface QA {
   answer: string;
 }
 
-const initialQuestion = "¿Cuál es tu uso principal del celular? (Por ejemplo: fotos familiares, trabajo, gaming, redes sociales)";
+const initialQuestion = "¿Cuál es tu uso principal del celular?\nTips: fotos familiares, trabajo, gaming, redes sociales";
 const maxQuestions = 3; 
 
 const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
