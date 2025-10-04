@@ -40,7 +40,7 @@ const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
   }, [userProfileData]);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center px-4">
+    <div className="w-full flex items-center justify-center px-4 py-8">
       <div className="glassmorphism-card rounded-3xl soft-border shadow-2xl p-10 md:p-12 max-w-md w-full text-center">
         {/* Giant S! logo with pulse */}
         <div className="mb-10">

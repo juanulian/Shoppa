@@ -38,17 +38,21 @@ const SwipeInstructionOverlay: React.FC<SwipeInstructionOverlayProps> = ({ onDis
       onClick={handleDismiss}
     >
       {/* Left half - Previous */}
-      <div className="w-1/2 flex flex-col items-center justify-center gap-4 bg-black/40 backdrop-blur-sm border-r-2 border-dashed border-white/30">
-        <div className="text-6xl animate-pulse">👈</div>
-        <p className="text-white font-semibold text-lg uppercase tracking-wide">
+      <div className="w-1/2 flex flex-col items-center justify-center gap-6 bg-black/50 backdrop-blur-sm border-r border-dashed border-white/40">
+        <svg className="w-16 h-16 text-white animate-[swipe-left_1.5s_ease-in-out_infinite]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path d="M13 7l-5 5 5 5M19 12H8" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        <p className="text-white font-light text-base uppercase tracking-wider">
           Anterior
         </p>
       </div>
 
       {/* Right half - Next */}
-      <div className="w-1/2 flex flex-col items-center justify-center gap-4 bg-black/40 backdrop-blur-sm border-l-2 border-dashed border-white/30">
-        <div className="text-6xl animate-pulse">👉</div>
-        <p className="text-white font-semibold text-lg uppercase tracking-wide">
+      <div className="w-1/2 flex flex-col items-center justify-center gap-6 bg-black/50 backdrop-blur-sm border-l border-dashed border-white/40">
+        <svg className="w-16 h-16 text-white animate-[swipe-right_1.5s_ease-in-out_infinite]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path d="M11 17l5-5-5-5M5 12h11" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        <p className="text-white font-light text-base uppercase tracking-wider">
           Siguiente
         </p>
       </div>
