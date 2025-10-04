@@ -274,14 +274,24 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   };
 
   const parseQuestion = (question: string) => {
-    // Split question from tips if format is "Question\nTips: examples"
-    const parts = question.split(/\n(?=Tips?:|Ejemplos?:)/i);
-    if (parts.length > 1) {
+    // Try to split by newline first
+    const newlineSplit = question.split(/\n(?=Tips?:|Ejemplos?:)/i);
+    if (newlineSplit.length > 1) {
       return {
-        main: parts[0].trim(),
-        tips: parts.slice(1).join('\n').trim()
+        main: newlineSplit[0].trim(),
+        tips: newlineSplit.slice(1).join('\n').trim()
       };
     }
+
+    // If no newline, try to find "Tips:" or "Ejemplos:" anywhere
+    const match = question.match(/^(.+?)(Tips?:|Ejemplos?:)(.+)$/is);
+    if (match) {
+      return {
+        main: match[1].trim(),
+        tips: `${match[2]} ${match[3]}`.trim()
+      };
+    }
+
     return { main: question, tips: null };
   };
 
