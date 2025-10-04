@@ -39,20 +39,20 @@ const SwipeInstructionOverlay: React.FC<SwipeInstructionOverlayProps> = ({ onDis
       onClick={handleDismiss}
     >
       <div className="relative w-full h-full flex items-center justify-center text-white">
-        {/* Left Side Instruction */}
+        {/* Left Side Instruction - swipe left goes to NEXT */}
         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1/2 flex flex-col items-center justify-center text-center p-4 animate-pulse">
           <div className="relative">
             <Hand className="w-10 h-10 transform -scale-x-100 animate-swipe-left" />
           </div>
-          <span className="mt-2 font-semibold text-sm">Ver siguiente</span>
+          <span className="mt-2 font-semibold text-sm">Ver anterior</span>
         </div>
 
-        {/* Right Side Instruction */}
+        {/* Right Side Instruction - swipe right goes to PREVIOUS */}
         <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1/2 flex flex-col items-center justify-center text-center p-4 animate-pulse">
           <div className="relative">
             <Hand className="w-10 h-10 animate-swipe-right" />
           </div>
-          <span className="mt-2 font-semibold text-sm">Ver anterior</span>
+          <span className="mt-2 font-semibold text-sm">Ver siguiente</span>
         </div>
       </div>
     </div>
