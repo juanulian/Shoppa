@@ -286,41 +286,41 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto glassmorphism-strong shadow-2xl transition-all duration-500 hover-glow soft-border">
-      <CardHeader className="p-4 md:p-6">
-        <CardTitle className="font-headline text-xl sm:text-2xl md:text-3xl text-center">
+    <Card className="w-full max-w-2xl mx-auto glassmorphism-card rounded-3xl soft-border shadow-2xl transition-all duration-500">
+      <CardHeader className="p-6 md:p-8">
+        <CardTitle className="font-headline text-2xl sm:text-3xl md:text-4xl font-light text-center">
             Encontremos tu celular ideal
         </CardTitle>
-        <CardDescription className="text-center text-sm sm:text-base">
-            Responde algunas preguntas para recibir una recomendación experta.
+        <CardDescription className="text-center text-base sm:text-lg font-light mt-4">
+            Solo 3 preguntas simples.
         </CardDescription>
-        <div className="pt-4">
-            <Progress value={progressValue} className="w-full" />
-            <div className="flex justify-between items-center mt-2">
-              <p className="text-xs text-muted-foreground">Pregunta {qaPairs.length + 1} de {maxQuestions}</p>
+        <div className="pt-6">
+            <Progress value={progressValue} className="w-full h-2" />
+            <div className="flex justify-between items-center mt-3">
+              <p className="text-sm text-muted-foreground font-light">{qaPairs.length + 1} de {maxQuestions}</p>
               {getStatusIndicator()}
             </div>
         </div>
       </CardHeader>
-      <CardContent className="p-4 md:p-6">
-        <div className="space-y-6">
-          <div className="text-center min-h-[4rem] flex flex-col items-center justify-center p-2 space-y-3">
+      <CardContent className="p-6 md:p-8">
+        <div className="space-y-8">
+          <div className="text-center min-h-[6rem] flex flex-col items-center justify-center space-y-4">
             {processingState !== 'idle' ? (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex justify-center">
-                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
                 </div>
-                <p className="text-sm text-muted-foreground animate-pulse">
+                <p className="text-base text-muted-foreground font-light animate-pulse">
                   {getProcessingMessage()}
                 </p>
               </div>
             ) : (
               <>
-                <p className="text-base sm:text-lg font-medium text-foreground animate-in fade-in duration-500">
+                <p className="text-xl sm:text-2xl font-light text-foreground animate-in fade-in duration-500">
                   {parseQuestion(currentQuestion).main}
                 </p>
                 {parseQuestion(currentQuestion).tips && (
-                  <p className="text-xs sm:text-sm text-muted-foreground font-light animate-in fade-in duration-500 delay-100">
+                  <p className="text-sm sm:text-base text-muted-foreground font-light animate-in fade-in duration-500 delay-100">
                     {parseQuestion(currentQuestion).tips}
                   </p>
                 )}
