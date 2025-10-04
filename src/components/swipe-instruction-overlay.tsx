@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Hand } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface SwipeInstructionOverlayProps {
   onDismiss: () => void;
@@ -17,7 +17,7 @@ const SwipeInstructionOverlay: React.FC<SwipeInstructionOverlayProps> = ({ onDis
 
     const dismissTimer = setTimeout(() => {
       handleDismiss();
-    }, 5000);
+    }, 4000);
 
     return () => {
       clearTimeout(fadeInTimer);
@@ -28,31 +28,36 @@ const SwipeInstructionOverlay: React.FC<SwipeInstructionOverlayProps> = ({ onDis
 
   const handleDismiss = () => {
     setIsVisible(false);
-    setTimeout(onDismiss, 500);
+    setTimeout(onDismiss, 300);
   };
 
   return (
     <div
-      className={`absolute inset-0 z-10 bg-black/60 backdrop-blur-sm transition-opacity duration-500 ${
+      className={`absolute inset-0 z-10 transition-opacity duration-300 ${
         isVisible ? 'opacity-100' : 'opacity-0'
       }`}
       onClick={handleDismiss}
     >
-      <div className="relative w-full h-full flex items-center justify-center text-white">
-        {/* Left Side Instruction - swipe left goes to NEXT */}
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1/2 flex flex-col items-center justify-center text-center p-4 animate-pulse">
-          <div className="relative">
-            <Hand className="w-10 h-10 transform -scale-x-100 animate-swipe-left" />
-          </div>
-          <span className="mt-2 font-semibold text-sm">Ver anterior</span>
+      {/* Left indicator */}
+      <div className="absolute left-8 top-1/2 -translate-y-1/2 animate-pulse">
+        <div className="glassmorphism-strong rounded-full p-4 soft-border">
+          <ChevronLeft className="w-12 h-12 text-primary" strokeWidth={1.5} />
         </div>
+      </div>
 
-        {/* Right Side Instruction - swipe right goes to PREVIOUS */}
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1/2 flex flex-col items-center justify-center text-center p-4 animate-pulse">
-          <div className="relative">
-            <Hand className="w-10 h-10 animate-swipe-right" />
-          </div>
-          <span className="mt-2 font-semibold text-sm">Ver siguiente</span>
+      {/* Right indicator */}
+      <div className="absolute right-8 top-1/2 -translate-y-1/2 animate-pulse">
+        <div className="glassmorphism-strong rounded-full p-4 soft-border">
+          <ChevronRight className="w-12 h-12 text-primary" strokeWidth={1.5} />
+        </div>
+      </div>
+
+      {/* Centered instruction text */}
+      <div className="absolute bottom-32 left-0 right-0 flex justify-center px-4">
+        <div className="glassmorphism-strong rounded-full px-8 py-3 soft-border">
+          <p className="text-lg font-light text-slate-900 dark:text-white">
+            Deslizá para navegar
+          </p>
         </div>
       </div>
     </div>
