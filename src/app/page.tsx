@@ -119,11 +119,11 @@ export default function BuyerLandingPage() {
                 </div>
                 <Button
                   type="submit"
-                  size="lg"
-                  className="h-14 px-8 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
+                  size="icon"
+                  className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all flex-shrink-0"
+                  aria-label="Buscar"
                 >
-                  Buscar
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  <ArrowRight className="h-6 w-6" />
                 </Button>
               </div>
             </form>
