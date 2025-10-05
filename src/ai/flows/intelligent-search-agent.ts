@@ -256,7 +256,7 @@ Genera exactamente 3 recomendaciones en formato JSON array.`;
           effort: 'low'
         },
         text: {
-          verbosity: 'low',
+          verbosity: 'medium',
           format: {
             type: 'json_schema',
             name: 'recommendations',

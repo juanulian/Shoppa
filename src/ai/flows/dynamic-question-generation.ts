@@ -262,7 +262,7 @@ Responde SOLO con JSON válido siguiendo este esquema:
           effort: 'low'
         },
         text: {
-          verbosity: 'low',
+          verbosity: 'medium',
           format: {
             type: 'json_schema',
             name: 'questions_response',
