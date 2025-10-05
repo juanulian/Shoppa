@@ -261,9 +261,10 @@ Responde SOLO con JSON válido siguiendo este esquema:
         reasoning: {
           effort: 'low'
         },
-        output: {
-          type: 'json_schema',
-          json_schema: {
+        text: {
+          verbosity: 'low',
+          format: {
+            type: 'json_schema',
             name: 'questions_response',
             strict: true,
             schema: {

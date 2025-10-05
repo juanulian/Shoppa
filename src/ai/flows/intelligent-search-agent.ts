@@ -255,9 +255,10 @@ Genera exactamente 3 recomendaciones en formato JSON array.`;
         reasoning: {
           effort: 'low'
         },
-        output: {
-          type: 'json_schema',
-          json_schema: {
+        text: {
+          verbosity: 'low',
+          format: {
+            type: 'json_schema',
             name: 'recommendations',
             strict: true,
             schema: {
