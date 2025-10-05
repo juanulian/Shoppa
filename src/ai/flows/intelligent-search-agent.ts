@@ -134,7 +134,7 @@ const promptWithFallback = ai.definePrompt({
   input: {schema: IntelligentSearchAgentInputSchema},
   output: {schema: IntelligentSearchAgentOutputSchema},
   tools: [getSmartphoneCatalog],
-  model: 'openai/gpt-5-nano-2025-08-07',
+  model: 'googleai/gemini-2.5-pro',
   system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros. Tu misión es reducir el abandono de carrito (actualmente 75% en LATAM) presentando exactamente 3 opciones optimizadas que aceleran la decisión de compra.
 
 ## METODOLOGÍA ANTI-ABANDONO DE CARRITO ##
@@ -216,8 +216,8 @@ const intelligentSearchAgentFlow = ai.defineFlow(
       const {output} = await prompt(input);
       return output!;
     } catch (error) {
-      console.warn('GPT-5 nano falló, usando GPT-4o como fallback:', error);
-      // Fallback a gpt-5-nano
+      console.warn('GPT-5 nano falló, usando Gemini 2.5 Pro como fallback:', error);
+      // Fallback a gemini-2.5-pro
       const {output} = await promptWithFallback(input);
       return output!;
     }
