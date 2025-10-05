@@ -249,14 +249,11 @@ ${input.userProfileData}
 Genera exactamente 3 recomendaciones en formato JSON array.`;
 
       const response = await openai.responses.create({
-        model: 'gpt-5-nano-2025-08-07',
+        model: 'gpt-5-nano',
         instructions: systemPrompt,
         input: userPrompt,
         reasoning: {
-          effort: 'minimal'
-        },
-        text: {
-          verbosity: 'low'
+          effort: 'low'
         },
         output: {
           type: 'json_schema',
@@ -307,7 +304,7 @@ Genera exactamente 3 recomendaciones en formato JSON array.`;
         }
       });
 
-      const result = JSON.parse(response.text || '{"recommendations":[]}');
+      const result = JSON.parse(response.output_text || '{"recommendations":[]}');
       console.log('✅ GPT-5 nano respondió correctamente');
       return result.recommendations as IntelligentSearchAgentOutput;
 

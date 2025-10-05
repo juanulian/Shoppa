@@ -255,14 +255,11 @@ Responde SOLO con JSON válido siguiendo este esquema:
 }`;
 
       const response = await openai.responses.create({
-        model: 'gpt-5-nano-2025-08-07',
+        model: 'gpt-5-nano',
         instructions: systemPrompt,
         input: contextMessages,
         reasoning: {
-          effort: 'minimal'
-        },
-        text: {
-          verbosity: 'low'
+          effort: 'low'
         },
         output: {
           type: 'json_schema',
@@ -289,7 +286,7 @@ Responde SOLO con JSON válido siguiendo este esquema:
         }
       });
 
-      const result = JSON.parse(response.text || '{}');
+      const result = JSON.parse(response.output_text || '{}');
       console.log('✅ GPT-5 nano respondió correctamente');
       return result as GenerateFollowUpQuestionsOutput;
 
