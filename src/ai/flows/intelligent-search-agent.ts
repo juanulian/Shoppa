@@ -253,10 +253,10 @@ Genera exactamente 3 recomendaciones en formato JSON array.`;
         instructions: systemPrompt,
         input: userPrompt,
         reasoning: {
-          effort: 'low'
+          effort: 'medium'
         },
         text: {
-          verbosity: 'medium',
+          verbosity: 'high',
           format: {
             type: 'json_schema',
             name: 'recommendations',

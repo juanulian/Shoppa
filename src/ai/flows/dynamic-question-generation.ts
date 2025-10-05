@@ -259,10 +259,10 @@ Responde SOLO con JSON válido siguiendo este esquema:
         instructions: systemPrompt,
         input: contextMessages,
         reasoning: {
-          effort: 'low'
+          effort: 'medium'
         },
         text: {
-          verbosity: 'medium',
+          verbosity: 'high',
           format: {
             type: 'json_schema',
             name: 'questions_response',
