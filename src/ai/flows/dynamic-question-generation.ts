@@ -255,7 +255,7 @@ Responde SOLO con JSON válido siguiendo este esquema:
 }`;
 
       const response = await openai.responses.create({
-        model: 'gpt-5-nano',
+        model: 'gpt-5-mini-2025-08-07',
         instructions: systemPrompt,
         input: contextMessages,
         reasoning: {

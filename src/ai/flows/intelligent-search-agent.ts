@@ -249,7 +249,7 @@ ${input.userProfileData}
 Genera exactamente 3 recomendaciones en formato JSON array.`;
 
       const response = await openai.responses.create({
-        model: 'gpt-5-nano',
+        model: 'gpt-5-mini-2025-08-07',
         instructions: systemPrompt,
         input: userPrompt,
         reasoning: {
