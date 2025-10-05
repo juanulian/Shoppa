@@ -9,5 +9,5 @@ export const ai = genkit({
     }),
     googleAI(),
   ],
-  model: 'openai/gpt-5-nano-2025-08-07',
+  model: 'openai/gpt-4o-mini',
 });
