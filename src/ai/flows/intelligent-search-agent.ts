@@ -213,13 +213,14 @@ const intelligentSearchAgentFlow = ai.defineFlow(
   },
   async input => {
     try {
-      // Intentar con modelo por defecto (gpt-5-nano)
+      console.log('🤖 Usando GPT-5 nano para recomendaciones...');
       const {output} = await prompt(input);
+      console.log('✅ GPT-5 nano respondió correctamente');
       return output!;
     } catch (error) {
-      console.warn('GPT-5 nano falló, usando Gemini 2.5 Pro como fallback:', error);
-      // Fallback a gemini-2.5-pro
+      console.warn('❌ GPT-5 nano falló, usando Gemini 2.5 Pro como fallback:', error);
       const {output} = await promptWithFallback(input);
+      console.log('✅ Gemini 2.5 Pro respondió correctamente');
       return output!;
     }
   }
