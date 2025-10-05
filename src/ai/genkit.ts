@@ -1,9 +1,11 @@
 import {genkit} from 'genkit';
-import {googleAI} from '@genkit-ai/googleai';
+import {openAI} from 'genkitx-openai';
 
 export const ai = genkit({
   plugins: [
-    googleAI(),
+    openAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    }),
   ],
-  model: 'googleai/gemini-2.5-flash',
+  model: 'openai/gpt-5-nano-2025-08-07',
 });
