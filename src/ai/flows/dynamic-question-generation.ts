@@ -124,7 +124,7 @@ const promptWithFallback = ai.definePrompt({
   name: 'generateFollowUpQuestionsPromptFallback',
   input: {schema: GenerateFollowUpQuestionsInputSchema},
   output: {schema: GenerateFollowUpQuestionsOutputSchema},
-  model: 'googleai/gemini-2.5-pro',
+  model: 'openai/gpt-5-nano-2025-08-07',
   prompt: `Eres un vendedor experto estilo Steve Jobs. Tu objetivo: entender QUÉ PROBLEMA quiere resolver el usuario en MÁXIMO 3 preguntas EMOCIONALES Y SIMPLES.
 
 **FILOSOFÍA JOBS:**
@@ -213,7 +213,7 @@ const generateFollowUpQuestionsFlow = ai.defineFlow(
       const {output} = await prompt(input);
       return output!;
     } catch (error) {
-      console.warn('Gemini 2.5 Flash falló en preguntas, usando Gemini 2.5 Pro como fallback:', error);
+      console.warn('GPT-5 nano falló en preguntas, usando GPT-4o como fallback:', error);
       const {output} = await promptWithFallback(input);
       return output!;
     }
