@@ -76,24 +76,14 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
 
   return (
     <div className="w-full max-w-5xl mx-auto flex flex-col gap-6 sm:gap-8 px-2 sm:px-4">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-center md:text-left">
-        <div className="w-full md:w-auto">
+      <header className="flex flex-col items-start text-center md:text-left">
+        <div className="w-full">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-headline tracking-tight">
             Tus 3 opciones perfectas
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground mt-2">
             Seleccionadas específicamente para tus necesidades y presupuesto. Sin confusión, sin perdida de tiempo.
           </p>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-            <Button onClick={onNewSearch} variant="outline" size="lg" className="rounded-full glassmorphism-strong w-full sm:w-auto transition-all duration-300 hover:scale-105 text-sm sm:text-base touch-manipulation" suppressHydrationWarning>
-                <RefreshCw className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                Empezar de Nuevo
-            </Button>
-            <Button onClick={handleOpenForm} variant="outline" size="lg" className="rounded-full glassmorphism-strong w-full sm:w-auto transition-all duration-300 hover:scale-105 text-sm sm:text-base touch-manipulation" suppressHydrationWarning>
-                <FileText className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                Responder Encuesta
-            </Button>
         </div>
       </header>
 
@@ -113,6 +103,15 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
           ) : null}
         </div>
       </div>
+
+      {!isLoading && results.length > 0 && (
+        <div className="flex justify-center items-center pt-4">
+          <Button onClick={onNewSearch} variant="outline" size="lg" className="rounded-full glassmorphism-strong transition-all duration-300 hover:scale-105 text-sm sm:text-base touch-manipulation" suppressHydrationWarning>
+            <RefreshCw className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+            Empezar de Nuevo
+          </Button>
+        </div>
+      )}
 
       {/* Add Details Modal */}
       {showAddDetailsModal && (
