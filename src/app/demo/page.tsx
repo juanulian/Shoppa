@@ -5,6 +5,7 @@ import { useState, Suspense } from 'react';
 import Onboarding from '@/components/onboarding';
 import MainApp from '@/components/main-app';
 import Logo from '@/components/icons/logo';
+import Link from 'next/link';
 
 export type AppState = 'onboarding' | 'search';
 
@@ -32,7 +33,9 @@ export default function DemoPage() {
        <div className="absolute inset-0 bg-white/50 dark:bg-slate-950/80"></div>
       <main className="flex flex-col items-center justify-center p-4 md:p-8 min-h-screen">
         <div className="absolute top-4 left-4 md:top-8 md:left-8 z-10 animate-in fade-in duration-1000">
-          <Logo />
+          <Link href="/" aria-label="Shoppa! - Volver al inicio">
+            <Logo />
+          </Link>
         </div>
 
         <div className={`w-full max-w-2xl mx-auto z-10 ${appState === 'search' ? 'pt-16 md:pt-0' : ''}`}>
