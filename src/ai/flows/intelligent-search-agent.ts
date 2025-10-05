@@ -60,6 +60,7 @@ const prompt = ai.definePrompt({
   input: {schema: IntelligentSearchAgentInputSchema},
   output: {schema: IntelligentSearchAgentOutputSchema},
   tools: [getSmartphoneCatalog],
+  model: 'openai/gpt-5-nano-2025-08-07',
   system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros. Tu misión es reducir el abandono de carrito (actualmente 75% en LATAM) presentando exactamente 3 opciones optimizadas que aceleran la decisión de compra.
 
 ## METODOLOGÍA ANTI-ABANDONO DE CARRITO ##

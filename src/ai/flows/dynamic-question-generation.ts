@@ -43,6 +43,7 @@ const prompt = ai.definePrompt({
   name: 'generateFollowUpQuestionsPrompt',
   input: {schema: GenerateFollowUpQuestionsInputSchema},
   output: {schema: GenerateFollowUpQuestionsOutputSchema},
+  model: 'openai/gpt-5-nano-2025-08-07',
   prompt: `Eres un vendedor experto estilo Steve Jobs. Tu objetivo: entender QUÉ PROBLEMA quiere resolver el usuario en MÁXIMO 3 preguntas EMOCIONALES Y SIMPLES.
 
 **FILOSOFÍA JOBS:**
