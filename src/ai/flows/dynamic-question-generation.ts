@@ -10,7 +10,6 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import {openai} from '@/ai/openai-client';
 
 const GenerateFollowUpQuestionsInputSchema = z.object({
   initialAnswer: z.string().describe('La respuesta inicial del usuario a la pregunta de incorporación.'),
@@ -44,7 +43,7 @@ const prompt = ai.definePrompt({
   name: 'generateFollowUpQuestionsPrompt',
   input: {schema: GenerateFollowUpQuestionsInputSchema},
   output: {schema: GenerateFollowUpQuestionsOutputSchema},
-  model: 'openai/gpt-4o-mini',
+  model: 'googleai/gemini-2.0-flash-exp',
   prompt: `Eres un vendedor experto estilo Steve Jobs. Tu objetivo: entender QUÉ PROBLEMA quiere resolver el usuario en MÁXIMO 3 preguntas EMOCIONALES Y SIMPLES.
 
 **FILOSOFÍA JOBS:**
@@ -126,7 +125,7 @@ const promptWithFallback = ai.definePrompt({
   name: 'generateFollowUpQuestionsPromptFallback',
   input: {schema: GenerateFollowUpQuestionsInputSchema},
   output: {schema: GenerateFollowUpQuestionsOutputSchema},
-  model: 'googleai/gemini-2.5-pro',
+  model: 'googleai/gemini-2.0-flash-exp',
   prompt: `Eres un vendedor experto estilo Steve Jobs. Tu objetivo: entender QUÉ PROBLEMA quiere resolver el usuario en MÁXIMO 3 preguntas EMOCIONALES Y SIMPLES.
 
 **FILOSOFÍA JOBS:**
@@ -211,91 +210,9 @@ const generateFollowUpQuestionsFlow = ai.defineFlow(
     outputSchema: GenerateFollowUpQuestionsOutputSchema,
   },
   async input => {
-    try {
-      console.log('🤖 Usando GPT-5 nano para generar preguntas...');
-
-      // Build conversation context
-      let contextMessages = `Pregunta Inicial: "¿Qué tipo de celular estás buscando hoy?"
-Respuesta Inicial: ${input.initialAnswer}`;
-
-      if (input.priorQuestionsAndAnswers && input.priorQuestionsAndAnswers.length > 0) {
-        contextMessages += '\n\nPreguntas y Respuestas de Seguimiento:';
-        input.priorQuestionsAndAnswers.forEach(qa => {
-          contextMessages += `\nP: ${qa.question}\nR: ${qa.answer}`;
-        });
-      }
-
-      const systemPrompt = `Eres un vendedor experto estilo Steve Jobs. Tu objetivo: entender QUÉ PROBLEMA quiere resolver el usuario en MÁXIMO 3 preguntas EMOCIONALES Y SIMPLES.
-
-**FILOSOFÍA JOBS:**
-"La gente no sabe lo que quiere hasta que se lo mostrás."
-- NO preguntes especificaciones técnicas JAMÁS
-- NO preguntes presupuestos numéricos JAMÁS (la gente no sabe cuánto cuestan las cosas)
-- Preguntá sobre FRUSTRACIONES, DESEOS y USO REAL
-- Formato: "Pregunta corta\\nTips: ejemplos visuales y emocionales"
-
-**TU ESTRATEGIA (máximo 3 preguntas):**
-- Primera pregunta: Descubrí el PROBLEMA
-- Segunda pregunta: Entendé PRIORIDADES
-- Tercera pregunta: Definí RANGO (SIN números)
-
-**Validación de Respuestas:**
-Antes de generar nuevas preguntas, evalúa si la última respuesta del usuario es relevante. Si no es relevante (galimatías, evasiva, fuera de tema), devuelve isAnswerRelevant: false y questions: []
-
-**Tu Tarea:**
-1. Analiza la última respuesta del usuario
-2. Si la respuesta es relevante, genera 1-3 preguntas nuevas conversacionales
-3. No repitas información ya proporcionada
-4. USA SOLO CARACTERES ASCII (sin acentos, tildes, eñes)
-
-Responde SOLO con JSON válido siguiendo este esquema:
-{
-  "questions": ["pregunta1", "pregunta2"],
-  "isAnswerRelevant": true
-}`;
-
-      const response = await openai.responses.create({
-        model: 'gpt-5-mini-2025-08-07',
-        instructions: systemPrompt,
-        input: contextMessages,
-        reasoning: {
-          effort: 'medium'
-        },
-        text: {
-          verbosity: 'high',
-          format: {
-            type: 'json_schema',
-            name: 'questions_response',
-            strict: true,
-            schema: {
-              type: 'object',
-              properties: {
-                questions: {
-                  type: 'array',
-                  items: { type: 'string' },
-                  description: 'Lista de 1-3 preguntas de seguimiento'
-                },
-                isAnswerRelevant: {
-                  type: 'boolean',
-                  description: 'Si la última respuesta fue relevante'
-                }
-              },
-              required: ['questions', 'isAnswerRelevant'],
-              additionalProperties: false
-            }
-          }
-        }
-      });
-
-      const result = JSON.parse(response.output_text || '{}');
-      console.log('✅ GPT-5 nano respondió correctamente');
-      return result as GenerateFollowUpQuestionsOutput;
-
-    } catch (error) {
-      console.warn('❌ GPT-5 nano falló en preguntas, usando Gemini 2.5 Pro como fallback:', error);
-      const {output} = await promptWithFallback(input);
-      console.log('✅ Gemini 2.5 Pro respondió correctamente');
-      return output!;
-    }
+    console.log('🤖 Usando Gemini 2.5 Flash para generar preguntas...');
+    const {output} = await prompt(input);
+    console.log('✅ Gemini respondió correctamente');
+    return output!;
   }
 );

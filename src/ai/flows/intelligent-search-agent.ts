@@ -15,7 +15,6 @@ import {
   ProductRecommendationSchema,
 } from '@/ai/schemas/product-recommendation';
 import { smartphonesDatabase } from '@/lib/smartphones-database';
-import {openai} from '@/ai/openai-client';
 
 
 const getSmartphoneCatalog = ai.defineTool(
@@ -61,7 +60,7 @@ const prompt = ai.definePrompt({
   input: {schema: IntelligentSearchAgentInputSchema},
   output: {schema: IntelligentSearchAgentOutputSchema},
   tools: [getSmartphoneCatalog],
-  model: 'openai/gpt-4o-mini',
+  model: 'googleai/gemini-2.0-flash-exp',
   system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros. Tu misión es reducir el abandono de carrito (actualmente 75% en LATAM) presentando exactamente 3 opciones optimizadas que aceleran la decisión de compra.
 
 ## METODOLOGÍA ANTI-ABANDONO DE CARRITO ##
@@ -136,7 +135,7 @@ const promptWithFallback = ai.definePrompt({
   input: {schema: IntelligentSearchAgentInputSchema},
   output: {schema: IntelligentSearchAgentOutputSchema},
   tools: [getSmartphoneCatalog],
-  model: 'googleai/gemini-2.5-pro',
+  model: 'googleai/gemini-2.0-flash-exp',
   system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros. Tu misión es reducir el abandono de carrito (actualmente 75% en LATAM) presentando exactamente 3 opciones optimizadas que aceleran la decisión de compra.
 
 ## METODOLOGÍA ANTI-ABANDONO DE CARRITO ##
@@ -213,108 +212,10 @@ const intelligentSearchAgentFlow = ai.defineFlow(
     outputSchema: IntelligentSearchAgentOutputSchema,
   },
   async input => {
-    try {
-      console.log('🤖 Usando GPT-5 nano para recomendaciones...');
-
-      const catalog = smartphonesDatabase.devices;
-
-      const systemPrompt = `Eres el motor de recomendaciones de Shoppa! Tu misión: reducir abandono de carrito presentando exactamente 3 opciones optimizadas.
-
-**REGLAS CRÍTICAS:**
-1. Respeta estrictamente el presupuesto del usuario (90% dentro del rango)
-2. NUNCA menciones specs técnicas (GB RAM, mAh, procesadores)
-3. Habla de EXPERIENCIAS: "rápido", "batería dura todo el día", "fotos increíbles"
-4. Usa lenguaje simple como si hablaras con tu abuela
-
-**CAMPOS OBLIGATORIOS:**
-- productName: del catálogo
-- price: del catálogo
-- imageUrl: del catálogo
-- productUrl: Google search URL
-- availability: "En stock"
-- qualityScore: 70-98
-- productDescription: beneficios, no specs
-- justification: conexión emocional con necesidades del usuario
-- matchPercentage: 65-98%
-- matchTags: 2-4 tags con nivel (high/medium/low)
-
-Responde SOLO con un array JSON de exactamente 3 recomendaciones.`;
-
-      const userPrompt = `**Catálogo disponible:**
-${JSON.stringify(catalog, null, 2)}
-
-**Perfil del usuario:**
-${input.userProfileData}
-
-Genera exactamente 3 recomendaciones en formato JSON array.`;
-
-      const response = await openai.responses.create({
-        model: 'gpt-5-mini-2025-08-07',
-        instructions: systemPrompt,
-        input: userPrompt,
-        reasoning: {
-          effort: 'medium'
-        },
-        text: {
-          verbosity: 'high',
-          format: {
-            type: 'json_schema',
-            name: 'recommendations',
-            strict: true,
-            schema: {
-              type: 'object',
-              properties: {
-                recommendations: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      productName: { type: 'string' },
-                      productDescription: { type: 'string' },
-                      price: { type: 'string' },
-                      qualityScore: { type: 'number', minimum: 70, maximum: 98 },
-                      availability: { type: 'string' },
-                      justification: { type: 'string' },
-                      imageUrl: { type: 'string' },
-                      productUrl: { type: 'string' },
-                      matchPercentage: { type: 'number', minimum: 65, maximum: 98 },
-                      matchTags: {
-                        type: 'array',
-                        minItems: 2,
-                        maxItems: 4,
-                        items: {
-                          type: 'object',
-                          properties: {
-                            tag: { type: 'string' },
-                            level: { type: 'string', enum: ['high', 'medium', 'low'] }
-                          },
-                          required: ['tag', 'level'],
-                          additionalProperties: false
-                        }
-                      }
-                    },
-                    required: ['productName', 'productDescription', 'price', 'qualityScore', 'availability', 'justification', 'imageUrl', 'productUrl', 'matchPercentage', 'matchTags'],
-                    additionalProperties: false
-                  }
-                }
-              },
-              required: ['recommendations'],
-              additionalProperties: false
-            }
-          }
-        }
-      });
-
-      const result = JSON.parse(response.output_text || '{"recommendations":[]}');
-      console.log('✅ GPT-5 nano respondió correctamente');
-      return result.recommendations as IntelligentSearchAgentOutput;
-
-    } catch (error) {
-      console.warn('❌ GPT-5 nano falló, usando Gemini 2.5 Pro como fallback:', error);
-      const {output} = await promptWithFallback(input);
-      console.log('✅ Gemini 2.5 Pro respondió correctamente');
-      return output!;
-    }
+    console.log('🤖 Usando Gemini 2.0 Flash para recomendaciones...');
+    const {output} = await prompt(input);
+    console.log('✅ Gemini respondió correctamente');
+    return output!;
   }
 );
 
