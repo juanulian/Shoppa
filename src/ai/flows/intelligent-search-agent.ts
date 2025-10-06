@@ -229,18 +229,20 @@ function preFilterCatalog(userProfile: string, fullCatalog: typeof smartphonesDa
   // Brand filter (if specific brand mentioned)
   if (preferredBrands.length > 0) {
     filtered = filtered.filter(device =>
-      preferredBrands.some(brand => device.name.toLowerCase().includes(brand))
+      device?.name && preferredBrands.some(brand => device.name.toLowerCase().includes(brand))
     );
   }
 
   // Price filter
   if (isBudget) {
     filtered = filtered.filter(device => {
+      if (!device?.price) return false;
       const price = parseFloat(device.price.replace(/[^0-9.]/g, ''));
       return price < 600;
     });
   } else if (isPremium) {
     filtered = filtered.filter(device => {
+      if (!device?.price) return false;
       const price = parseFloat(device.price.replace(/[^0-9.]/g, ''));
       return price > 800;
     });
