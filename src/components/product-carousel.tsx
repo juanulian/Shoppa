@@ -14,6 +14,7 @@ import SwipeInstructionOverlay from './swipe-instruction-overlay';
 type ProductCarouselProps = {
   products: ProductRecommendation[];
   onAddMoreDetails: () => void;
+  isGenerating?: boolean;
 };
 
 const getTagColor = (level: 'high' | 'medium' | 'low') => {
@@ -27,6 +28,46 @@ const getTagColor = (level: 'high' | 'medium' | 'low') => {
   }
 };
 
+const SkeletonProductCard: React.FC<{
+  deviceType: ReturnType<typeof useDeviceType>;
+}> = ({ deviceType }) => {
+  const { isMobile, isTablet } = deviceType;
+
+  return (
+    <div className={`glassmorphism-card rounded-3xl soft-border overflow-hidden shadow-lg ${
+      isMobile
+        ? 'w-full max-w-xs mx-auto'
+        : isTablet
+        ? 'w-full max-w-sm mx-auto'
+        : 'w-full max-w-md mx-auto'
+    }`}>
+      <div className="relative">
+        <div className="w-full h-64 bg-muted-foreground/10 animate-pulse" />
+        <div className="absolute top-4 left-4 px-4 py-2 rounded-full bg-muted-foreground/20 animate-pulse w-24 h-8" />
+      </div>
+
+      <div className="p-6 space-y-4">
+        <div className="h-8 bg-muted-foreground/10 animate-pulse rounded w-3/4" />
+        <div className="h-6 bg-muted-foreground/10 animate-pulse rounded w-1/3" />
+
+        <div className="flex gap-2 flex-wrap">
+          <div className="h-6 bg-muted-foreground/10 animate-pulse rounded w-20" />
+          <div className="h-6 bg-muted-foreground/10 animate-pulse rounded w-24" />
+        </div>
+
+        <div className="space-y-2">
+          <div className="h-4 bg-muted-foreground/10 animate-pulse rounded w-full" />
+          <div className="h-4 bg-muted-foreground/10 animate-pulse rounded w-5/6" />
+        </div>
+
+        <div className="flex gap-2 pt-4">
+          <div className="h-12 bg-muted-foreground/10 animate-pulse rounded-full flex-1" />
+          <div className="h-12 bg-muted-foreground/10 animate-pulse rounded-full flex-1" />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const ProductCard: React.FC<{
   product: ProductRecommendation;
@@ -211,7 +252,8 @@ const AddMoreDetailsCard: React.FC<{
 
 const ProductCarousel: React.FC<ProductCarouselProps> = ({
   products,
-  onAddMoreDetails
+  onAddMoreDetails,
+  isGenerating = false
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState<ProductRecommendation | null>(null);
@@ -245,8 +287,12 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
       }
     }
   };
-  // Include the "add more details" card as the last item
-  const totalItems = products.length + 1;
+  // Create array with real products + skeleton cards (total 3 cards always)
+  const displayItems = [...products];
+  const skeletonsNeeded = isGenerating ? Math.max(0, 3 - products.length) : 0;
+
+  // Include the "add more details" card as the last item (only when not generating)
+  const totalItems = products.length + skeletonsNeeded + (isGenerating ? 0 : 1);
 
   const handlePrevious = () => {
     setCurrentIndex(prev => Math.max(0, prev - 1));
@@ -401,7 +447,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
           >
             {/* Product Cards */}
             {products.map((product, index) => (
-              <div key={index} className={`w-full flex-shrink-0 ${
+              <div key={`product-${index}`} className={`w-full flex-shrink-0 ${
                 isMobile ? 'p-2' : isTablet ? 'p-3' : 'p-4'
               }`}>
                 <ProductCard
@@ -414,15 +460,26 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
               </div>
             ))}
 
-            {/* Add More Details Card */}
-            <div className={`w-full flex-shrink-0 ${
-              isMobile ? 'p-2' : isTablet ? 'p-3' : 'p-4'
-            }`}>
-              <AddMoreDetailsCard
-                onAddMoreDetails={onAddMoreDetails}
-                deviceType={deviceInfo}
-              />
-            </div>
+            {/* Skeleton Cards for loading products */}
+            {isGenerating && Array.from({ length: skeletonsNeeded }).map((_, index) => (
+              <div key={`skeleton-${index}`} className={`w-full flex-shrink-0 ${
+                isMobile ? 'p-2' : isTablet ? 'p-3' : 'p-4'
+              }`}>
+                <SkeletonProductCard deviceType={deviceInfo} />
+              </div>
+            ))}
+
+            {/* Add More Details Card (only when not generating) */}
+            {!isGenerating && (
+              <div className={`w-full flex-shrink-0 ${
+                isMobile ? 'p-2' : isTablet ? 'p-3' : 'p-4'
+              }`}>
+                <AddMoreDetailsCard
+                  onAddMoreDetails={onAddMoreDetails}
+                  deviceType={deviceInfo}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

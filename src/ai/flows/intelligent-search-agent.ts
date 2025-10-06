@@ -55,6 +55,90 @@ export async function intelligentSearchAgent(input: IntelligentSearchAgentInput)
   return intelligentSearchAgentFlow(input);
 }
 
+// Single recommendation schema for streaming
+const SingleRecommendationInputSchema = z.object({
+  userProfileData: z.string().describe('Datos del perfil de usuario recopilados de las preguntas de incorporación.'),
+  recommendationNumber: z.number().describe('Número de recomendación (1, 2, o 3)'),
+  previousRecommendations: z.array(ProductRecommendationSchema).optional().describe('Recomendaciones previas para evitar duplicados'),
+});
+
+// Streaming version - generates recommendations in parallel and yields as soon as ready
+export async function* intelligentSearchAgentStreaming(input: IntelligentSearchAgentInput): AsyncGenerator<ProductRecommendation, void, unknown> {
+  // Create 3 promises that generate recommendations in parallel
+  const recommendationPromises = [1, 2, 3].map(async (num) => ({
+    index: num,
+    recommendation: await generateSingleRecommendation({
+      userProfileData: input.userProfileData,
+      recommendationNumber: num,
+      previousRecommendations: [],
+    })
+  }));
+
+  // Yield recommendations as soon as ANY is ready (not in order)
+  const pending = [...recommendationPromises];
+  while (pending.length > 0) {
+    const result = await Promise.race(pending);
+    yield result.recommendation;
+
+    // Remove the completed promise
+    const index = pending.findIndex(p => p === recommendationPromises[result.index - 1]);
+    if (index !== -1) {
+      pending.splice(index, 1);
+    }
+  }
+}
+
+// Prompt for single recommendation (for streaming)
+const singleRecommendationPrompt = ai.definePrompt({
+  name: 'singleRecommendationPrompt',
+  input: {schema: SingleRecommendationInputSchema},
+  output: {schema: ProductRecommendationSchema},
+  tools: [getSmartphoneCatalog],
+  model: 'googleai/gemini-2.5-flash',
+  system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros.
+
+**TU TAREA:**
+Genera UNA SOLA recomendación de celular basándote en el perfil del usuario y el número de recomendación solicitado.
+
+**REGLAS:**
+
+1. **CATALOGO PRIMERO:**
+   - Llama 'getSmartphoneCatalog' para obtener productos disponibles
+   - Solo recomienda productos del catálogo
+
+2. **PRIORIZACIÓN POR NÚMERO:**
+   - Recomendación #1: LA MEJOR coincidencia (máximo match con presupuesto y necesidades)
+   - Recomendación #2: Segunda mejor opción (alternativa valiosa, diferente ángulo)
+   - Recomendación #3: Tercera opción (balance precio/features o stretch option)
+
+3. **PRESUPUESTO:**
+   - 90% de recomendaciones DENTRO del presupuesto del usuario
+   - Si excedes: justifica el valor extra específicamente
+
+4. **COMUNICACIÓN STEVE JOBS:**
+   - CERO especificaciones técnicas (GB, mAh, megapíxeles, procesadores)
+   - Habla de EXPERIENCIAS: "súper rápido", "batería todo el día", "fotos increíbles"
+   - Simple y claro como para tu abuela de 80 años
+
+5. **CAMPOS OBLIGATORIOS:**
+   - productName: Del catálogo (campo model)
+   - price: Del catálogo (campo precio_estimado)
+   - imageUrl: Del catálogo (campo image_url)
+   - productUrl: Google search (ej: https://www.google.com/search?q=Samsung+Galaxy+S25+Ultra)
+   - availability: "En stock"
+   - qualityScore: 70-98
+   - productDescription: Beneficios, no specs
+   - justification: Por qué este para ESTE usuario
+   - matchPercentage: 65-98%
+   - matchTags: 2-4 tags (high/medium/low)`,
+  prompt: `**Perfil del Usuario:**
+{{{userProfileData}}}
+
+**Número de Recomendación:** {{{recommendationNumber}}}
+
+Genera la recomendación #{{{recommendationNumber}}} para este usuario. Recuerda: lenguaje simple, enfocado en experiencias, respetando presupuesto.`,
+});
+
 const prompt = ai.definePrompt({
   name: 'intelligentSearchAgentPrompt',
   input: {schema: IntelligentSearchAgentInputSchema},
@@ -260,6 +344,40 @@ function preFilterCatalog(userProfile: string, fullCatalog: typeof smartphonesDa
   return filtered;
 }
 
+// Flow for generating a single recommendation
+const generateSingleRecommendationFlow = ai.defineFlow(
+  {
+    name: 'generateSingleRecommendationFlow',
+    inputSchema: SingleRecommendationInputSchema,
+    outputSchema: ProductRecommendationSchema,
+  },
+  async input => {
+    console.log(`🤖 Generando recomendación #${input.recommendationNumber}...`);
+
+    // Pre-filter catalog to reduce input size
+    const fullCatalog = smartphonesDatabase.devices;
+    const filteredCatalog = preFilterCatalog(input.userProfileData, fullCatalog);
+
+    // Temporarily override getSmartphoneCatalog to return filtered catalog
+    const originalCatalog = smartphonesDatabase.devices;
+    (smartphonesDatabase as any).devices = filteredCatalog;
+
+    try {
+      const {output} = await singleRecommendationPrompt(input);
+      console.log(`✅ Recomendación #${input.recommendationNumber} lista`);
+      return output!;
+    } finally {
+      // Restore original catalog
+      (smartphonesDatabase as any).devices = originalCatalog;
+    }
+  }
+);
+
+// Helper function for streaming
+async function generateSingleRecommendation(input: z.infer<typeof SingleRecommendationInputSchema>): Promise<ProductRecommendation> {
+  return generateSingleRecommendationFlow(input);
+}
+
 const intelligentSearchAgentFlow = ai.defineFlow(
   {
     name: 'intelligentSearchAgentFlow',
@@ -288,4 +406,4 @@ const intelligentSearchAgentFlow = ai.defineFlow(
   }
 );
 
-    
+
