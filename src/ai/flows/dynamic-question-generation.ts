@@ -43,7 +43,7 @@ const prompt = ai.definePrompt({
   name: 'generateFollowUpQuestionsPrompt',
   input: {schema: GenerateFollowUpQuestionsInputSchema},
   output: {schema: GenerateFollowUpQuestionsOutputSchema},
-  model: 'googleai/gemini-2.0-flash-exp',
+  model: 'googleai/gemini-2.5-pro',
   prompt: `Eres un vendedor experto estilo Steve Jobs. Tu objetivo: entender QUÉ PROBLEMA quiere resolver el usuario en MÁXIMO 3 preguntas EMOCIONALES Y SIMPLES.
 
 **FILOSOFÍA JOBS:**
@@ -125,7 +125,7 @@ const promptWithFallback = ai.definePrompt({
   name: 'generateFollowUpQuestionsPromptFallback',
   input: {schema: GenerateFollowUpQuestionsInputSchema},
   output: {schema: GenerateFollowUpQuestionsOutputSchema},
-  model: 'googleai/gemini-2.0-flash-exp',
+  model: 'googleai/gemini-2.5-pro',
   prompt: `Eres un vendedor experto estilo Steve Jobs. Tu objetivo: entender QUÉ PROBLEMA quiere resolver el usuario en MÁXIMO 3 preguntas EMOCIONALES Y SIMPLES.
 
 **FILOSOFÍA JOBS:**
@@ -210,9 +210,9 @@ const generateFollowUpQuestionsFlow = ai.defineFlow(
     outputSchema: GenerateFollowUpQuestionsOutputSchema,
   },
   async input => {
-    console.log('🤖 Usando Gemini 2.0 Flash para generar preguntas...');
+    console.log('🤖 Usando Gemini 2.5 Pro para generar preguntas...');
     const {output} = await prompt(input);
-    console.log('✅ Gemini respondió correctamente');
+    console.log('✅ Gemini 2.5 Pro respondió correctamente');
     return output!;
   }
 );
