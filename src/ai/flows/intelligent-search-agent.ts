@@ -60,7 +60,7 @@ const prompt = ai.definePrompt({
   input: {schema: IntelligentSearchAgentInputSchema},
   output: {schema: IntelligentSearchAgentOutputSchema},
   tools: [getSmartphoneCatalog],
-  model: 'googleai/gemini-2.5-pro',
+  model: 'googleai/gemini-2.5-flash',
   system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros. Tu misión es reducir el abandono de carrito (actualmente 75% en LATAM) presentando exactamente 3 opciones optimizadas que aceleran la decisión de compra.
 
 ## METODOLOGÍA ANTI-ABANDONO DE CARRITO ##
@@ -135,7 +135,7 @@ const promptWithFallback = ai.definePrompt({
   input: {schema: IntelligentSearchAgentInputSchema},
   output: {schema: IntelligentSearchAgentOutputSchema},
   tools: [getSmartphoneCatalog],
-  model: 'googleai/gemini-2.5-pro',
+  model: 'googleai/gemini-2.5-flash',
   system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros. Tu misión es reducir el abandono de carrito (actualmente 75% en LATAM) presentando exactamente 3 opciones optimizadas que aceleran la decisión de compra.
 
 ## METODOLOGÍA ANTI-ABANDONO DE CARRITO ##
@@ -212,9 +212,9 @@ const intelligentSearchAgentFlow = ai.defineFlow(
     outputSchema: IntelligentSearchAgentOutputSchema,
   },
   async input => {
-    console.log('🤖 Usando Gemini 2.5 Pro para recomendaciones...');
+    console.log('🤖 Usando Gemini 2.5 Flash para recomendaciones...');
     const {output} = await prompt(input);
-    console.log('✅ Gemini 2.5 Pro respondió correctamente');
+    console.log('✅ Gemini 2.5 Flash respondió correctamente');
     return output!;
   }
 );
