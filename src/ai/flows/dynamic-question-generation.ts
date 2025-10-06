@@ -43,7 +43,7 @@ const prompt = ai.definePrompt({
   name: 'generateFollowUpQuestionsPrompt',
   input: {schema: GenerateFollowUpQuestionsInputSchema},
   output: {schema: GenerateFollowUpQuestionsOutputSchema},
-  model: 'openai/gpt-4o-mini-2025-04-16',
+  model: 'openai/gpt-4o-mini',
   prompt: `Eres un vendedor experto estilo Steve Jobs. Tu objetivo: entender QUÉ PROBLEMA quiere resolver el usuario en MÁXIMO 3 preguntas EMOCIONALES Y SIMPLES.
 
 **FILOSOFÍA JOBS:**
@@ -125,7 +125,7 @@ const promptWithFallback = ai.definePrompt({
   name: 'generateFollowUpQuestionsPromptFallback',
   input: {schema: GenerateFollowUpQuestionsInputSchema},
   output: {schema: GenerateFollowUpQuestionsOutputSchema},
-  model: 'openai/gpt-4o-mini-2025-04-16',
+  model: 'openai/gpt-4o-mini',
   prompt: `Eres un vendedor experto estilo Steve Jobs. Tu objetivo: entender QUÉ PROBLEMA quiere resolver el usuario en MÁXIMO 3 preguntas EMOCIONALES Y SIMPLES.
 
 **FILOSOFÍA JOBS:**
