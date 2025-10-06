@@ -205,6 +205,59 @@ Analiza el perfil para identificar: presupuesto máximo, casos de uso principale
 `,
 });
 
+// Pre-filter catalog based on user profile to reduce input size and latency
+function preFilterCatalog(userProfile: string, fullCatalog: typeof smartphonesDatabase.devices) {
+  const profileLower = userProfile.toLowerCase();
+
+  // Extract keywords and preferences
+  const keywords = {
+    brands: ['iphone', 'samsung', 'xiaomi', 'motorola', 'google', 'pixel'],
+    priceRanges: ['economico', 'barato', 'accesible', 'premium', 'caro', 'gama alta', 'gama media'],
+    features: ['camara', 'fotos', 'bateria', 'rapido', 'gaming', 'juegos', 'pantalla'],
+  };
+
+  // Detect brand preference
+  const preferredBrands = keywords.brands.filter(brand => profileLower.includes(brand));
+
+  // Detect price preference
+  const isPremium = profileLower.includes('premium') || profileLower.includes('mejor') || profileLower.includes('gama alta');
+  const isBudget = profileLower.includes('economico') || profileLower.includes('barato') || profileLower.includes('accesible');
+
+  // Filter catalog
+  let filtered = fullCatalog;
+
+  // Brand filter (if specific brand mentioned)
+  if (preferredBrands.length > 0) {
+    filtered = filtered.filter(device =>
+      preferredBrands.some(brand => device.name.toLowerCase().includes(brand))
+    );
+  }
+
+  // Price filter
+  if (isBudget) {
+    filtered = filtered.filter(device => {
+      const price = parseFloat(device.price.replace(/[^0-9.]/g, ''));
+      return price < 600;
+    });
+  } else if (isPremium) {
+    filtered = filtered.filter(device => {
+      const price = parseFloat(device.price.replace(/[^0-9.]/g, ''));
+      return price > 800;
+    });
+  }
+
+  // If we filtered too much, return top 15 by price range
+  if (filtered.length < 5) {
+    filtered = fullCatalog.slice(0, 15);
+  }
+
+  // Limit to max 15 products to reduce input size
+  filtered = filtered.slice(0, 15);
+
+  console.log(`📊 Pre-filtrado: ${fullCatalog.length} → ${filtered.length} productos`);
+  return filtered;
+}
+
 const intelligentSearchAgentFlow = ai.defineFlow(
   {
     name: 'intelligentSearchAgentFlow',
@@ -213,9 +266,23 @@ const intelligentSearchAgentFlow = ai.defineFlow(
   },
   async input => {
     console.log('🤖 Usando Gemini 2.5 Flash para recomendaciones...');
-    const {output} = await prompt(input);
-    console.log('✅ Gemini 2.5 Flash respondió correctamente');
-    return output!;
+
+    // Pre-filter catalog to reduce input size
+    const fullCatalog = smartphonesDatabase.devices;
+    const filteredCatalog = preFilterCatalog(input.userProfileData, fullCatalog);
+
+    // Temporarily override getSmartphoneCatalog to return filtered catalog
+    const originalCatalog = smartphonesDatabase.devices;
+    (smartphonesDatabase as any).devices = filteredCatalog;
+
+    try {
+      const {output} = await prompt(input);
+      console.log('✅ Gemini 2.5 Flash respondió correctamente');
+      return output!;
+    } finally {
+      // Restore original catalog
+      (smartphonesDatabase as any).devices = originalCatalog;
+    }
   }
 );
 
