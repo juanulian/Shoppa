@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { getRecommendationAtIndex } from '@/ai/actions/streaming-recommendations';
+import { intelligentSearchAgent } from '@/ai/flows/intelligent-search-agent';
 import { ProductRecommendation } from '@/ai/schemas/product-recommendation';
 import { Button } from '@/components/ui/button';
 import ProductCarousel from '@/components/product-carousel';
@@ -28,25 +28,16 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
     try {
       const userData = searchData || currentUserData;
 
-      // Launch 3 parallel calls to generate recommendations
-      const promises = [0, 1, 2].map(async (index) => {
-        const rec = await getRecommendationAtIndex(userData, index);
-        return { index, rec };
+      // Generate all 3 recommendations at once (faster)
+      const allRecommendations = await intelligentSearchAgent({
+        userProfileData: userData,
       });
 
-      // Add recommendations as they complete
-      for (const promise of promises) {
-        promise.then(({ index, rec }) => {
-          setResults(prev => {
-            const newResults = [...prev];
-            newResults[index] = rec;
-            return newResults.filter(Boolean); // Remove empty slots
-          });
-        });
+      // Show them progressively with small delays for better UX
+      for (let i = 0; i < allRecommendations.length; i++) {
+        await new Promise(resolve => setTimeout(resolve, i * 500)); // 0.5s delay between cards
+        setResults(prev => [...prev, allRecommendations[i]]);
       }
-
-      // Wait for all to complete
-      await Promise.all(promises);
     } catch (error) {
       console.error('La búsqueda falló:', error);
       toast({

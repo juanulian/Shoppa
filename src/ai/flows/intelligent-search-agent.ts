@@ -296,36 +296,40 @@ Analiza el perfil para identificar: presupuesto máximo, casos de uso principale
 function preFilterCatalog(userProfile: string, fullCatalog: typeof smartphonesDatabase.devices) {
   const profileLower = userProfile.toLowerCase();
 
-  // Extract keywords and preferences
+  // Extract budget from profile
+  const budgetMatch = profileLower.match(/(\d+)\s*(usd|dolares|pesos)/i);
+  let maxBudget = budgetMatch ? parseInt(budgetMatch[1]) : null;
+
+  // Extract keywords
   const keywords = {
     brands: ['iphone', 'samsung', 'xiaomi', 'motorola', 'google', 'pixel'],
-    priceRanges: ['economico', 'barato', 'accesible', 'premium', 'caro', 'gama alta', 'gama media'],
-    features: ['camara', 'fotos', 'bateria', 'rapido', 'gaming', 'juegos', 'pantalla'],
   };
 
-  // Detect brand preference
   const preferredBrands = keywords.brands.filter(brand => profileLower.includes(brand));
-
-  // Detect price preference
   const isPremium = profileLower.includes('premium') || profileLower.includes('mejor') || profileLower.includes('gama alta');
   const isBudget = profileLower.includes('economico') || profileLower.includes('barato') || profileLower.includes('accesible');
 
-  // Filter catalog
   let filtered = fullCatalog;
 
-  // Brand filter (if specific brand mentioned)
+  // Brand filter
   if (preferredBrands.length > 0) {
     filtered = filtered.filter(device =>
       device?.name && preferredBrands.some(brand => device.name.toLowerCase().includes(brand))
     );
   }
 
-  // Price filter
-  if (isBudget) {
+  // Budget filter (más agresivo)
+  if (maxBudget) {
     filtered = filtered.filter(device => {
       if (!device?.price) return false;
       const price = parseFloat(device.price.replace(/[^0-9.]/g, ''));
-      return price < 600;
+      return price <= maxBudget * 1.15; // Allow 15% over budget
+    });
+  } else if (isBudget) {
+    filtered = filtered.filter(device => {
+      if (!device?.price) return false;
+      const price = parseFloat(device.price.replace(/[^0-9.]/g, ''));
+      return price < 500;
     });
   } else if (isPremium) {
     filtered = filtered.filter(device => {
@@ -335,13 +339,13 @@ function preFilterCatalog(userProfile: string, fullCatalog: typeof smartphonesDa
     });
   }
 
-  // If we filtered too much, return top 15 by price range
+  // If filtered too much, get diverse sample
   if (filtered.length < 5) {
-    filtered = fullCatalog.slice(0, 15);
+    filtered = fullCatalog.slice(0, 10);
+  } else if (filtered.length > 10) {
+    // Reduce to 10 for faster processing
+    filtered = filtered.slice(0, 10);
   }
-
-  // Limit to max 15 products to reduce input size
-  filtered = filtered.slice(0, 15);
 
   console.log(`📊 Pre-filtrado: ${fullCatalog.length} → ${filtered.length} productos`);
   return filtered;
