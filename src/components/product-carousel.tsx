@@ -34,13 +34,21 @@ const SkeletonProductCard: React.FC<{
   const { isMobile, isTablet } = deviceType;
 
   return (
-    <div className={`glassmorphism-card rounded-3xl soft-border overflow-hidden shadow-lg ${
+    <div className={`glassmorphism-card rounded-3xl soft-border overflow-hidden shadow-lg relative ${
       isMobile
         ? 'w-full max-w-xs mx-auto'
         : isTablet
         ? 'w-full max-w-sm mx-auto'
         : 'w-full max-w-md mx-auto'
     }`}>
+      {/* Loading overlay with spinner */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10 backdrop-blur-[1px] z-10 flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent" />
+          <p className="text-sm font-medium text-primary">Analizando opciones...</p>
+        </div>
+      </div>
+
       <div className="relative">
         <div className="w-full h-64 bg-muted-foreground/10 animate-pulse" />
         <div className="absolute top-4 left-4 px-4 py-2 rounded-full bg-muted-foreground/20 animate-pulse w-24 h-8" />
