@@ -1,9 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import {
-  intelligentSearchAgentStreaming,
-  IntelligentSearchAgentOutput,
-} from '@/ai/flows/intelligent-search-agent';
+import { getRecommendationAtIndex } from '@/ai/actions/streaming-recommendations';
 import { ProductRecommendation } from '@/ai/schemas/product-recommendation';
 import { Button } from '@/components/ui/button';
 import ProductCarousel from '@/components/product-carousel';
@@ -29,14 +26,27 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
     setResults([]);
 
     try {
-      // Use streaming to add recommendations one by one
-      const stream = intelligentSearchAgentStreaming({
-        userProfileData: searchData || currentUserData,
+      const userData = searchData || currentUserData;
+
+      // Launch 3 parallel calls to generate recommendations
+      const promises = [0, 1, 2].map(async (index) => {
+        const rec = await getRecommendationAtIndex(userData, index);
+        return { index, rec };
       });
 
-      for await (const recommendation of stream) {
-        setResults(prev => [...prev, recommendation]);
+      // Add recommendations as they complete
+      for (const promise of promises) {
+        promise.then(({ index, rec }) => {
+          setResults(prev => {
+            const newResults = [...prev];
+            newResults[index] = rec;
+            return newResults.filter(Boolean); // Remove empty slots
+          });
+        });
       }
+
+      // Wait for all to complete
+      await Promise.all(promises);
     } catch (error) {
       console.error('La búsqueda falló:', error);
       toast({

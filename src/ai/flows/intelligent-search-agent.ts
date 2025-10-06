@@ -65,26 +65,29 @@ const SingleRecommendationInputSchema = z.object({
 // Streaming version - generates recommendations in parallel and yields as soon as ready
 export async function* intelligentSearchAgentStreaming(input: IntelligentSearchAgentInput): AsyncGenerator<ProductRecommendation, void, unknown> {
   // Create 3 promises that generate recommendations in parallel
-  const recommendationPromises = [1, 2, 3].map(async (num) => ({
-    index: num,
-    recommendation: await generateSingleRecommendation({
+  const promises = [1, 2, 3].map((num) =>
+    generateSingleRecommendation({
       userProfileData: input.userProfileData,
       recommendationNumber: num,
       previousRecommendations: [],
     })
-  }));
+  );
 
-  // Yield recommendations as soon as ANY is ready (not in order)
-  const pending = [...recommendationPromises];
-  while (pending.length > 0) {
-    const result = await Promise.race(pending);
-    yield result.recommendation;
+  // Yield recommendations as soon as ANY is ready using Promise.race properly
+  const completed = new Set<number>();
 
-    // Remove the completed promise
-    const index = pending.findIndex(p => p === recommendationPromises[result.index - 1]);
-    if (index !== -1) {
-      pending.splice(index, 1);
-    }
+  while (completed.size < 3) {
+    // Wrap each pending promise with its index
+    const indexed = promises
+      .map((p, i) => completed.has(i) ? null : p.then(rec => ({ index: i, rec })))
+      .filter(Boolean) as Promise<{index: number, rec: ProductRecommendation}>[];
+
+    // Wait for the first one to complete
+    const { index, rec } = await Promise.race(indexed);
+
+    // Mark as completed and yield
+    completed.add(index);
+    yield rec;
   }
 }
 
