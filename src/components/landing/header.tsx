@@ -42,7 +42,7 @@ export function Header() {
         </nav>
         <div className="flex items-center gap-4">
           <Button variant="ghost" className="glassmorphism transition-all duration-300 hover:glassmorphism-strong hover:scale-105" asChild>
-            <Link href="mailto:juan.ulian@pluscompol.com?subject=Solicitud%20de%20Reunión%20-%20Shoppa!&body=Hola!%20Me%20gustaría%20coordinar%20una%20reunión%20en%20los%20próximos%20días%20para%20ver%20como%20implementar%20Shoppa!%20en%20mi%20negocio.%20Vendo%20...%20(completar%20sugerencia)">Agendar Reunión</Link>
+            <Link href="mailto:juan.ulian@shoppa.ar?subject=Solicitud%20de%20Reunión%20-%20Shoppa!&body=Hola!%20Me%20gustaría%20coordinar%20una%20reunión%20en%20los%20próximos%20días%20para%20ver%20como%20implementar%20Shoppa!%20en%20mi%20negocio.%20Vendo%20...%20(completar%20sugerencia)">Agendar Reunión</Link>
           </Button>
           <Button className="glassmorphism-strong transition-all duration-300 hover:scale-105" asChild>
             <Link href="/demo">Probar ahora</Link>

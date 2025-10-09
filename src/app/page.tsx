@@ -251,7 +251,7 @@ export default function BuyerLandingPage() {
               <Link href="/sellers" className="hover:text-primary transition-colors">
                 Quiero Vender
               </Link>
-              <Link href="mailto:juanulian@gmail.com" className="hover:text-primary transition-colors">
+              <Link href="mailto:juan.ulian@shoppa.ar" className="hover:text-primary transition-colors">
                 Contacto
               </Link>
             </div>

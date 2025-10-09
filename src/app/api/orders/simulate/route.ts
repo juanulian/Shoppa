@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
       <p>
         <strong>Shoppa!</strong> - El marketplace sin vueltas<br/>
         <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:9002'}">www.shoppa.com</a> |
-        <a href="mailto:soporte@shoppa.com">soporte@shoppa.com</a>
+        <a href="mailto:soporte@shoppa.ar">soporte@shoppa.ar</a>
       </p>
       <p style="margin-top: 10px;">
         Si tenés dudas, respondé este email o escribinos a WhatsApp.
@@ -155,7 +155,7 @@ export async function POST(request: NextRequest) {
 
         await resend.emails.send({
           from: process.env.RESEND_FROM_EMAIL || 'Shoppa! <noreply@shoppa.com>',
-          to: 'juanulian@gmail.com',
+          to: 'juan.ulian@shoppa.ar',
           subject: emailSubject,
           html: emailHTML,
         });
@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
         emailError = error.message;
       }
     } else {
-      console.log('⚠️ RESEND_API_KEY not configured. Email would have been sent to: juanulian@gmail.com');
+      console.log('⚠️ RESEND_API_KEY not configured. Email would have been sent to: juan.ulian@shoppa.ar');
       console.log('Subject:', emailSubject);
     }
 

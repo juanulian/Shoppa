@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Calculator, ArrowRight, Zap, ShoppingCart } from 'lucide-react';
 import Logo from '@/components/icons/logo';
 import { Footer } from '@/components/landing/footer';
+import InteractiveTimelineCurved from '@/components/landing/interactive-timeline-curved';
 
 // Timeline component will be redesigned
 
@@ -126,7 +127,7 @@ export default function SellersLandingPage() {
                                 </Link>
                             </Button>
                             <Button size="lg" variant="outline" asChild className="rounded-full px-10 h-14 text-lg shadow-lg hover:shadow-xl transition-all">
-                                <Link href="mailto:juanulian@gmail.com?subject=Solicitud%20de%20Reuni%C3%B3n%20-%20Shoppa!&body=Hola!%20Me%20gustar%C3%ADa%20coordinar%20una%20reuni%C3%B3n%20para%20ver%20c%C3%B3mo%20implementar%20Shoppa!%20en%20mi%20negocio.">
+                                <Link href="mailto:juan.ulian@shoppa.ar?subject=Solicitud%20de%20Reuni%C3%B3n%20-%20Shoppa!&body=Hola!%20Me%20gustar%C3%ADa%20coordinar%20una%20reuni%C3%B3n%20para%20ver%20c%C3%B3mo%20implementar%20Shoppa!%20en%20mi%20negocio.">
                                     Agendar Reunión
                                 </Link>
                             </Button>
@@ -170,54 +171,7 @@ export default function SellersLandingPage() {
                     </div>
                 </section>
 
-                {/* Comparativa - Rediseñada estilo Apple */}
-                <section className="py-32 bg-slate-50 dark:bg-slate-900">
-                    <div className="container mx-auto px-4 max-w-6xl">
-                        <div className="text-center mb-24">
-                            <h2 className="text-5xl md:text-7xl font-light mb-6 text-slate-900 dark:text-slate-100 tracking-tight">
-                                Un solo número
-                            </h2>
-                            <p className="text-2xl md:text-3xl text-slate-600 dark:text-slate-400 font-light">
-                                Sin rangos. Sin letra chica.
-                            </p>
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
-                            {/* MercadoLibre - Minimalista */}
-                            <div className="bg-white dark:bg-slate-950 p-12 rounded-3xl">
-                                <div className="text-center mb-8">
-                                    <p className="text-sm text-slate-500 dark:text-slate-500 uppercase tracking-wider mb-4">Otros</p>
-                                    <div className="text-6xl font-light text-slate-400 dark:text-slate-600 mb-2">15<span className="text-3xl">%</span></div>
-                                    <div className="text-3xl font-light text-slate-400 dark:text-slate-600 mb-2">a</div>
-                                    <div className="text-6xl font-light text-slate-400 dark:text-slate-600 mb-6">49<span className="text-3xl">%</span></div>
-                                    <p className="text-sm text-slate-500 dark:text-slate-500 leading-relaxed">
-                                        + costos fijos<br/>
-                                        + impuestos<br/>
-                                        + sorpresas
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Shoppa! - Hero style */}
-                            <div className="bg-white dark:bg-slate-950 p-12 rounded-3xl border-2 border-primary">
-                                <div className="text-center mb-8">
-                                    <p className="text-sm text-primary uppercase tracking-wider mb-4">Shoppa!</p>
-                                    <div className="text-8xl md:text-9xl font-light text-primary mb-8">6<span className="text-5xl">%</span></div>
-                                    <p className="text-xl text-slate-600 dark:text-slate-400 mb-8">
-                                        Todo incluido.<br/>
-                                        Siempre.
-                                    </p>
-                                    <div className="pt-8 border-t border-slate-200 dark:border-slate-800">
-                                        <p className="text-sm text-slate-500 dark:text-slate-500">
-                                            Vendés +$10M/mes → <span className="text-primary font-medium">5%</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </section>
+                <InteractiveTimelineCurved />
 
                 <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center py-20 sm:py-28 transition-all duration-700">
                     <div className="container mx-auto px-4 max-w-3xl">
@@ -262,7 +216,7 @@ export default function SellersLandingPage() {
                             Implementación en 48hs. Sin compromiso. Sin costos fijos.
                         </p>
                         <Button size="lg" variant="secondary" asChild className="rounded-full px-12 h-16 text-xl shadow-2xl hover:scale-105 transition-transform font-bold">
-                            <Link href="mailto:juanulian@gmail.com?subject=Solicitud%20de%20Reuni%C3%B3n%20-%20Shoppa!&body=Hola!%20Quiero%20vender%20con%20Shoppa!%20y%20pagar%20solo%206%25%20de%20comisi%C3%B3n.%0A%0AFacturaci%C3%B3n%20mensual%20aproximada%3A%20%0ACategor%C3%ADa%20principal%3A%20">
+                            <Link href="mailto:juan.ulian@shoppa.ar?subject=Solicitud%20de%20Reuni%C3%B3n%20-%20Shoppa!&body=Hola!%20Quiero%20vender%20con%20Shoppa!%20y%20pagar%20solo%206%25%20de%20comisi%C3%B3n.%0A%0AFacturaci%C3%B3n%20mensual%20aproximada%3A%20%0ACategor%C3%ADa%20principal%3A%20">
                                 Empezar ahora
                                 <ArrowRight className="ml-3 h-6 w-6" />
                             </Link>
