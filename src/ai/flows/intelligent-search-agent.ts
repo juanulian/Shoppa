@@ -13,6 +13,7 @@ import {z} from 'genkit';
 import {
   ProductRecommendation,
   ProductRecommendationSchema,
+  normalizeProductRecommendation,
 } from '@/ai/schemas/product-recommendation';
 import { smartphonesDatabase } from '@/lib/smartphones-database';
 
@@ -260,14 +261,20 @@ const intelligentSearchAgentFlow = ai.defineFlow(
       // Promise.race: retorna el PRIMER resultado exitoso
       const result = await Promise.race(promises);
       console.log(`🎯 Ganador: ${result.model} en ${result.time}ms total`);
-      return result.output;
+
+      // Normalizar tags para corregir inconsistencias de la AI
+      const normalizedOutput = result.output.map(normalizeProductRecommendation);
+      return normalizedOutput;
     } catch (firstError) {
       // Si Promise.race falla, usamos Promise.any como último recurso
       console.warn("⚠️ Promise.race falló, intentando con Promise.any...");
       try {
         const result = await Promise.any(promises);
         console.log(`🎯 Fallback ganador: ${result.model} en ${result.time}ms total`);
-        return result.output;
+
+        // Normalizar tags para corregir inconsistencias de la AI
+        const normalizedOutput = result.output.map(normalizeProductRecommendation);
+        return normalizedOutput;
       } catch (allErrors) {
         const totalTime = Date.now() - startTime;
         console.error(`❌ Error fatal después de ${totalTime}ms: ningún modelo pudo generar recomendaciones`);
@@ -409,20 +416,20 @@ const generateSingleRecommendationFlow = ai.defineFlow(
     try {
       const {output} = await mainSingleRecPrompt(input);
       console.log(`✅ Recomendación #${input.recommendationNumber} lista con Pro`);
-      return output!;
+      return normalizeProductRecommendation(output!);
     } catch (e) {
       console.error(`❌ Error en Pro para rec #${input.recommendationNumber}, activando fallback a Flash...`, e);
       try {
         const {output} = await fallbackSingleRecPrompt(input);
         console.log(`✅ Recomendación #${input.recommendationNumber} lista con Flash`);
-        return output!;
+        return normalizeProductRecommendation(output!);
       } catch (e2) {
         console.error(`❌ Error en fallback a Flash para rec #${input.recommendationNumber}, activando fallback a OpenAI...`, e2);
         try {
             console.log(`⚡️ Usando OpenAI GPT-4o-mini como fallback final para rec #${input.recommendationNumber}...`);
             const {output} = await openAIFallbackSingleRecPrompt(input);
             console.log(`✅ Recomendación #${input.recommendationNumber} lista con OpenAI`);
-            return output!;
+            return normalizeProductRecommendation(output!);
         } catch(e3) {
             console.error(`❌ Error en el fallback final a OpenAI para rec #${input.recommendationNumber}`, e3);
             throw e3;

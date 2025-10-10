@@ -66,8 +66,7 @@ export const PREDEFINED_MATCH_TAGS = {
 
 export type PredefinedMatchTag = keyof typeof PREDEFINED_MATCH_TAGS;
 
-// Schema base (el que usa la AI)
-const BaseProductRecommendationSchema = z.object({
+export const ProductRecommendationSchema = z.object({
   productName: z.string().describe('El nombre del celular (ej. "Galaxy S25 Ultra").'),
   productDescription: z.string().describe('Una descripción atractiva centrada en beneficios reales para el usuario, usando lenguaje claro y no técnico.'),
   price: z.string().describe('El precio o rango de precio estimado del celular.'),
@@ -105,26 +104,28 @@ const BaseProductRecommendationSchema = z.object({
   })).min(2).max(4).describe('Array de 2-4 tags predefinidos. CRÍTICO: El nivel (color) está IMPLÍCITO en el tag. Si elegís "Máxima Velocidad", el nivel DEBE ser "high". Si elegís "Buen Rendimiento", el nivel DEBE ser "medium".'),
 });
 
-// Validación post-AI para corregir inconsistencias
-export const ProductRecommendationSchema = BaseProductRecommendationSchema.transform((data) => {
-  // Auto-corregir nivel según el tag para eliminar inconsistencias
-  const correctedTags = data.matchTags.map(matchTag => {
+export type ProductRecommendation = z.infer<typeof ProductRecommendationSchema>;
+
+/**
+ * Función helper para auto-corregir tags inconsistentes de la AI
+ * Se aplica manualmente en el flow si es necesario
+ */
+export function normalizeProductRecommendation(product: ProductRecommendation): ProductRecommendation {
+  const correctedTags = product.matchTags.map(matchTag => {
     const tagInfo = PREDEFINED_MATCH_TAGS[matchTag.tag as PredefinedMatchTag];
     if (tagInfo) {
-      // Corregir icono y nivel según definición
+      // Auto-corregir icono y nivel según definición
       return {
         ...matchTag,
-        icon: tagInfo.icon,
-        level: tagInfo.baseLevel,
+        icon: tagInfo.icon as any,
+        level: tagInfo.baseLevel as any,
       };
     }
     return matchTag;
   });
 
   return {
-    ...data,
+    ...product,
     matchTags: correctedTags,
   };
-});
-
-export type ProductRecommendation = z.infer<typeof BaseProductRecommendationSchema>;
+}
