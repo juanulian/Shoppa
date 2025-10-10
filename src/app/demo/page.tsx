@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, Suspense, useEffect } from 'react';
@@ -74,7 +75,7 @@ function DemoPageContent() {
 
         <div className={`w-full max-w-2xl mx-auto z-10 ${appState === 'search' ? 'pt-16 md:pt-0' : ''}`}>
           {appState === 'analyzing' && (
-            <div className="text-center p-8 glassmorphism-card rounded-3xl">
+            <div className="flex flex-col items-center justify-center w-80 h-80 mx-auto text-center p-8 glassmorphism-card rounded-3xl">
                 <Loader2 className="h-12 w-12 mx-auto animate-spin text-primary mb-4" />
                 <p className="text-xl text-foreground font-semibold">Analizando tu búsqueda...</p>
                 <p className="text-muted-foreground mt-2">"{query}"</p>
