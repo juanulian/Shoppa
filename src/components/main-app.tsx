@@ -25,29 +25,20 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
     setIsGenerating(true);
     setResults([]);
 
-    try {
-      const userData = searchData || currentUserData;
+    const userData = searchData || currentUserData;
 
-      // Generate all 3 recommendations at once (faster)
-      const allRecommendations = await intelligentSearchAgent({
-        userProfileData: userData,
-      });
+    // Generate all 3 recommendations at once (faster)
+    const allRecommendations = await intelligentSearchAgent({
+      userProfileData: userData,
+    });
 
-      // Show them progressively with small delays for better UX
-      for (let i = 0; i < allRecommendations.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, i * 500)); // 0.5s delay between cards
-        setResults(prev => [...prev, allRecommendations[i]]);
-      }
-    } catch (error) {
-      console.error('La búsqueda falló:', error);
-      toast({
-        title: 'Error de Búsqueda',
-        description: 'No pudimos encontrar tus opciones perfectas. Intentémoslo de nuevo en un momento.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsGenerating(false);
+    // Show them progressively with small delays for better UX
+    for (let i = 0; i < allRecommendations.length; i++) {
+      await new Promise(resolve => setTimeout(resolve, i * 500)); // 0.5s delay between cards
+      setResults(prev => [...prev, allRecommendations[i]]);
     }
+    
+    setIsGenerating(false);
   };
 
   const handleAddMoreDetails = (additionalDetails: string, selectedTags: string[]) => {
