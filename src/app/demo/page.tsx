@@ -49,6 +49,7 @@ function DemoPageContent() {
     } else if (!query) {
         setAppState('onboarding');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
   const handleOnboardingComplete = (profileData: string) => {

@@ -54,7 +54,9 @@ const IntelligentSearchAgentOutputSchema = z.array(ProductRecommendationSchema).
 export type IntelligentSearchAgentOutput = z.infer<typeof IntelligentSearchAgentOutputSchema>;
 
 export async function intelligentSearchAgent(input: IntelligentSearchAgentInput): Promise<IntelligentSearchAgentOutput> {
-  return intelligentSearchAgentFlow(input);
+  const filteredCatalog = preFilterCatalog(input.userProfileData, smartphonesDatabase.devices);
+  const flow = createIntelligentSearchFlow(filteredCatalog);
+  return flow(input);
 }
 
 // Single recommendation schema for streaming
@@ -66,13 +68,15 @@ const SingleRecommendationInputSchema = z.object({
 
 // Streaming version - generates recommendations in parallel and yields as soon as ready
 export async function* intelligentSearchAgentStreaming(input: IntelligentSearchAgentInput): AsyncGenerator<ProductRecommendation, void, unknown> {
+  const filteredCatalog = preFilterCatalog(input.userProfileData, smartphonesDatabase.devices);
+  
   // Create 3 promises that generate recommendations in parallel
   const promises = [1, 2, 3].map((num) =>
     generateSingleRecommendation({
       userProfileData: input.userProfileData,
       recommendationNumber: num,
       previousRecommendations: [],
-    })
+    }, filteredCatalog)
   );
 
   // Yield recommendations as soon as ANY is ready using Promise.race properly
@@ -100,7 +104,7 @@ function createSingleRecommendationPrompt(catalogTool: ReturnType<typeof createG
     input: {schema: SingleRecommendationInputSchema},
     output: {schema: ProductRecommendationSchema},
     tools: [catalogTool],
-    model: 'googleai/gemini-2.5-flash',
+    model: 'openai/gpt-5-nano-2025-08-07',
   system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros.
 
 **TU TAREA:**
@@ -136,7 +140,7 @@ Genera UNA SOLA recomendación de celular basándote en el perfil del usuario y 
    - productDescription: Beneficios, no specs
    - justification: Por qué este para ESTE usuario
    - matchPercentage: 65-98%
-   - matchTags: Array de 2-4 tags. IMPORTANTE: Para el campo 'icon', debes elegir uno de los valores permitidos en el schema (['camera', 'battery', 'zap', ...]). NO inventes iconos.`,
+   - matchTags: Array de 2-4 tags. IMPORTANTE: Para el campo 'icon', debes elegir uno de los valores permitidos en el schema. NO inventes iconos.`,
   prompt: `**Perfil del Usuario:**
 {{{userProfileData}}}
 
@@ -152,7 +156,7 @@ function createIntelligentSearchPrompt(catalogTool: ReturnType<typeof createGetS
     input: {schema: IntelligentSearchAgentInputSchema},
     output: {schema: IntelligentSearchAgentOutputSchema},
     tools: [catalogTool],
-    model: 'googleai/gemini-2.5-flash',
+    model: 'openai/gpt-5-nano-2025-08-07',
   system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros. Tu misión es reducir el abandono de carrito (actualmente 75% en LATAM) presentando exactamente 3 opciones optimizadas que aceleran la decisión de compra.
 
 ## METODOLOGÍA ANTI-ABANDONO DE CARRITO ##
@@ -206,7 +210,7 @@ function createIntelligentSearchPrompt(catalogTool: ReturnType<typeof createGetS
 - productDescription: Resumen compelling centrado en beneficios
 - justification: Conexión personalizada entre características y necesidades del usuario
 - matchPercentage: Porcentaje de compatibilidad 65-98% basado en coincidencia con necesidades del usuario
-- matchTags: Array de 2-4 tags. IMPORTANTE: Para el campo 'icon', debes elegir uno de los valores permitidos en el schema (['camera', 'battery', 'zap', ...]). NO inventes iconos.
+- matchTags: Array de 2-4 tags. IMPORTANTE: Para el campo 'icon', debes elegir uno de los valores permitidos en el schema. NO inventes iconos.
 
 **CONTEXTO DE MERCADO LATAM:**
 - Alta sensibilidad al precio
@@ -220,83 +224,8 @@ function createIntelligentSearchPrompt(catalogTool: ReturnType<typeof createGetS
 **INSTRUCCIONES ESPECÍFICAS:**
 Analiza el perfil para identificar: presupuesto máximo, casos de uso principales, nivel técnico, y prioridades. Presenta 3 recomendaciones que maximicen la probabilidad de compra inmediata, respetando estrictamente el presupuesto y usando lenguaje apropiado al nivel del usuario.
 `,
-});
-
-function createIntelligentSearchPromptWithFallback(catalogTool: ReturnType<typeof createGetSmartphoneCatalogTool>) {
-  return ai.definePrompt({
-    name: 'intelligentSearchAgentPromptFallback',
-    input: {schema: IntelligentSearchAgentInputSchema},
-    output: {schema: IntelligentSearchAgentOutputSchema},
-    tools: [catalogTool],
-    model: 'googleai/gemini-2.5-flash',
-  system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros. Tu misión es reducir el abandono de carrito (actualmente 75% en LATAM) presentando exactamente 3 opciones optimizadas que aceleran la decisión de compra.
-
-## METODOLOGÍA ANTI-ABANDONO DE CARRITO ##
-
-**ARQUITECTURA DE ELECCIÓN CIENTÍFICA:**
-- Estudios demuestran: 3 opciones = 30% conversión vs 3% con catálogos extensos
-- Tu rol: Filtrar inteligentemente para presentar solo las mejores coincidencias
-- Objetivo: Decisión de compra en 3-5 minutos vs 30+ minutos actuales
-
-**REGLAS INQUEBRANTABLES:**
-
-1. **CATALOGO PRIMERO, SIEMPRE:**
-   - Primera acción obligatoria: llamar 'getSmartphoneCatalog'
-   - PROHIBIDO inventar o recomendar productos fuera del catálogo
-   - Base toda recomendación en datos reales de inventario
-
-2. **SUPREMACÍA DEL PRESUPUESTO:**
-   - El presupuesto es la restricción MÁS CRÍTICA
-   - 90% de recomendaciones DENTRO del presupuesto
-   - Máximo 10% de exceso con justificación excepcional
-   - Si excedes presupuesto: explica valor específico y cuantifica inversión adicional
-
-3. **COMUNICACIÓN ESTILO STEVE JOBS (CRÍTICO):**
-   - NUNCA menciones especificaciones técnicas (GB RAM, mAh, megapíxeles, procesadores)
-   - Habla de EXPERIENCIAS, no de specs
-   - Ejemplo MAL: "Snapdragon 8 Gen 3, 12GB RAM, 5000mAh" ❌
-   - Ejemplo BIEN: "Tan rápido que los juegos se cargan al instante. Batería que dura todo el día sin pensarlo" ✅
-   - Escribe como si le hablaras a tu abuela: simple, claro, emocional
-   - Usa metáforas y comparaciones cotidianas
-
-4. **JUSTIFICACIONES HUMANIZADAS:**
-   - Cuenta una HISTORIA, no leas una ficha técnica
-   - Conecta con emociones y situaciones reales del usuario
-   - Ejemplo: "Perfecto para capturar cada sonrisa de tus hijos, incluso cuando no paran de moverse"
-   - Evita jerga tech absolutamente: NO digas "procesador", "chipset", "sensor", "almacenamiento"
-   - Di en cambio: "súper rápido", "fotos increíbles", "espacio de sobra para tus apps y fotos"
-
-5. **OPTIMIZACIÓN DE CONVERSIÓN:**
-   - Presenta opción principal PRIMERO (mejor coincidencia)
-   - Diferencia claramente entre las 3 opciones
-   - Incluye disparadores de decisión (valor, escasez, futuro-protección)
-   - Simplifica el camino hacia la compra
-
-**CAMPOS OBLIGATORIOS:**
-- productName: Del campo model del catálogo
-- price: Del campo precio_estimado del catálogo
-- imageUrl: Del campo image_url del catálogo
-- productUrl: URL de búsqueda Google (ej: https://www.google.com/search?q=Samsung+Galaxy+S25+Ultra)
-- availability: Siempre "En stock"
-- qualityScore: 70-98 basado en gama y especificaciones
-- productDescription: Resumen compelling centrado en beneficios
-- justification: Conexión personalizada entre características y necesidades del usuario
-- matchPercentage: Porcentaje de compatibilidad 65-98% basado en coincidencia con necesidades del usuario
-- matchTags: Array de 2-4 tags. IMPORTANTE: Para el campo 'icon', debes elegir uno de los valores permitidos en el schema (['camera', 'battery', 'zap', ...]). NO inventes iconos.
-
-**CONTEXTO DE MERCADO LATAM:**
-- Alta sensibilidad al precio
-- Necesidad de explicaciones claras y simples
-- Decisiones familiares/compartidas frecuentes
-- Búsqueda de valor a largo plazo
-`,
-  prompt: `**Perfil del Usuario:**
-{{{userProfileData}}}
-
-**INSTRUCCIONES ESPECÍFICAS:**
-Analiza el perfil para identificar: presupuesto máximo, casos de uso principales, nivel técnico, y prioridades. Presenta 3 recomendaciones que maximicen la probabilidad de compra inmediata, respetando estrictamente el presupuesto y usando lenguaje apropiado al nivel del usuario.
-`,
-});
+  });
+}
 
 // Pre-filter catalog based on user profile to reduce input size and latency
 function preFilterCatalog(userProfile: string, fullCatalog: typeof smartphonesDatabase.devices) {
@@ -370,38 +299,51 @@ function createGenerateSingleRecommendationFlow(filteredCatalog: typeof smartpho
     },
     async input => {
       console.log(`🤖 Generando recomendación #${input.recommendationNumber}...`);
-      const {output} = await prompt(input);
-      console.log(`✅ Recomendación #${input.recommendationNumber} lista`);
-      return output!;
+      try {
+        const {output} = await prompt(input);
+        console.log(`✅ Recomendación #${input.recommendationNumber} lista`);
+        return output!;
+      } catch (e) {
+          console.error("Fallback a Gemini por error en OpenAI", e);
+          const fallbackPrompt = createSingleRecommendationPrompt(catalogTool);
+          fallbackPrompt.model = 'googleai/gemini-2.5-pro';
+          const {output} = await fallbackPrompt(input);
+          return output!;
+      }
     }
   );
 }
 
 // Helper function for streaming
-async function generateSingleRecommendation(input: z.infer<typeof SingleRecommendationInputSchema>): Promise<ProductRecommendation> {
-  const filteredCatalog = preFilterCatalog(input.userProfileData, smartphonesDatabase.devices);
-  const flow = createGenerateSingleRecommendationFlow(filteredCatalog);
+async function generateSingleRecommendation(input: z.infer<typeof SingleRecommendationInputSchema>, catalog: typeof smartphonesDatabase.devices): Promise<ProductRecommendation> {
+  const flow = createGenerateSingleRecommendationFlow(catalog);
   return flow(input);
 }
 
-const intelligentSearchAgentFlow = ai.defineFlow(
-  {
-    name: 'intelligentSearchAgentFlow',
-    inputSchema: IntelligentSearchAgentInputSchema,
-    outputSchema: IntelligentSearchAgentOutputSchema,
-  },
-  async input => {
-    console.log('🤖 Usando Gemini 2.5 Flash para recomendaciones...');
 
-    // Pre-filter catalog to reduce input size
-    const filteredCatalog = preFilterCatalog(input.userProfileData, smartphonesDatabase.devices);
-
-    // Create tools and prompts with filtered catalog
-    const catalogTool = createGetSmartphoneCatalogTool(filteredCatalog);
+function createIntelligentSearchFlow(catalog: typeof smartphonesDatabase.devices) {
+    const catalogTool = createGetSmartphoneCatalogTool(catalog);
     const prompt = createIntelligentSearchPrompt(catalogTool);
 
-    const {output} = await prompt(input);
-    console.log('✅ Gemini 2.5 Flash respondió correctamente');
-    return output!;
-  }
-);
+    return ai.defineFlow(
+      {
+        name: 'intelligentSearchAgentFlow',
+        inputSchema: IntelligentSearchAgentInputSchema,
+        outputSchema: IntelligentSearchAgentOutputSchema,
+      },
+      async input => {
+        console.log('🤖 Usando OpenAI para recomendaciones...');
+        try {
+            const {output} = await prompt(input);
+            console.log('✅ OpenAI respondió correctamente');
+            return output!;
+        } catch (e) {
+            console.error("Fallback a Gemini por error en OpenAI", e);
+            const fallbackPrompt = createIntelligentSearchPrompt(catalogTool);
+            fallbackPrompt.model = 'googleai/gemini-2.5-pro';
+            const {output} = await fallbackPrompt(input);
+            return output!;
+        }
+      }
+    );
+}
