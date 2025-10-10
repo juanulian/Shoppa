@@ -1,31 +1,70 @@
 
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Onboarding from '@/components/onboarding';
+import OnboardingNew from '@/components/onboarding-new';
 import MainApp from '@/components/main-app';
 import Logo from '@/components/icons/logo';
 import Link from 'next/link';
+import { analyzeQuery, type QueryAnalysisOutput } from '@/ai/flows/query-analysis';
+import { Loader2 } from 'lucide-react';
 
-export type AppState = 'onboarding' | 'search';
+export type AppState = 'analyzing' | 'onboarding' | 'search';
 
 export default function DemoPage() {
-  const [appState, setAppState] = useState<AppState>('onboarding');
-  const [userProfile, setUserProfile] = useState<string | null>(null);
-  const [initialSearch, setInitialSearch] = useState<string | undefined>(undefined);
+  const searchParams = useSearchParams();
+  const query = searchParams.get('q') || '';
 
-  const handleOnboardingComplete = (profileData: string, initialSearchQuery?: string) => {
-    setUserProfile(profileData);
-    if(initialSearchQuery) {
-        setInitialSearch(initialSearchQuery);
+  const [appState, setAppState] = useState<AppState>(query ? 'analyzing' : 'onboarding');
+  const [userProfile, setUserProfile] = useState<string | null>(null);
+  const [analysis, setAnalysis] = useState<QueryAnalysisOutput | undefined>(undefined);
+
+  useEffect(() => {
+    if (query) {
+
+      // Analyze query
+      analyzeQuery({ query })
+        .then((result) => {
+          setAnalysis(result);
+
+          // If complete, skip onboarding
+          if (result.isComplete) {
+            // Build profile from detected data
+            let profileData = `Búsqueda inicial: ${query}\n\n`;
+
+            const { brand, model, useCase, priority, budget, special } = result.detected;
+            if (brand) profileData += `Marca: ${brand}\n`;
+            if (model) profileData += `Modelo: ${model}\n`;
+            if (useCase.length > 0) profileData += `Uso: ${useCase.join(', ')}\n`;
+            if (priority.length > 0) profileData += `Prioridades: ${priority.join(', ')}\n`;
+            if (budget) profileData += `Presupuesto: ${budget}\n`;
+            if (special) profileData += `Especial: ${special}\n`;
+
+            setUserProfile(profileData);
+            setAppState('search');
+          } else {
+            setAppState('onboarding');
+          }
+        })
+        .catch((error) => {
+          console.error('Error analyzing query:', error);
+          // Fallback to onboarding
+          setAppState('onboarding');
+        });
     }
+  }, [query]);
+
+  const handleOnboardingComplete = (profileData: string) => {
+    setUserProfile(profileData);
     setAppState('search');
   };
-  
+
   const handleNewSearch = () => {
     setAppState('onboarding');
     setUserProfile(null);
-    setInitialSearch(undefined);
+    setAnalysis(undefined);
   }
 
   return (

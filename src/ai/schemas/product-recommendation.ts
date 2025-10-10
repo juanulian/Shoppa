@@ -15,7 +15,8 @@ export const ProductRecommendationSchema = z.object({
   matchPercentage: z.number().min(65).max(98).describe('Porcentaje de compatibilidad del producto con las necesidades del usuario (65-98%).'),
   matchTags: z.array(z.object({
     tag: z.string().describe('Tag de 1-3 palabras que sintetiza una característica clave que coincide con las necesidades del usuario.'),
-    level: z.enum(['high', 'medium', 'low']).describe('Nivel de match: high (verde), medium (amarillo), low (rojo).')
+    level: z.enum(['high', 'medium', 'low']).describe('Nivel de match: high (verde), medium (amarillo), low (rojo).'),
+    icon: z.enum(['camera', 'battery', 'zap', 'dollar-sign', 'hard-drive', 'monitor', 'gamepad', 'briefcase', 'shield', 'wifi', 'smartphone']).describe('Icono representativo del tag: camera (cámara), battery (batería), zap (velocidad), dollar-sign (precio), hard-drive (almacenamiento), monitor (pantalla), gamepad (gaming), briefcase (trabajo), shield (resistencia), wifi (conectividad), smartphone (general).')
   })).min(2).max(4).describe('Array de 2-4 tags que resumen los puntos clave de coincidencia con el usuario.'),
 });
 
