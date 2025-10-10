@@ -13,9 +13,10 @@ const loadingStates = [
   { text: "Identificando prioridades...", duration: 5000 },
   { text: "Filtrando el catálogo de productos...", duration: 8000 },
   { text: "Comparando las mejores opciones...", duration: 8000 },
-  { text: "Generando Recomendaciones 1/3", duration: 7000 },
-  { text: "Generando Recomendaciones 2/3", duration: 6000 },
-  { text: "Generando Recomendaciones 3/3", duration: 6000 },
+  { text: "Creando la primera recomendación...", duration: 7000 },
+  { text: "Buscando la mejor alternativa...", duration: 6000 },
+  { text: "Añadiendo la opción final...", duration: 6000 },
+  { text: "¡Listas! Presentando tus opciones...", duration: 1000 },
 ];
 
 const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
@@ -27,16 +28,20 @@ const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
 
   useEffect(() => {
     if (isFinished) {
-      setStage(loadingStates.length);
+      // Clear any pending timeouts and jump to the final "Presenting" stage
+      timeouts.current.forEach(clearTimeout);
+      setStage(loadingStates.length - 1);
       return;
     }
 
+    // Reset and start the animation sequence
     timeouts.current.forEach(clearTimeout);
     timeouts.current = [];
     setStage(0);
 
     let cumulativeTime = 0;
-    loadingStates.forEach((state, index) => {
+    // We only schedule up to the second to last state. The final one is triggered by `isFinished`.
+    loadingStates.slice(0, -1).forEach((state, index) => {
       cumulativeTime += state.duration;
       const timeout = setTimeout(() => {
         setStage(index + 1);
@@ -49,12 +54,6 @@ const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
     };
   }, [userProfileData, isFinished]);
 
-  useEffect(() => {
-    if (isFinished) {
-      timeouts.current.forEach(clearTimeout);
-      setStage(loadingStates.length);
-    }
-  }, [isFinished]);
 
   return (
     <div className="w-full flex items-center justify-center px-4 py-8">
@@ -68,7 +67,7 @@ const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
 
         <div className="h-12 flex flex-col items-center justify-center mb-8">
           <p className="text-xl md:text-2xl font-light text-foreground/90 animate-pulse">
-            {loadingStates[Math.min(stage, loadingStates.length - 1)]?.text || "Preparando..."}
+            {loadingStates[stage]?.text || "Preparando..."}
           </p>
         </div>
         
