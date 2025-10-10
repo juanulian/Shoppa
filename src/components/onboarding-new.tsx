@@ -32,7 +32,7 @@ const OnboardingNew: React.FC<OnboardingNewProps> = ({ onComplete, analysis, ini
     questionsToAsk.push({
       type: 'useCase',
       title: '¿Para qué lo vas a usar más?',
-      description: 'Podés elegir más de uno',
+      description: 'Elegí todos los que quieras',
       multiSelect: true,
     });
   }
@@ -41,7 +41,7 @@ const OnboardingNew: React.FC<OnboardingNewProps> = ({ onComplete, analysis, ini
     questionsToAsk.push({
       type: 'priority',
       title: '¿Qué no te puede fallar?',
-      description: 'Elegí tus prioridades',
+      description: 'Elegí todos los que quieras',
       multiSelect: true,
     });
   }
