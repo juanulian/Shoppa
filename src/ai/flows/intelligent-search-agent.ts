@@ -53,10 +53,79 @@ export type { ProductRecommendation };
 const IntelligentSearchAgentOutputSchema = z.array(ProductRecommendationSchema).describe('Una lista de 3 recomendaciones de celulares.');
 export type IntelligentSearchAgentOutput = z.infer<typeof IntelligentSearchAgentOutputSchema>;
 
+
+function createIntelligentSearchFlow(catalog: typeof smartphonesDatabase.devices) {
+    const catalogTool = createGetSmartphoneCatalogTool(catalog);
+    const prompt = createIntelligentSearchPrompt(catalogTool);
+    const fallbackPrompt = createIntelligentSearchPrompt(catalogTool);
+    fallbackPrompt.model = 'googleai/gemini-2.5-flash';
+
+    return ai.defineFlow(
+      {
+        name: 'intelligentSearchAgentFlow',
+        inputSchema: IntelligentSearchAgentInputSchema,
+        outputSchema: IntelligentSearchAgentOutputSchema,
+      },
+      async input => {
+        try {
+            console.log('🤖 Usando Gemini 2.5 Pro para recomendaciones...');
+            const {output} = await prompt(input);
+            console.log('✅ Gemini 2.5 Pro respondió correctamente');
+            return output!;
+        } catch (e) {
+            console.error("Fallback a Gemini 2.5 Flash por error en Pro", e);
+            try {
+              console.log('⚡️ Usando Gemini 2.5 Flash como fallback...');
+              const {output} = await fallbackPrompt(input);
+              console.log('✅ Gemini 2.5 Flash respondió correctamente');
+              return output!;
+            } catch (e2) {
+              console.error("Error en el fallback a Gemini 2.5 Flash.", e2);
+              throw e2; // Re-throw the error if fallback also fails
+            }
+        }
+      }
+    );
+}
+
 export async function intelligentSearchAgent(input: IntelligentSearchAgentInput): Promise<IntelligentSearchAgentOutput> {
   const filteredCatalog = preFilterCatalog(input.userProfileData, smartphonesDatabase.devices);
   const flow = createIntelligentSearchFlow(filteredCatalog);
   return flow(input);
+}
+
+
+function createSingleRecommendationFlow(catalog: typeof smartphonesDatabase.devices) {
+  const catalogTool = createGetSmartphoneCatalogTool(catalog);
+  const prompt = createSingleRecommendationPrompt(catalogTool);
+  const fallbackPrompt = createSingleRecommendationPrompt(catalogTool);
+  fallbackPrompt.model = 'googleai/gemini-2.5-flash';
+
+  return ai.defineFlow(
+    {
+      name: 'generateSingleRecommendationFlow',
+      inputSchema: SingleRecommendationInputSchema,
+      outputSchema: ProductRecommendationSchema,
+    },
+    async input => {
+      console.log(`🤖 Generando recomendación #${input.recommendationNumber}...`);
+      try {
+        const {output} = await prompt(input);
+        console.log(`✅ Recomendación #${input.recommendationNumber} lista con Pro`);
+        return output!;
+      } catch (e) {
+        console.error("Fallback a 2.5 Flash por error en Pro", e);
+        try {
+          const {output} = await fallbackPrompt(input);
+          console.log(`✅ Recomendación #${input.recommendationNumber} lista con 2.5 Flash`);
+          return output!;
+        } catch (e2) {
+          console.error("Error en el fallback a Gemini 2.5 Flash.", e2);
+          throw e2;
+        }
+      }
+    }
+  );
 }
 
 // Single recommendation schema for streaming
@@ -69,6 +138,7 @@ const SingleRecommendationInputSchema = z.object({
 // Streaming version - generates recommendations in parallel and yields as soon as ready
 export async function* intelligentSearchAgentStreaming(input: IntelligentSearchAgentInput): AsyncGenerator<ProductRecommendation, void, unknown> {
   const filteredCatalog = preFilterCatalog(input.userProfileData, smartphonesDatabase.devices);
+  const generateSingleRecommendation = createSingleRecommendationFlow(filteredCatalog);
   
   // Create 3 promises that generate recommendations in parallel
   const promises = [1, 2, 3].map((num) =>
@@ -76,7 +146,7 @@ export async function* intelligentSearchAgentStreaming(input: IntelligentSearchA
       userProfileData: input.userProfileData,
       recommendationNumber: num,
       previousRecommendations: [],
-    }, filteredCatalog)
+    })
   );
 
   // Yield recommendations as soon as ANY is ready using Promise.race properly
@@ -284,88 +354,4 @@ function preFilterCatalog(userProfile: string, fullCatalog: typeof smartphonesDa
 
   console.log(`📊 Pre-filtrado: ${fullCatalog.length} → ${filtered.length} productos`);
   return filtered;
-}
-
-// Flow for generating a single recommendation
-function createGenerateSingleRecommendationFlow(filteredCatalog: typeof smartphonesDatabase.devices) {
-  const catalogTool = createGetSmartphoneCatalogTool(filteredCatalog);
-  const prompt = createSingleRecommendationPrompt(catalogTool);
-  const fallbackPrompt = createSingleRecommendationPrompt(catalogTool);
-  fallbackPrompt.model = 'googleai/gemini-2.5-flash';
-  const secondFallbackPrompt = createSingleRecommendationPrompt(catalogTool);
-  secondFallbackPrompt.model = 'googleai/gemini-1.5-flash-latest';
-
-  return ai.defineFlow(
-    {
-      name: 'generateSingleRecommendationFlow',
-      inputSchema: SingleRecommendationInputSchema,
-      outputSchema: ProductRecommendationSchema,
-    },
-    async input => {
-      console.log(`🤖 Generando recomendación #${input.recommendationNumber}...`);
-      try {
-        const {output} = await prompt(input);
-        console.log(`✅ Recomendación #${input.recommendationNumber} lista con Pro`);
-        return output!;
-      } catch (e) {
-        console.error("Fallback a 2.5 Flash por error en Pro", e);
-        try {
-          const {output} = await fallbackPrompt(input);
-          console.log(`✅ Recomendación #${input.recommendationNumber} lista con 2.5 Flash`);
-          return output!;
-        } catch (e2) {
-          console.error("Fallback a 1.5 Flash por error en 2.5 Flash", e2);
-          const {output} = await secondFallbackPrompt(input);
-          console.log(`✅ Recomendación #${input.recommendationNumber} lista con 1.5 Flash`);
-          return output!;
-        }
-      }
-    }
-  );
-}
-
-// Helper function for streaming
-async function generateSingleRecommendation(input: z.infer<typeof SingleRecommendationInputSchema>, catalog: typeof smartphonesDatabase.devices): Promise<ProductRecommendation> {
-  const flow = createGenerateSingleRecommendationFlow(catalog);
-  return flow(input);
-}
-
-
-function createIntelligentSearchFlow(catalog: typeof smartphonesDatabase.devices) {
-    const catalogTool = createGetSmartphoneCatalogTool(catalog);
-    const prompt = createIntelligentSearchPrompt(catalogTool);
-    const fallbackPrompt = createIntelligentSearchPrompt(catalogTool);
-    fallbackPrompt.model = 'googleai/gemini-2.5-flash';
-    const secondFallbackPrompt = createIntelligentSearchPrompt(catalogTool);
-    secondFallbackPrompt.model = 'googleai/gemini-1.5-flash-latest';
-
-    return ai.defineFlow(
-      {
-        name: 'intelligentSearchAgentFlow',
-        inputSchema: IntelligentSearchAgentInputSchema,
-        outputSchema: IntelligentSearchAgentOutputSchema,
-      },
-      async input => {
-        try {
-            console.log('🤖 Usando Gemini 2.5 Pro para recomendaciones...');
-            const {output} = await prompt(input);
-            console.log('✅ Gemini 2.5 Pro respondió correctamente');
-            return output!;
-        } catch (e) {
-            console.error("Fallback a Gemini Flash por error en Pro", e);
-            try {
-              console.log('⚡️ Usando Gemini 2.5 Flash como primer fallback...');
-              const {output} = await fallbackPrompt(input);
-              console.log('✅ Gemini 2.5 Flash respondió correctamente');
-              return output!;
-            } catch (e2) {
-              console.error("Fallback a Gemini 1.5 Flash por error en 2.5 Flash", e2);
-              console.log('⚡️ Usando Gemini 1.5 Flash como segundo fallback...');
-              const {output} = await secondFallbackPrompt(input);
-              console.log('✅ Gemini 1.5 Flash respondió correctamente');
-              return output!;
-            }
-        }
-      }
-    );
 }
