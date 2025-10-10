@@ -295,8 +295,8 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
   
   const MAX_PRODUCTS = 3;
   const productsToShow = products.slice(0, MAX_PRODUCTS);
-  const skeletonsNeeded = isGenerating ? Math.max(0, MAX_PRODUCTS - products.length) : 0;
-  const hasAddMoreCard = !isGenerating;
+  const skeletonsNeeded = isGenerating ? Math.max(0, MAX_PRODUCTS - productsToShow.length) : 0;
+  const hasAddMoreCard = !isGenerating && productsToShow.length > 0;
   const totalItems = productsToShow.length + skeletonsNeeded + (hasAddMoreCard ? 1 : 0);
 
   useEffect(() => {
@@ -327,7 +327,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
   };
 
   const handleNext = () => {
-    setCurrentIndex(prev => Math.min(totalItems - 1, prev - 1));
+    setCurrentIndex(prev => Math.min(totalItems - 1, prev + 1));
     dismissInstructions();
   };
 
@@ -463,14 +463,10 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
         >
           <div
             className={`flex transition-transform duration-500 ease-out ${
-              isDragging ? 'duration-0' : ''
+              isDragging ? '!duration-0' : ''
             }`}
             style={{
-              transform: `translateX(-${currentIndex * 100}%)`,
-              // Add slight visual feedback during drag
-              ...(isDragging && startX && currentX ? {
-                transform: `translateX(${-currentIndex * 100 + ((currentX - startX) / (carouselRef.current?.offsetWidth || 1)) * 100}%)`
-              } : {})
+              transform: `translateX(calc(-${currentIndex * 100}% + ${isDragging && startX && currentX ? currentX - startX : 0}px))`,
             }}
           >
             {/* Product Cards */}
