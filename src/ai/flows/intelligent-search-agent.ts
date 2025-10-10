@@ -154,7 +154,7 @@ function withTimeout<T>(promise: Promise<T>, timeoutMs: number, modelName: strin
   return Promise.race([
     promise,
     new Promise<T>((_, reject) =>
-      setTimeout(() => reject(new Error(`${modelName} timeout after ${timeoutMs}ms`)), timeoutMs)
+      setTimeout(() => reject(new Error(`Timeout: ${modelName} excedió ${timeoutMs}ms`)), timeoutMs)
     ),
   ]);
 }
@@ -173,7 +173,7 @@ const intelligentSearchAgentFlow = ai.defineFlow(
     // 1. Los 3 modelos se lanzan casi simultáneamente (delays mínimos para priorizar)
     // 2. Promise.race retorna el PRIMERO que responda exitosamente
     // 3. Las otras promesas se descartan automáticamente (no se esperan)
-    // 4. Timeouts agresivos previenen bloqueos
+    // 4. Timeouts más generosos para móvil/conexiones lentas
     //
     // COSTO vs BENEFICIO:
     // - ✅ UX: 45-60s → 10-15s (mejora 70%)
@@ -194,13 +194,14 @@ const intelligentSearchAgentFlow = ai.defineFlow(
           console.log('🤖 [0ms] Gemini 2.5 Pro iniciado');
           const {output} = await withTimeout(
             mainSearchPrompt(input),
-            18000, // 18s timeout (reducido de 20s)
+            25000, // 25s timeout (aumentado para móvil)
             'Gemini 2.5 Pro'
           );
           console.log(`✅ Gemini 2.5 Pro respondió en ${Date.now() - modelStart}ms`);
           return { output: output!, model: 'Gemini 2.5 Pro', time: Date.now() - startTime };
         } catch (e) {
-          console.error(`❌ Gemini 2.5 Pro falló después de ${Date.now() - modelStart}ms:`, e);
+          const errorMsg = e instanceof Error ? e.message : 'Error desconocido';
+          console.error(`❌ Gemini 2.5 Pro falló después de ${Date.now() - modelStart}ms:`, errorMsg);
           throw e;
         }
       })(),
@@ -213,13 +214,14 @@ const intelligentSearchAgentFlow = ai.defineFlow(
           console.log('⚡ [800ms] Gemini 2.5 Flash iniciado');
           const {output} = await withTimeout(
             fallbackSearchPrompt(input),
-            12000, // 12s timeout (reducido de 15s)
+            20000, // 20s timeout (aumentado para móvil)
             'Gemini 2.5 Flash'
           );
           console.log(`✅ Gemini 2.5 Flash respondió en ${Date.now() - modelStart}ms`);
           return { output: output!, model: 'Gemini 2.5 Flash', time: Date.now() - startTime };
         } catch (e) {
-          console.error(`❌ Gemini 2.5 Flash falló después de ${Date.now() - modelStart}ms:`, e);
+          const errorMsg = e instanceof Error ? e.message : 'Error desconocido';
+          console.error(`❌ Gemini 2.5 Flash falló después de ${Date.now() - modelStart}ms:`, errorMsg);
           throw e;
         }
       })(),
@@ -232,13 +234,14 @@ const intelligentSearchAgentFlow = ai.defineFlow(
           console.log('🤖 [1500ms] OpenAI GPT-4o-mini iniciado');
           const {output} = await withTimeout(
             openAIFallbackSearchPrompt(input),
-            12000, // 12s timeout (reducido de 15s)
+            20000, // 20s timeout (aumentado para móvil)
             'OpenAI GPT-4o-mini'
           );
           console.log(`✅ OpenAI respondió en ${Date.now() - modelStart}ms`);
           return { output: output!, model: 'OpenAI GPT-4o-mini', time: Date.now() - startTime };
         } catch (e) {
-          console.error(`❌ OpenAI falló después de ${Date.now() - modelStart}ms:`, e);
+          const errorMsg = e instanceof Error ? e.message : 'Error desconocido';
+          console.error(`❌ OpenAI falló después de ${Date.now() - modelStart}ms:`, errorMsg);
           throw e;
         }
       })()
@@ -259,6 +262,18 @@ const intelligentSearchAgentFlow = ai.defineFlow(
       } catch (allErrors) {
         const totalTime = Date.now() - startTime;
         console.error(`❌ Error fatal después de ${totalTime}ms: ningún modelo pudo generar recomendaciones`);
+
+        // Analizar qué tipo de errores ocurrieron
+        if (allErrors instanceof AggregateError) {
+          const hasTimeoutError = allErrors.errors.some(e =>
+            e instanceof Error && e.message.includes('Timeout')
+          );
+
+          if (hasTimeoutError) {
+            throw new Error('Timeout: Los servidores están tardando más de lo normal');
+          }
+        }
+
         throw new Error("No se pudieron generar recomendaciones. Por favor, intentá de nuevo en unos segundos.");
       }
     }

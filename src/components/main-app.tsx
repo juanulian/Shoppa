@@ -28,11 +28,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
     const userData = searchData || currentUserData;
 
     try {
-      // Safari detection para mejor manejo de errores
-      const isSafari = typeof window !== 'undefined' &&
-        /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
-      console.log(`🔍 Iniciando búsqueda... (Safari: ${isSafari})`);
+      console.log('🔍 Iniciando búsqueda...');
 
       // Generate all 3 recommendations at once (faster with parallel execution)
       const allRecommendations = await intelligentSearchAgent({
@@ -56,17 +52,31 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
     } catch (error) {
       console.error('La búsqueda falló:', error);
 
-      // Mensaje de error más específico para Safari
-      const isSafari = typeof window !== 'undefined' &&
-        /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      // Error messages específicos según el tipo de error
+      let errorTitle = 'No se pudo completar la búsqueda';
+      let errorDescription = 'Hubo un problema al generar las recomendaciones. Por favor, intentá de nuevo.';
 
-      const errorMessage = isSafari
-        ? 'Parece que hay un problema temporal. Si usás Safari, probá recargar la página o usar Chrome/Firefox.'
-        : 'Hubo un problema al generar las recomendaciones. Por favor, intentá de nuevo.';
+      if (error instanceof Error) {
+        // Error de timeout de los modelos AI
+        if (error.message.includes('timeout')) {
+          errorTitle = 'Tiempo de espera agotado';
+          errorDescription = 'Los servidores están tardando más de lo normal. Por favor, intentá de nuevo en unos segundos.';
+        }
+        // Error cuando ningún modelo puede generar recomendaciones
+        else if (error.message.includes('No se pudieron generar recomendaciones')) {
+          errorTitle = 'Servicio temporalmente no disponible';
+          errorDescription = 'Nuestros sistemas de IA están experimentando alta demanda. Por favor, intentá de nuevo en unos momentos.';
+        }
+        // Error de validación (no hay resultados)
+        else if (error.message.includes('No se recibieron recomendaciones')) {
+          errorTitle = 'No se encontraron recomendaciones';
+          errorDescription = 'No pudimos encontrar productos que coincidan con tus criterios. Intentá ajustar tus preferencias.';
+        }
+      }
 
       toast({
-        title: 'No se pudo completar la búsqueda',
-        description: errorMessage,
+        title: errorTitle,
+        description: errorDescription,
         variant: 'destructive',
       });
       setIsGenerating(false);
