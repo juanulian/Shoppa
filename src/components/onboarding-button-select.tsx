@@ -157,18 +157,18 @@ export const budgetOptions: Option[] = [
     id: 'económico',
     label: 'Económico',
     icon: Wallet,
-    description: 'Hasta AR$180k',
+    description: 'Ideal para el día a día',
   },
   {
     id: 'medio',
     label: 'Equilibrado',
     icon: TrendingUp,
-    description: 'AR$180k - AR$250k',
+    description: 'Potencia y precio justo',
   },
   {
     id: 'premium',
     label: 'Premium',
     icon: Crown,
-    description: 'Lo mejor sin límite',
+    description: 'Lo mejor, sin límites',
   },
 ];
