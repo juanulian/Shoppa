@@ -290,6 +290,8 @@ function preFilterCatalog(userProfile: string, fullCatalog: typeof smartphonesDa
 function createGenerateSingleRecommendationFlow(filteredCatalog: typeof smartphonesDatabase.devices) {
   const catalogTool = createGetSmartphoneCatalogTool(filteredCatalog);
   const prompt = createSingleRecommendationPrompt(catalogTool);
+  const fallbackPrompt = createSingleRecommendationPrompt(catalogTool);
+  fallbackPrompt.model = 'googleai/gemini-2.5-flash';
 
   return ai.defineFlow(
     {
@@ -305,8 +307,6 @@ function createGenerateSingleRecommendationFlow(filteredCatalog: typeof smartpho
         return output!;
       } catch (e) {
           console.error("Fallback a Gemini Flash por error en Pro", e);
-          const fallbackPrompt = createSingleRecommendationPrompt(catalogTool);
-          fallbackPrompt.model = 'googleai/gemini-2.5-flash';
           const {output} = await fallbackPrompt(input);
           return output!;
       }
@@ -324,6 +324,8 @@ async function generateSingleRecommendation(input: z.infer<typeof SingleRecommen
 function createIntelligentSearchFlow(catalog: typeof smartphonesDatabase.devices) {
     const catalogTool = createGetSmartphoneCatalogTool(catalog);
     const prompt = createIntelligentSearchPrompt(catalogTool);
+    const fallbackPrompt = createIntelligentSearchPrompt(catalogTool);
+    fallbackPrompt.model = 'googleai/gemini-2.5-flash';
 
     return ai.defineFlow(
       {
@@ -339,8 +341,6 @@ function createIntelligentSearchFlow(catalog: typeof smartphonesDatabase.devices
             return output!;
         } catch (e) {
             console.error("Fallback a Gemini Flash por error en Pro", e);
-            const fallbackPrompt = createIntelligentSearchPrompt(catalogTool);
-            fallbackPrompt.model = 'googleai/gemini-2.5-flash';
             const {output} = await fallbackPrompt(input);
             return output!;
         }
