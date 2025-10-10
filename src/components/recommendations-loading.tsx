@@ -1,9 +1,7 @@
-
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
-import Logo from '@/components/icons/logo';
 
 interface RecommendationsLoadingProps {
   userProfileData?: string;
@@ -62,7 +60,10 @@ const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
     <div className="w-full flex items-center justify-center px-4 py-8">
       <div className="glassmorphism-card rounded-3xl soft-border shadow-2xl p-8 md:p-12 max-w-md w-full text-center">
         <div className="mx-auto mb-8">
-            <Logo />
+          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight">
+            <span className="text-foreground">S</span>
+            <span className="text-primary">!</span>
+          </h1>
         </div>
 
         <div className="h-12 flex flex-col items-center justify-center mb-8">
