@@ -44,8 +44,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
       console.error('La búsqueda falló:', error);
       toast({
         title: 'Error en la búsqueda',
-        description:
-          'Parece que hay mucha demanda, por favor volvé a intentar en algunos minutos',
+        description: 'Parece que hay mucha demanda, por favor volvé a intentar en algunos minutos',
         variant: 'destructive',
       });
       setIsGenerating(false); // Detener el estado de carga
