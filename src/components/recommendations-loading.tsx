@@ -60,7 +60,7 @@ const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
     <div className="w-full flex items-center justify-center px-4 py-8">
       <div className="glassmorphism-card rounded-3xl soft-border shadow-2xl p-8 md:p-12 max-w-md w-full text-center">
         <div className="mx-auto mb-8">
-          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight">
+          <h1 className="text-7xl md:text-8xl font-extrabold tracking-tight">
             <span className="text-foreground">S</span>
             <span className="text-primary">!</span>
           </h1>
