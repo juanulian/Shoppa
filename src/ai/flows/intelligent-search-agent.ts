@@ -16,36 +16,35 @@ import {
 } from '@/ai/schemas/product-recommendation';
 import { smartphonesDatabase } from '@/lib/smartphones-database';
 
+// Define the tool statically at the top level.
+const getSmartphoneCatalogTool = ai.defineTool(
+  {
+    name: 'getSmartphoneCatalog',
+    description: 'Recupera la lista COMPLETA de celulares disponibles. Debes llamar a esta herramienta SIEMPRE para poder responder a la solicitud del usuario.',
+    inputSchema: z.void(),
+    outputSchema: z.array(z.object({
+      id: z.string(),
+      brand: z.string(),
+      model: z.string(),
+      storage: z.string(),
+      image_url: z.string(),
+      gama: z.string(),
+      precio_estimado: z.string(),
+      uso_recomendado: z.array(z.string()),
+      especificaciones: z.any(),
+      durabilidad: z.any(),
+      ideal_para: z.array(z.string()),
+    })),
+  },
+  async () => {
+    // The tool now directly accesses the imported database.
+    return smartphonesDatabase.devices;
+  }
+);
 
-function createGetSmartphoneCatalogTool(catalog: typeof smartphonesDatabase.devices) {
-  return ai.defineTool(
-    {
-      name: 'getSmartphoneCatalog',
-      description: 'Recupera la lista COMPLETA de celulares disponibles. Debes llamar a esta herramienta SIEMPRE para poder responder a la solicitud del usuario.',
-      inputSchema: z.void(),
-      outputSchema: z.array(z.object({
-        id: z.string(),
-        brand: z.string(),
-        model: z.string(),
-        storage: z.string(),
-        image_url: z.string(),
-        gama: z.string(),
-        precio_estimado: z.string(),
-        uso_recomendado: z.array(z.string()),
-        especificaciones: z.any(),
-        durabilidad: z.any(),
-        ideal_para: z.array(z.string()),
-      })),
-    },
-    async () => {
-      return catalog;
-    }
-  );
-}
 
 const IntelligentSearchAgentInputSchema = z.object({
   userProfileData: z.string().describe('Datos del perfil de usuario recopilados de las preguntas de incorporación.'),
-  catalog: z.any().optional(), // Now passed directly
 });
 export type IntelligentSearchAgentInput = z.infer<typeof IntelligentSearchAgentInputSchema>;
 
@@ -58,7 +57,6 @@ const SingleRecommendationInputSchema = z.object({
   userProfileData: z.string().describe('Datos del perfil de usuario recopilados de las preguntas de incorporación.'),
   recommendationNumber: z.number().describe('Número de recomendación (1, 2, o 3)'),
   previousRecommendations: z.array(ProductRecommendationSchema).optional().describe('Recomendaciones previas para evitar duplicados'),
-  catalog: z.any().optional(),
 });
 
 
@@ -69,6 +67,7 @@ function createIntelligentSearchPrompt(model: 'googleai/gemini-2.5-pro' | 'googl
     input: {schema: IntelligentSearchAgentInputSchema},
     output: {schema: IntelligentSearchAgentOutputSchema},
     model,
+    tools: [getSmartphoneCatalogTool], // Statically assign the tool
     system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros. Tu misión es reducir el abandono de carrito (actualmente 75% en LATAM) presentando exactamente 3 opciones optimizadas que aceleran la decisión de compra.
 
 ## METODOLOGÍA ANTI-ABANDONO DE CARRITO ##
@@ -123,12 +122,6 @@ function createIntelligentSearchPrompt(model: 'googleai/gemini-2.5-pro' | 'googl
 - justification: Conexión personalizada entre características y necesidades del usuario
 - matchPercentage: Porcentaje de compatibilidad 65-98% basado en coincidencia con necesidades del usuario
 - matchTags: Array de 2-4 tags. IMPORTANTE: Para el campo 'icon', debes elegir uno de los valores permitidos en el schema. NO inventes iconos.
-
-**CONTEXTO DE MERCADO LATAM:**
-- Alta sensibilidad al precio
-- Necesidad de explicaciones claras y simples
-- Decisiones familiares/compartidas frecuentes
-- Búsqueda de valor a largo plazo
 `,
     prompt: `**Perfil del Usuario:**
 {{{userProfileData}}}
@@ -150,11 +143,6 @@ const intelligentSearchAgentFlow = ai.defineFlow(
     outputSchema: IntelligentSearchAgentOutputSchema,
   },
   async input => {
-    const { catalog } = input;
-    const catalogTool = createGetSmartphoneCatalogTool(catalog);
-    mainSearchPrompt.tools = [catalogTool];
-    fallbackSearchPrompt.tools = [catalogTool];
-
     try {
         console.log('🤖 Usando Gemini 2.5 Pro para recomendaciones...');
         const {output} = await mainSearchPrompt(input);
@@ -177,8 +165,19 @@ const intelligentSearchAgentFlow = ai.defineFlow(
 
 
 export async function intelligentSearchAgent(input: IntelligentSearchAgentInput): Promise<IntelligentSearchAgentOutput> {
-  const filteredCatalog = preFilterCatalog(input.userProfileData, smartphonesDatabase.devices);
-  return intelligentSearchAgentFlow({ userProfileData: input.userProfileData, catalog: filteredCatalog });
+  const filteredCatalog = preFilterCatalog(input.userProfileData);
+  
+  // This is a temporary workaround to pass the filtered catalog to the tool.
+  // A better approach would be to pass filter parameters to the tool itself.
+  const originalDevices = smartphonesDatabase.devices;
+  (smartphonesDatabase as any).devices = filteredCatalog;
+
+  try {
+    return await intelligentSearchAgentFlow(input);
+  } finally {
+    // IMPORTANT: Restore the original database to avoid side effects.
+    (smartphonesDatabase as any).devices = originalDevices;
+  }
 }
 
 
@@ -188,6 +187,7 @@ function createSingleRecommendationPrompt(model: 'googleai/gemini-2.5-pro' | 'go
     input: {schema: SingleRecommendationInputSchema},
     output: {schema: ProductRecommendationSchema},
     model,
+    tools: [getSmartphoneCatalogTool], // Statically assign the tool
     system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros.
 
 **TU TAREA:**
@@ -244,11 +244,6 @@ const generateSingleRecommendationFlow = ai.defineFlow(
     outputSchema: ProductRecommendationSchema,
   },
   async input => {
-    const { catalog } = input;
-    const catalogTool = createGetSmartphoneCatalogTool(catalog);
-    mainSingleRecPrompt.tools = [catalogTool];
-    fallbackSingleRecPrompt.tools = [catalogTool];
-
     console.log(`🤖 Generando recomendación #${input.recommendationNumber}...`);
     try {
       const {output} = await mainSingleRecPrompt(input);
@@ -271,38 +266,49 @@ const generateSingleRecommendationFlow = ai.defineFlow(
 
 // Streaming version - generates recommendations in parallel and yields as soon as ready
 export async function* intelligentSearchAgentStreaming(input: IntelligentSearchAgentInput): AsyncGenerator<ProductRecommendation, void, unknown> {
-  const filteredCatalog = preFilterCatalog(input.userProfileData, smartphonesDatabase.devices);
+  const filteredCatalog = preFilterCatalog(input.userProfileData);
+
+  // This is a temporary workaround to pass the filtered catalog to the tool.
+  const originalDevices = smartphonesDatabase.devices;
+  (smartphonesDatabase as any).devices = filteredCatalog;
   
-  // Create 3 promises that generate recommendations in parallel
-  const promises = [1, 2, 3].map((num) =>
-    generateSingleRecommendationFlow({
-      userProfileData: input.userProfileData,
-      recommendationNumber: num,
-      previousRecommendations: [],
-      catalog: filteredCatalog,
-    })
-  );
+  try {
+    // Create 3 promises that generate recommendations in parallel
+    const promises = [1, 2, 3].map((num) =>
+      generateSingleRecommendationFlow({
+        userProfileData: input.userProfileData,
+        recommendationNumber: num,
+        previousRecommendations: [],
+      })
+    );
 
-  // Yield recommendations as soon as ANY is ready using Promise.race properly
-  const completed = new Set<number>();
+    // Yield recommendations as soon as ANY is ready using Promise.race properly
+    const completed = new Set<number>();
 
-  while (completed.size < 3) {
-    // Wrap each pending promise with its index
-    const indexed = promises
-      .map((p, i) => completed.has(i) ? null : p.then(rec => ({ index: i, rec })))
-      .filter(Boolean) as Promise<{index: number, rec: ProductRecommendation}>[];
+    while (completed.size < 3) {
+      // Wrap each pending promise with its index
+      const indexed = promises
+        .map((p, i) => completed.has(i) ? null : p.then(rec => ({ index: i, rec })))
+        .filter(Boolean) as Promise<{index: number, rec: ProductRecommendation}>[];
 
-    // Wait for the first one to complete
-    const { index, rec } = await Promise.race(indexed);
+      if (indexed.length === 0) break;
 
-    // Mark as completed and yield
-    completed.add(index);
-    yield rec;
+      // Wait for the first one to complete
+      const { index, rec } = await Promise.race(indexed);
+
+      // Mark as completed and yield
+      completed.add(index);
+      yield rec;
+    }
+  } finally {
+    // IMPORTANT: Restore the original database to avoid side effects.
+    (smartphonesDatabase as any).devices = originalDevices;
   }
 }
 
 // Pre-filter catalog based on user profile to reduce input size and latency
-function preFilterCatalog(userProfile: string, fullCatalog: typeof smartphonesDatabase.devices) {
+function preFilterCatalog(userProfile: string) {
+  const fullCatalog = smartphonesDatabase.devices;
   const profileLower = userProfile.toLowerCase();
 
   // Extract budget from profile
