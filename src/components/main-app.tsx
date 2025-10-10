@@ -60,17 +60,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
         // Error de timeout de los modelos AI
         if (error.message.includes('timeout')) {
           errorTitle = 'Tiempo de espera agotado';
-          errorDescription = 'Los servidores están tardando más de lo normal. Por favor, intentá de nuevo en unos segundos.';
-        }
-        // Error cuando ningún modelo puede generar recomendaciones
-        else if (error.message.includes('No se pudieron generar recomendaciones')) {
-          errorTitle = 'Servicio temporalmente no disponible';
-          errorDescription = 'Nuestros sistemas de IA están experimentando alta demanda. Por favor, intentá de nuevo en unos momentos.';
-        }
-        // Error de validación (no hay resultados)
-        else if (error.message.includes('No se recibieron recomendaciones')) {
-          errorTitle = 'No se encontraron recomendaciones';
-          errorDescription = 'No pudimos encontrar productos que coincidan con tus criterios. Intentá ajustar tus preferencias.';
+          errorDescription = 'Parece que hay mucha demanda, por favor volvé a intentar en algunos minutos.';
         }
       }
 
@@ -111,14 +101,16 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
   return (
     <div className="w-full max-w-5xl mx-auto flex flex-col gap-6 sm:gap-8 px-2 sm:px-4">
       <header className="flex flex-col items-start text-center md:text-left">
-        <div className="w-full">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-headline tracking-tight">
-            Tus 3 opciones perfectas
-          </h2>
-          <p className="text-sm sm:text-base text-muted-foreground mt-2">
-            Seleccionadas específicamente para tus necesidades y presupuesto. Sin confusión, sin perdida de tiempo.
-          </p>
-        </div>
+        {results.length > 0 && !isGenerating && (
+           <div className="w-full animate-in fade-in duration-500">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-headline tracking-tight">
+              Pensadas para vos.
+            </h2>
+            <p className="text-sm sm:text-base text-muted-foreground mt-2">
+              Rápido. Simple.
+            </p>
+          </div>
+        )}
       </header>
 
       <div className="space-y-4 min-h-[400px]">

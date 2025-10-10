@@ -56,7 +56,7 @@ export const PREDEFINED_MATCH_TAGS = {
 
   // Durabilidad (icon: shield)
   'Súper Resistente': { icon: 'shield', baseLevel: 'high' },
-  'Resistencia IP68': { icon: 'shield', baseLevel: 'high' },
+  'Resistente al agua': { icon: 'shield', baseLevel: 'high' },
   'Resistente': { icon: 'shield', baseLevel: 'medium' },
 
   // Conectividad (icon: wifi)
@@ -95,11 +95,11 @@ export const ProductRecommendationSchema = z.object({
       // Trabajo
       'Ideal Trabajo', 'Bueno para Trabajo',
       // Durabilidad
-      'Súper Resistente', 'Resistencia IP68', 'Resistente',
+      'Súper Resistente', 'Resistente al agua', 'Resistente',
       // Conectividad
       '5G Ultrarrápido', 'Buena Conectividad',
     ]).describe('Tag predefinido que describe una característica clave. EL TAG YA DEFINE EL NIVEL: "Máxima Velocidad"=high, "Buen Rendimiento"=medium, "Rendimiento Básico"=low.'),
-    level: z.enum(['high', 'medium', 'low']).describe('DEBE coincidir con el tag: "Máxima Velocidad"/"Súper Rápido"/"Cámara Pro"/"Fotos Excelentes"/"Batería Todo el Día"/"Carga Rápida"/"Excelente Precio"/"Mucho Espacio"/"Pantalla Premium"/"Gaming Pro"/"Ideal Trabajo"/"Súper Resistente"/"Resistencia IP68"/"5G Ultrarrápido" = SIEMPRE "high". "Buen Rendimiento"/"Cámara Buena"/"Batería Decente"/"Buen Valor"/"Espacio Suficiente"/"Buena Pantalla"/"Juegos Fluidos"/"Bueno para Trabajo"/"Resistente"/"Buena Conectividad" = SIEMPRE "medium". "Rendimiento Básico"/"Fotos Básicas"/"Batería Justa"/"Precio Elevado"/"Espacio Limitado"/"Pantalla Básica"/"Gaming Casual" = SIEMPRE "low".'),
+    level: z.enum(['high', 'medium', 'low']).describe('DEBE coincidir con el tag: "Máxima Velocidad"/"Súper Rápido"/"Cámara Pro"/"Fotos Excelentes"/"Batería Todo el Día"/"Carga Rápida"/"Excelente Precio"/"Mucho Espacio"/"Pantalla Premium"/"Gaming Pro"/"Ideal Trabajo"/"Súper Resistente"/"Resistente al agua"/"5G Ultrarrápido" = SIEMPRE "high". "Buen Rendimiento"/"Cámara Buena"/"Batería Decente"/"Buen Valor"/"Espacio Suficiente"/"Buena Pantalla"/"Juegos Fluidos"/"Bueno para Trabajo"/"Resistente"/"Buena Conectividad" = SIEMPRE "medium". "Rendimiento Básico"/"Fotos Básicas"/"Batería Justa"/"Precio Elevado"/"Espacio Limitado"/"Pantalla Básica"/"Gaming Casual" = SIEMPRE "low".'),
     icon: z.enum(['camera', 'battery', 'zap', 'dollar-sign', 'hard-drive', 'monitor', 'gamepad', 'briefcase', 'shield', 'wifi', 'smartphone']).describe('Icono automático según el tag seleccionado. NO inventar, usar el icono correspondiente al tag.')
   })).min(2).max(4).describe('Array de 2-4 tags predefinidos. CRÍTICO: El nivel (color) está IMPLÍCITO en el tag. Si elegís "Máxima Velocidad", el nivel DEBE ser "high". Si elegís "Buen Rendimiento", el nivel DEBE ser "medium".'),
 });
