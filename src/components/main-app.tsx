@@ -28,26 +28,48 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
     const userData = searchData || currentUserData;
 
     try {
-      // Generate all 3 recommendations at once (faster)
+      // Safari detection para mejor manejo de errores
+      const isSafari = typeof window !== 'undefined' &&
+        /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+      console.log(`🔍 Iniciando búsqueda... (Safari: ${isSafari})`);
+
+      // Generate all 3 recommendations at once (faster with parallel execution)
       const allRecommendations = await intelligentSearchAgent({
         userProfileData: userData,
       });
+
+      // Validación adicional de resultados
+      if (!allRecommendations || allRecommendations.length === 0) {
+        throw new Error('No se recibieron recomendaciones');
+      }
+
+      console.log(`✅ Recibidas ${allRecommendations.length} recomendaciones`);
 
       // Show them progressively with small delays for better UX
       for (let i = 0; i < allRecommendations.length; i++) {
         await new Promise(resolve => setTimeout(resolve, i * 500)); // 0.5s delay between cards
         setResults(prev => [...prev, allRecommendations[i]]);
       }
-      
+
       setIsGenerating(false);
     } catch (error) {
       console.error('La búsqueda falló:', error);
+
+      // Mensaje de error más específico para Safari
+      const isSafari = typeof window !== 'undefined' &&
+        /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+      const errorMessage = isSafari
+        ? 'Parece que hay un problema temporal. Si usás Safari, probá recargar la página o usar Chrome/Firefox.'
+        : 'Hubo un problema al generar las recomendaciones. Por favor, intentá de nuevo.';
+
       toast({
-        title: 'Error en la búsqueda',
-        description: 'Hubo un problema al generar las recomendaciones. Por favor, intentá de nuevo.',
+        title: 'No se pudo completar la búsqueda',
+        description: errorMessage,
         variant: 'destructive',
       });
-      setIsGenerating(false); // Detener el estado de carga
+      setIsGenerating(false);
     }
   };
 
