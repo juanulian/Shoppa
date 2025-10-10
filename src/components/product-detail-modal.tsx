@@ -1,12 +1,13 @@
 'use client';
 
-import { X, CheckCircle, HelpCircle, Heart } from "lucide-react";
+import { X, CheckCircle, HelpCircle, Heart, LucideIcon, Camera, Battery, Zap, DollarSign, HardDrive, Monitor, Gamepad2, Briefcase, Shield, Wifi, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { ProductRecommendation } from "@/ai/schemas/product-recommendation";
 import SmartProductImage from "./smart-product-image";
 import VerifiedProductLink from "./verified-product-link";
 import { useDeviceType } from '@/hooks/use-device-type';
+import { cn } from "@/lib/utils";
 
 const KEYWORDS = ['cámara', 'batería', 'rendimiento', 'pantalla', 'gaming', 'fotos', 'trabajo', 'precio', 'calidad', 'diseño', 'procesador', 'memoria', 'almacenamiento', 'zoom', 'noche', 'video', 'autonomía'];
 
@@ -34,6 +35,20 @@ const HighlightedText: React.FC<{ text: string }> = ({ text }) => {
 type ProductDetailModalProps = {
   product: ProductRecommendation;
   onClose: () => void;
+};
+
+const iconMap: Record<string, LucideIcon> = {
+  camera: Camera,
+  battery: Battery,
+  zap: Zap,
+  'dollar-sign': DollarSign,
+  'hard-drive': HardDrive,
+  monitor: Monitor,
+  gamepad: Gamepad2,
+  briefcase: Briefcase,
+  shield: Shield,
+  wifi: Wifi,
+  smartphone: Smartphone,
 };
 
 const getTagColor = (level: 'high' | 'medium' | 'low') => {
@@ -149,16 +164,18 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClos
               isMobile ? 'text-sm' : 'text-base'
             }`}>¿Por qué coincide contigo?</h3>
             <div className="flex flex-wrap gap-2">
-              {product.matchTags.map((matchTag, index) => (
-                <Badge
-                  key={index}
-                  className={`border font-medium ${getTagColor(matchTag.level)} ${
-                    isMobile ? 'text-xs' : 'text-sm'
-                  }`}
-                >
-                  {matchTag.tag}
-                </Badge>
-              ))}
+              {product.matchTags.map((matchTag, index) => {
+                const Icon = iconMap[matchTag.icon] || Smartphone;
+                return(
+                  <Badge
+                    key={index}
+                    className={cn('border font-medium flex items-center gap-1.5', getTagColor(matchTag.level), isMobile ? 'text-xs px-2 py-1' : 'text-sm px-3 py-1.5')}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {matchTag.tag}
+                  </Badge>
+                )
+              })}
             </div>
           </div>
 
@@ -191,6 +208,10 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClos
           <div className="pt-4">
             <VerifiedProductLink
               className="w-full"
+              productId={product.productName}
+              productName={product.productName}
+              productPrice={product.price}
+              productImage={product.imageUrl}
             />
           </div>
         </div>
@@ -200,5 +221,3 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClos
 };
 
 export default ProductDetailModal;
-
-    

@@ -4,12 +4,27 @@ import { useState, useRef, useEffect } from 'react';
 import type { ProductRecommendation } from "@/ai/schemas/product-recommendation";
 import ProductDetailModal from './product-detail-modal';
 import { Button } from './ui/button';
-import { ArrowLeft, ArrowRight, Plus, Heart } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Plus, Heart, Camera, Battery, Zap, DollarSign, HardDrive, Monitor, Gamepad2, Briefcase, Shield, Wifi, Smartphone, LucideIcon } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import SmartProductImage from "./smart-product-image";
 import VerifiedProductLink from "./verified-product-link";
 import { useDeviceType } from '@/hooks/use-device-type';
 import SwipeInstructionOverlay from './swipe-instruction-overlay';
+import { cn } from '@/lib/utils';
+
+const iconMap: Record<string, LucideIcon> = {
+  camera: Camera,
+  battery: Battery,
+  zap: Zap,
+  'dollar-sign': DollarSign,
+  'hard-drive': HardDrive,
+  monitor: Monitor,
+  gamepad: Gamepad2,
+  briefcase: Briefcase,
+  shield: Shield,
+  wifi: Wifi,
+  smartphone: Smartphone,
+};
 
 type ProductCarouselProps = {
   products: ProductRecommendation[];
@@ -155,14 +170,18 @@ const ProductCard: React.FC<{
 
         {/* Match Tags Preview */}
         <div className="flex flex-wrap gap-1">
-          {product.matchTags.slice(0, 3).map((matchTag, index) => (
-            <Badge
-              key={index}
-              className={`border font-medium text-xs py-0 px-2 ${getTagColor(matchTag.level)}`}
-            >
-              {matchTag.tag}
-            </Badge>
-          ))}
+          {product.matchTags.slice(0, 3).map((matchTag, index) => {
+            const Icon = iconMap[matchTag.icon] || Smartphone;
+            return (
+              <Badge
+                key={index}
+                className={cn('border font-medium text-xs py-0.5 px-2 flex items-center gap-1.5', getTagColor(matchTag.level))}
+              >
+                <Icon className="w-3 h-3" />
+                {matchTag.tag}
+              </Badge>
+            );
+          })}
           {product.matchTags.length > 3 && (
             <Badge variant="outline" className="text-xs py-0 px-2">
               +{product.matchTags.length - 3}
@@ -184,7 +203,7 @@ const ProductCard: React.FC<{
           </Button>
           <VerifiedProductLink
             className="w-full"
-            productId={product.productName}
+            productId={product.productName} // Using name as ID for now
             productName={product.productName}
             productPrice={product.price}
             productImage={product.imageUrl}
@@ -392,7 +411,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
     setIsDragging(false);
   };
 
-  const isAddMoreDetailsCard = currentIndex >= products.length;
+  const isAddMoreDetailsCard = currentIndex >= products.length + skeletonsNeeded;
 
   return (
     <div className={`w-full mx-auto ${

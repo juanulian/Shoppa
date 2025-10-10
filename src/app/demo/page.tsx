@@ -3,7 +3,6 @@
 
 import { useState, Suspense, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Onboarding from '@/components/onboarding';
 import OnboardingNew from '@/components/onboarding-new';
 import MainApp from '@/components/main-app';
 import Logo from '@/components/icons/logo';
@@ -13,7 +12,7 @@ import { Loader2 } from 'lucide-react';
 
 export type AppState = 'analyzing' | 'onboarding' | 'search';
 
-export default function DemoPage() {
+function DemoPageContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
 
@@ -22,18 +21,12 @@ export default function DemoPage() {
   const [analysis, setAnalysis] = useState<QueryAnalysisOutput | undefined>(undefined);
 
   useEffect(() => {
-    if (query) {
-
-      // Analyze query
+    if (query && appState === 'analyzing') {
       analyzeQuery({ query })
         .then((result) => {
           setAnalysis(result);
-
-          // If complete, skip onboarding
           if (result.isComplete) {
-            // Build profile from detected data
             let profileData = `Búsqueda inicial: ${query}\n\n`;
-
             const { brand, model, useCase, priority, budget, special } = result.detected;
             if (brand) profileData += `Marca: ${brand}\n`;
             if (model) profileData += `Modelo: ${model}\n`;
@@ -50,11 +43,12 @@ export default function DemoPage() {
         })
         .catch((error) => {
           console.error('Error analyzing query:', error);
-          // Fallback to onboarding
           setAppState('onboarding');
         });
+    } else if (!query) {
+        setAppState('onboarding');
     }
-  }, [query]);
+  }, [query, appState]);
 
   const handleOnboardingComplete = (profileData: string) => {
     setUserProfile(profileData);
@@ -62,9 +56,8 @@ export default function DemoPage() {
   };
 
   const handleNewSearch = () => {
-    setAppState('onboarding');
-    setUserProfile(null);
-    setAnalysis(undefined);
+    // Navigate to home to allow for a new search from the input
+    window.location.href = '/';
   }
 
   return (
@@ -78,11 +71,20 @@ export default function DemoPage() {
         </div>
 
         <div className={`w-full max-w-2xl mx-auto z-10 ${appState === 'search' ? 'pt-16 md:pt-0' : ''}`}>
+          {appState === 'analyzing' && (
+            <div className="text-center p-8 glassmorphism-card rounded-3xl">
+                <Loader2 className="h-12 w-12 mx-auto animate-spin text-primary mb-4" />
+                <p className="text-xl text-foreground font-semibold">Analizando tu búsqueda...</p>
+                <p className="text-muted-foreground mt-2">"{query}"</p>
+            </div>
+          )}
           {appState === 'onboarding' && (
             <div className="animate-in fade-in-0 zoom-in-95 duration-500">
-              <Suspense fallback={<div className="text-center p-8">Cargando...</div>}>
-                <Onboarding onComplete={handleOnboardingComplete} />
-              </Suspense>
+                <OnboardingNew
+                  onComplete={handleOnboardingComplete}
+                  initialQuery={query}
+                  analysis={analysis}
+                />
             </div>
           )}
           {appState === 'search' && userProfile !== null && (
@@ -94,4 +96,17 @@ export default function DemoPage() {
       </main>
     </div>
   );
+}
+
+
+export default function DemoPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+                <Loader2 className="h-12 w-12 animate-spin text-primary" />
+            </div>
+        }>
+            <DemoPageContent />
+        </Suspense>
+    )
 }

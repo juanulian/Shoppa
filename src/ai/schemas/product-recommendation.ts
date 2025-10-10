@@ -21,5 +21,3 @@ export const ProductRecommendationSchema = z.object({
 });
 
 export type ProductRecommendation = z.infer<typeof ProductRecommendationSchema>;
-
-    

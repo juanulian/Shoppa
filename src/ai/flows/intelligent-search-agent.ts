@@ -133,7 +133,7 @@ Genera UNA SOLA recomendación de celular basándote en el perfil del usuario y 
    - productDescription: Beneficios, no specs
    - justification: Por qué este para ESTE usuario
    - matchPercentage: 65-98%
-   - matchTags: 2-4 tags (high/medium/low)`,
+   - matchTags: Array de 2-4 tags. IMPORTANTE: Para el campo 'icon', debes elegir uno de los valores permitidos en el schema (['camera', 'battery', 'zap', ...]). NO inventes iconos.`,
   prompt: `**Perfil del Usuario:**
 {{{userProfileData}}}
 
@@ -201,7 +201,7 @@ const prompt = ai.definePrompt({
 - productDescription: Resumen compelling centrado en beneficios
 - justification: Conexión personalizada entre características y necesidades del usuario
 - matchPercentage: Porcentaje de compatibilidad 65-98% basado en coincidencia con necesidades del usuario
-- matchTags: Array de 2-4 tags con nivel (high/medium/low) que sintetizen los puntos de coincidencia más relevantes
+- matchTags: Array de 2-4 tags. IMPORTANTE: Para el campo 'icon', debes elegir uno de los valores permitidos en el schema (['camera', 'battery', 'zap', ...]). NO inventes iconos.
 
 **CONTEXTO DE MERCADO LATAM:**
 - Alta sensibilidad al precio
@@ -276,7 +276,7 @@ const promptWithFallback = ai.definePrompt({
 - productDescription: Resumen compelling centrado en beneficios
 - justification: Conexión personalizada entre características y necesidades del usuario
 - matchPercentage: Porcentaje de compatibilidad 65-98% basado en coincidencia con necesidades del usuario
-- matchTags: Array de 2-4 tags con nivel (high/medium/low) que sintetizen los puntos de coincidencia más relevantes
+- matchTags: Array de 2-4 tags. IMPORTANTE: Para el campo 'icon', debes elegir uno de los valores permitidos en el schema (['camera', 'battery', 'zap', ...]). NO inventes iconos.
 
 **CONTEXTO DE MERCADO LATAM:**
 - Alta sensibilidad al precio
@@ -314,27 +314,27 @@ function preFilterCatalog(userProfile: string, fullCatalog: typeof smartphonesDa
   // Brand filter
   if (preferredBrands.length > 0) {
     filtered = filtered.filter(device =>
-      device?.name && preferredBrands.some(brand => device.name.toLowerCase().includes(brand))
+      device?.model && preferredBrands.some(brand => device.model.toLowerCase().includes(brand))
     );
   }
 
   // Budget filter (más agresivo)
   if (maxBudget) {
     filtered = filtered.filter(device => {
-      if (!device?.price) return false;
-      const price = parseFloat(device.price.replace(/[^0-9.]/g, ''));
+      if (!device?.precio_estimado) return false;
+      const price = parseFloat(device.precio_estimado.replace(/[^0-9.]/g, ''));
       return price <= maxBudget * 1.15; // Allow 15% over budget
     });
   } else if (isBudget) {
     filtered = filtered.filter(device => {
-      if (!device?.price) return false;
-      const price = parseFloat(device.price.replace(/[^0-9.]/g, ''));
+      if (!device?.precio_estimado) return false;
+      const price = parseFloat(device.precio_estimado.replace(/[^0-9.]/g, ''));
       return price < 500;
     });
   } else if (isPremium) {
     filtered = filtered.filter(device => {
-      if (!device?.price) return false;
-      const price = parseFloat(device.price.replace(/[^0-9.]/g, ''));
+      if (!device?.precio_estimado) return false;
+      const price = parseFloat(device.precio_estimado.replace(/[^0-9.]/g, ''));
       return price > 800;
     });
   }
@@ -412,5 +412,3 @@ const intelligentSearchAgentFlow = ai.defineFlow(
     }
   }
 );
-
-
