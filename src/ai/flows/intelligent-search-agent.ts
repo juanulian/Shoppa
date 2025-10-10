@@ -45,6 +45,7 @@ function createGetSmartphoneCatalogTool(catalog: typeof smartphonesDatabase.devi
 
 const IntelligentSearchAgentInputSchema = z.object({
   userProfileData: z.string().describe('Datos del perfil de usuario recopilados de las preguntas de incorporación.'),
+  catalog: z.any().optional(), // Now passed directly
 });
 export type IntelligentSearchAgentInput = z.infer<typeof IntelligentSearchAgentInputSchema>;
 
@@ -53,181 +54,22 @@ export type { ProductRecommendation };
 const IntelligentSearchAgentOutputSchema = z.array(ProductRecommendationSchema).describe('Una lista de 3 recomendaciones de celulares.');
 export type IntelligentSearchAgentOutput = z.infer<typeof IntelligentSearchAgentOutputSchema>;
 
-
-function createIntelligentSearchFlow(catalog: typeof smartphonesDatabase.devices) {
-    const catalogTool = createGetSmartphoneCatalogTool(catalog);
-    const prompt = createIntelligentSearchPrompt(catalogTool);
-    const fallbackPrompt = createIntelligentSearchPrompt(catalogTool);
-    fallbackPrompt.model = 'googleai/gemini-2.5-flash';
-
-    return ai.defineFlow(
-      {
-        name: 'intelligentSearchAgentFlow',
-        inputSchema: IntelligentSearchAgentInputSchema,
-        outputSchema: IntelligentSearchAgentOutputSchema,
-      },
-      async input => {
-        try {
-            console.log('🤖 Usando Gemini 2.5 Pro para recomendaciones...');
-            const {output} = await prompt(input);
-            console.log('✅ Gemini 2.5 Pro respondió correctamente');
-            return output!;
-        } catch (e) {
-            console.error("Fallback a Gemini 2.5 Flash por error en Pro", e);
-            try {
-              console.log('⚡️ Usando Gemini 2.5 Flash como fallback...');
-              const {output} = await fallbackPrompt(input);
-              console.log('✅ Gemini 2.5 Flash respondió correctamente');
-              return output!;
-            } catch (e2) {
-              console.error("Error en el fallback a Gemini 2.5 Flash.", e2);
-              throw e2; // Re-throw the error if fallback also fails
-            }
-        }
-      }
-    );
-}
-
-export async function intelligentSearchAgent(input: IntelligentSearchAgentInput): Promise<IntelligentSearchAgentOutput> {
-  const filteredCatalog = preFilterCatalog(input.userProfileData, smartphonesDatabase.devices);
-  const flow = createIntelligentSearchFlow(filteredCatalog);
-  return flow(input);
-}
-
-
-function createSingleRecommendationFlow(catalog: typeof smartphonesDatabase.devices) {
-  const catalogTool = createGetSmartphoneCatalogTool(catalog);
-  const prompt = createSingleRecommendationPrompt(catalogTool);
-  const fallbackPrompt = createSingleRecommendationPrompt(catalogTool);
-  fallbackPrompt.model = 'googleai/gemini-2.5-flash';
-
-  return ai.defineFlow(
-    {
-      name: 'generateSingleRecommendationFlow',
-      inputSchema: SingleRecommendationInputSchema,
-      outputSchema: ProductRecommendationSchema,
-    },
-    async input => {
-      console.log(`🤖 Generando recomendación #${input.recommendationNumber}...`);
-      try {
-        const {output} = await prompt(input);
-        console.log(`✅ Recomendación #${input.recommendationNumber} lista con Pro`);
-        return output!;
-      } catch (e) {
-        console.error("Fallback a 2.5 Flash por error en Pro", e);
-        try {
-          const {output} = await fallbackPrompt(input);
-          console.log(`✅ Recomendación #${input.recommendationNumber} lista con 2.5 Flash`);
-          return output!;
-        } catch (e2) {
-          console.error("Error en el fallback a Gemini 2.5 Flash.", e2);
-          throw e2;
-        }
-      }
-    }
-  );
-}
-
-// Single recommendation schema for streaming
 const SingleRecommendationInputSchema = z.object({
   userProfileData: z.string().describe('Datos del perfil de usuario recopilados de las preguntas de incorporación.'),
   recommendationNumber: z.number().describe('Número de recomendación (1, 2, o 3)'),
   previousRecommendations: z.array(ProductRecommendationSchema).optional().describe('Recomendaciones previas para evitar duplicados'),
+  catalog: z.any().optional(),
 });
 
-// Streaming version - generates recommendations in parallel and yields as soon as ready
-export async function* intelligentSearchAgentStreaming(input: IntelligentSearchAgentInput): AsyncGenerator<ProductRecommendation, void, unknown> {
-  const filteredCatalog = preFilterCatalog(input.userProfileData, smartphonesDatabase.devices);
-  const generateSingleRecommendation = createSingleRecommendationFlow(filteredCatalog);
-  
-  // Create 3 promises that generate recommendations in parallel
-  const promises = [1, 2, 3].map((num) =>
-    generateSingleRecommendation({
-      userProfileData: input.userProfileData,
-      recommendationNumber: num,
-      previousRecommendations: [],
-    })
-  );
 
-  // Yield recommendations as soon as ANY is ready using Promise.race properly
-  const completed = new Set<number>();
-
-  while (completed.size < 3) {
-    // Wrap each pending promise with its index
-    const indexed = promises
-      .map((p, i) => completed.has(i) ? null : p.then(rec => ({ index: i, rec })))
-      .filter(Boolean) as Promise<{index: number, rec: ProductRecommendation}>[];
-
-    // Wait for the first one to complete
-    const { index, rec } = await Promise.race(indexed);
-
-    // Mark as completed and yield
-    completed.add(index);
-    yield rec;
-  }
-}
-
-// Prompt for single recommendation (for streaming)
-function createSingleRecommendationPrompt(catalogTool: ReturnType<typeof createGetSmartphoneCatalogTool>) {
+// Helper to create prompts
+function createIntelligentSearchPrompt(model: 'googleai/gemini-2.5-pro' | 'googleai/gemini-2.5-flash') {
   return ai.definePrompt({
-    name: 'singleRecommendationPrompt',
-    input: {schema: SingleRecommendationInputSchema},
-    output: {schema: ProductRecommendationSchema},
-    tools: [catalogTool],
-    model: 'googleai/gemini-2.5-pro',
-  system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros.
-
-**TU TAREA:**
-Genera UNA SOLA recomendación de celular basándote en el perfil del usuario y el número de recomendación solicitado.
-
-**REGLAS:**
-
-1. **CATALOGO PRIMERO:**
-   - Llama 'getSmartphoneCatalog' para obtener productos disponibles
-   - Solo recomienda productos del catálogo
-
-2. **PRIORIZACIÓN POR NÚMERO:**
-   - Recomendación #1: LA MEJOR coincidencia (máximo match con presupuesto y necesidades)
-   - Recomendación #2: Segunda mejor opción (alternativa valiosa, diferente ángulo)
-   - Recomendación #3: Tercera opción (balance precio/features o stretch option)
-
-3. **PRESUPUESTO:**
-   - 90% de recomendaciones DENTRO del presupuesto del usuario
-   - Si excedes: justifica el valor extra específicamente
-
-4. **COMUNICACIÓN STEVE JOBS:**
-   - CERO especificaciones técnicas (GB, mAh, megapíxeles, procesadores)
-   - Habla de EXPERIENCIAS: "súper rápido", "batería todo el día", "fotos increíbles"
-   - Simple y claro como para tu abuela de 80 años
-
-5. **CAMPOS OBLIGATORIOS:**
-   - productName: Del catálogo (campo model)
-   - price: Del catálogo (campo precio_estimado)
-   - imageUrl: Del catálogo (campo image_url)
-   - productUrl: Google search (ej: https://www.google.com/search?q=Samsung+Galaxy+S25+Ultra)
-   - availability: "En stock"
-   - qualityScore: 70-98
-   - productDescription: Beneficios, no specs
-   - justification: Por qué este para ESTE usuario
-   - matchPercentage: 65-98%
-   - matchTags: Array de 2-4 tags. IMPORTANTE: Para el campo 'icon', debes elegir uno de los valores permitidos en el schema. NO inventes iconos.`,
-  prompt: `**Perfil del Usuario:**
-{{{userProfileData}}}
-
-**Número de Recomendación:** {{{recommendationNumber}}}
-
-Genera la recomendación #{{{recommendationNumber}}} para este usuario. Recuerda: lenguaje simple, enfocado en experiencias, respetando presupuesto.`,
-  });
-}
-
-function createIntelligentSearchPrompt(catalogTool: ReturnType<typeof createGetSmartphoneCatalogTool>) {
-  return ai.definePrompt({
-    name: 'intelligentSearchAgentPrompt',
+    name: `intelligentSearchAgentPrompt_${model.replace(/[^a-zA-Z0-9]/g, '_')}`,
     input: {schema: IntelligentSearchAgentInputSchema},
     output: {schema: IntelligentSearchAgentOutputSchema},
-    tools: [catalogTool],
-    model: 'googleai/gemini-2.5-pro',
-  system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros. Tu misión es reducir el abandono de carrito (actualmente 75% en LATAM) presentando exactamente 3 opciones optimizadas que aceleran la decisión de compra.
+    model,
+    system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros. Tu misión es reducir el abandono de carrito (actualmente 75% en LATAM) presentando exactamente 3 opciones optimizadas que aceleran la decisión de compra.
 
 ## METODOLOGÍA ANTI-ABANDONO DE CARRITO ##
 
@@ -288,13 +130,175 @@ function createIntelligentSearchPrompt(catalogTool: ReturnType<typeof createGetS
 - Decisiones familiares/compartidas frecuentes
 - Búsqueda de valor a largo plazo
 `,
-  prompt: `**Perfil del Usuario:**
+    prompt: `**Perfil del Usuario:**
 {{{userProfileData}}}
 
 **INSTRUCCIONES ESPECÍFICAS:**
 Analiza el perfil para identificar: presupuesto máximo, casos de uso principales, nivel técnico, y prioridades. Presenta 3 recomendaciones que maximicen la probabilidad de compra inmediata, respetando estrictamente el presupuesto y usando lenguaje apropiado al nivel del usuario.
 `,
   });
+}
+
+// Define prompts outside the flow
+const mainSearchPrompt = createIntelligentSearchPrompt('googleai/gemini-2.5-pro');
+const fallbackSearchPrompt = createIntelligentSearchPrompt('googleai/gemini-2.5-flash');
+
+const intelligentSearchAgentFlow = ai.defineFlow(
+  {
+    name: 'intelligentSearchAgentFlow',
+    inputSchema: IntelligentSearchAgentInputSchema,
+    outputSchema: IntelligentSearchAgentOutputSchema,
+  },
+  async input => {
+    const { catalog } = input;
+    const catalogTool = createGetSmartphoneCatalogTool(catalog);
+    mainSearchPrompt.tools = [catalogTool];
+    fallbackSearchPrompt.tools = [catalogTool];
+
+    try {
+        console.log('🤖 Usando Gemini 2.5 Pro para recomendaciones...');
+        const {output} = await mainSearchPrompt(input);
+        console.log('✅ Gemini 2.5 Pro respondió correctamente');
+        return output!;
+    } catch (e) {
+        console.error("❌ Error en Gemini 2.5 Pro, activando fallback...", e);
+        try {
+          console.log('⚡️ Usando Gemini 2.5 Flash como fallback...');
+          const {output} = await fallbackSearchPrompt(input);
+          console.log('✅ Gemini 2.5 Flash respondió correctamente');
+          return output!;
+        } catch (e2) {
+          console.error("❌ Error en el fallback a Gemini 2.5 Flash.", e2);
+          throw e2; // Re-throw the error if fallback also fails
+        }
+    }
+  }
+);
+
+
+export async function intelligentSearchAgent(input: IntelligentSearchAgentInput): Promise<IntelligentSearchAgentOutput> {
+  const filteredCatalog = preFilterCatalog(input.userProfileData, smartphonesDatabase.devices);
+  return intelligentSearchAgentFlow({ userProfileData: input.userProfileData, catalog: filteredCatalog });
+}
+
+
+function createSingleRecommendationPrompt(model: 'googleai/gemini-2.5-pro' | 'googleai/gemini-2.5-flash') {
+  return ai.definePrompt({
+    name: `singleRecommendationPrompt_${model.replace(/[^a-zA-Z0-9]/g, '_')}`,
+    input: {schema: SingleRecommendationInputSchema},
+    output: {schema: ProductRecommendationSchema},
+    model,
+    system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros.
+
+**TU TAREA:**
+Genera UNA SOLA recomendación de celular basándote en el perfil del usuario y el número de recomendación solicitado.
+
+**REGLAS:**
+
+1. **CATALOGO PRIMERO:**
+   - Llama 'getSmartphoneCatalog' para obtener productos disponibles
+   - Solo recomienda productos del catálogo
+
+2. **PRIORIZACIÓN POR NÚMERO:**
+   - Recomendación #1: LA MEJOR coincidencia (máximo match con presupuesto y necesidades)
+   - Recomendación #2: Segunda mejor opción (alternativa valiosa, diferente ángulo)
+   - Recomendación #3: Tercera opción (balance precio/features o stretch option)
+
+3. **PRESUPUESTO:**
+   - 90% de recomendaciones DENTRO del presupuesto del usuario
+   - Si excedes: justifica el valor extra específicamente
+
+4. **COMUNICACIÓN STEVE JOBS:**
+   - CERO especificaciones técnicas (GB, mAh, megapíxeles, procesadores)
+   - Habla de EXPERIENCIAS: "súper rápido", "batería todo el día", "fotos increíbles"
+   - Simple y claro como para tu abuela de 80 años
+
+5. **CAMPOS OBLIGATORIOS:**
+   - productName: Del catálogo (campo model)
+   - price: Del catálogo (campo precio_estimado)
+   - imageUrl: Del catálogo (campo image_url)
+   - productUrl: Google search (ej: https://www.google.com/search?q=Samsung+Galaxy+S25+Ultra)
+   - availability: "En stock"
+   - qualityScore: 70-98
+   - productDescription: Beneficios, no specs
+   - justification: Por qué este para ESTE usuario
+   - matchPercentage: 65-98%
+   - matchTags: Array de 2-4 tags. IMPORTANTE: Para el campo 'icon', debes elegir uno de los valores permitidos en el schema. NO inventes iconos.`,
+  prompt: `**Perfil del Usuario:**
+{{{userProfileData}}}
+
+**Número de Recomendación:** {{{recommendationNumber}}}
+
+Genera la recomendación #{{{recommendationNumber}}} para este usuario. Recuerda: lenguaje simple, enfocado en experiencias, respetando presupuesto.`,
+  });
+}
+
+// Define single recommendation prompts outside the flow
+const mainSingleRecPrompt = createSingleRecommendationPrompt('googleai/gemini-2.5-pro');
+const fallbackSingleRecPrompt = createSingleRecommendationPrompt('googleai/gemini-2.5-flash');
+
+const generateSingleRecommendationFlow = ai.defineFlow(
+  {
+    name: 'generateSingleRecommendationFlow',
+    inputSchema: SingleRecommendationInputSchema,
+    outputSchema: ProductRecommendationSchema,
+  },
+  async input => {
+    const { catalog } = input;
+    const catalogTool = createGetSmartphoneCatalogTool(catalog);
+    mainSingleRecPrompt.tools = [catalogTool];
+    fallbackSingleRecPrompt.tools = [catalogTool];
+
+    console.log(`🤖 Generando recomendación #${input.recommendationNumber}...`);
+    try {
+      const {output} = await mainSingleRecPrompt(input);
+      console.log(`✅ Recomendación #${input.recommendationNumber} lista con Pro`);
+      return output!;
+    } catch (e) {
+      console.error(`❌ Error en Pro para rec #${input.recommendationNumber}, activando fallback...`, e);
+      try {
+        const {output} = await fallbackSingleRecPrompt(input);
+        console.log(`✅ Recomendación #${input.recommendationNumber} lista con Flash`);
+        return output!;
+      } catch (e2) {
+        console.error(`❌ Error en fallback para rec #${input.recommendationNumber}`, e2);
+        throw e2;
+      }
+    }
+  }
+);
+
+
+// Streaming version - generates recommendations in parallel and yields as soon as ready
+export async function* intelligentSearchAgentStreaming(input: IntelligentSearchAgentInput): AsyncGenerator<ProductRecommendation, void, unknown> {
+  const filteredCatalog = preFilterCatalog(input.userProfileData, smartphonesDatabase.devices);
+  
+  // Create 3 promises that generate recommendations in parallel
+  const promises = [1, 2, 3].map((num) =>
+    generateSingleRecommendationFlow({
+      userProfileData: input.userProfileData,
+      recommendationNumber: num,
+      previousRecommendations: [],
+      catalog: filteredCatalog,
+    })
+  );
+
+  // Yield recommendations as soon as ANY is ready using Promise.race properly
+  const completed = new Set<number>();
+
+  while (completed.size < 3) {
+    // Wrap each pending promise with its index
+    const indexed = promises
+      .map((p, i) => completed.has(i) ? null : p.then(rec => ({ index: i, rec })))
+      .filter(Boolean) as Promise<{index: number, rec: ProductRecommendation}>[];
+
+    // Wait for the first one to complete
+    const { index, rec } = await Promise.race(indexed);
+
+    // Mark as completed and yield
+    completed.add(index);
+    yield rec;
+  }
 }
 
 // Pre-filter catalog based on user profile to reduce input size and latency

@@ -216,14 +216,14 @@ const generateFollowUpQuestionsFlow = ai.defineFlow(
       console.log('✅ Gemini 2.5 Pro respondió correctamente');
       return output!;
     } catch (e) {
-      console.error("Fallback a Gemini 2.5 Flash por error en Pro", e);
+      console.error("❌ Error en Gemini 2.5 Pro, activando fallback...", e);
       try {
         console.log('⚡️ Usando Gemini 2.5 Flash como fallback...');
         const {output} = await fallbackPrompt(input);
         console.log('✅ Gemini 2.5 Flash respondió correctamente');
         return output!;
       } catch (e2) {
-        console.error("Error en el fallback a Gemini 2.5 Flash.", e2);
+        console.error("❌ Error en el fallback a Gemini 2.5 Flash.", e2);
         throw e2; // Re-throw the error if fallback also fails
       }
     }
