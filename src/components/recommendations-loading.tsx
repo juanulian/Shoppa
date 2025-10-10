@@ -1,11 +1,12 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
 
 interface RecommendationsLoadingProps {
   userProfileData?: string;
+  isFinished?: boolean;
 }
 
 const loadingStates = [
@@ -20,14 +21,24 @@ const loadingStates = [
 
 const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
   userProfileData,
+  isFinished = false,
 }) => {
   const [stage, setStage] = useState(0);
+  const timeouts = useRef<NodeJS.Timeout[]>([]);
 
   useEffect(() => {
-    // Reset stage when user data changes (new search)
-    setStage(0);
+    // Si el proceso ya terminó, saltar al final
+    if (isFinished) {
+      setStage(loadingStates.length - 1);
+      return;
+    }
 
-    const timeouts: NodeJS.Timeout[] = [];
+    // Limpiar timeouts anteriores
+    timeouts.current.forEach(clearTimeout);
+    timeouts.current = [];
+
+    // Reiniciar estado para nueva búsqueda
+    setStage(0);
 
     const scheduleNextStage = (currentStage: number) => {
       if (currentStage >= loadingStates.length - 1) return;
@@ -36,15 +47,24 @@ const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
         setStage(prev => prev + 1);
         scheduleNextStage(currentStage + 1);
       }, loadingStates[currentStage].duration);
-      timeouts.push(timeout);
+      timeouts.current.push(timeout);
     };
 
     scheduleNextStage(0);
 
     return () => {
-      timeouts.forEach(clearTimeout);
+      timeouts.current.forEach(clearTimeout);
     };
-  }, [userProfileData]);
+  }, [userProfileData, isFinished]);
+  
+  useEffect(() => {
+    // Manejar el caso en que isFinished se vuelve true durante la animación
+    if (isFinished) {
+      timeouts.current.forEach(clearTimeout); // Detener timers pendientes
+      setStage(loadingStates.length - 1); // Saltar al estado final
+    }
+  }, [isFinished]);
+
 
   return (
     <div className="w-full flex items-center justify-center px-4 py-8">

@@ -42,12 +42,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
 
       console.log(`✅ Recibidas ${allRecommendations.length} recomendaciones`);
 
-      // Show them progressively with small delays for better UX
-      for (let i = 0; i < allRecommendations.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, i * 500)); // 0.5s delay between cards
-        setResults(prev => [...prev, allRecommendations[i]]);
-      }
-
+      setResults(allRecommendations);
       setIsGenerating(false);
     } catch (error) {
       console.error('La búsqueda falló:', error);
@@ -88,7 +83,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
   return (
     <div className="w-full max-w-5xl mx-auto flex flex-col gap-6 sm:gap-8 px-2 sm:px-4">
       <header className="flex flex-col items-start text-center md:text-left">
-        {results.length > 0 && !isGenerating && (
+        {!isGenerating && results.length > 0 && (
            <div className="w-full animate-in fade-in duration-500">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-headline tracking-tight">
               Tus 3 Recomendaciones
@@ -100,19 +95,21 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
         )}
       </header>
 
-      <div className="space-y-4 min-h-[400px]">
+      <div className="space-y-4 min-h-[400px] flex items-center justify-center">
         <div className="w-full transition-all duration-500 ease-in-out">
-          {results.length > 0 ? (
+          {isGenerating ? (
+            <div className="animate-in fade-in duration-500">
+              <RecommendationsLoading 
+                userProfileData={currentUserData} 
+                isFinished={!isGenerating} 
+              />
+            </div>
+          ) : results.length > 0 ? (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-4">
               <ProductCarousel
                 products={results}
                 onAddMoreDetails={() => setShowAddDetailsModal(true)}
-                isGenerating={isGenerating}
               />
-            </div>
-          ) : isGenerating ? (
-            <div className="animate-in fade-in duration-500">
-              <RecommendationsLoading userProfileData={currentUserData} />
             </div>
           ) : null}
         </div>
