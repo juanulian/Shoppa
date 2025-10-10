@@ -101,8 +101,8 @@ export default function BuyerLandingPage() {
               onSubmit={handleSearch}
               className="max-w-2xl mx-auto mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200"
             >
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="relative flex-1 w-full">
+              <div className="flex items-center gap-3">
+                <div className="relative flex-1">
                   <Search
                     aria-hidden="true"
                     className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none"
@@ -119,11 +119,11 @@ export default function BuyerLandingPage() {
                 </div>
                 <Button
                   type="submit"
-                  className="h-14 sm:w-14 rounded-full shadow-lg hover:shadow-xl transition-all w-full sm:w-auto sm:flex-shrink-0"
+                  size="icon"
+                  className="h-14 w-14 flex-shrink-0 rounded-full shadow-lg hover:shadow-xl transition-all"
                   aria-label="Buscar"
                 >
-                  <span className="sm:hidden font-semibold">Buscar</span>
-                  <ArrowRight className="h-6 w-6 hidden sm:block" />
+                  <ArrowRight className="h-6 w-6" />
                 </Button>
               </div>
             </form>

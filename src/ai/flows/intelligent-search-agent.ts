@@ -159,16 +159,6 @@ const mainSearchPrompt = createIntelligentSearchPrompt('googleai/gemini-2.5-pro'
 const fallbackSearchPrompt = createIntelligentSearchPrompt('googleai/gemini-2.5-flash');
 const openAIFallbackSearchPrompt = createIntelligentSearchPrompt('openai/gpt-4o-mini');
 
-// Helper: Timeout wrapper para cada modelo
-function withTimeout<T>(promise: Promise<T>, timeoutMs: number, modelName: string): Promise<T> {
-  return Promise.race([
-    promise,
-    new Promise<T>((_, reject) =>
-      setTimeout(() => reject(new Error(`Timeout: ${modelName} excedió ${timeoutMs}ms`)), timeoutMs)
-    ),
-  ]);
-}
-
 const intelligentSearchAgentFlow = ai.defineFlow(
   {
     name: 'intelligentSearchAgentFlow',
@@ -176,121 +166,29 @@ const intelligentSearchAgentFlow = ai.defineFlow(
     outputSchema: IntelligentSearchAgentOutputSchema,
   },
   async input => {
-    // OPTIMIZACIÓN: Ejecutar los 3 modelos en PARALELO con Promise.race
-    // Esto reduce la latencia de ~60s a ~10-15s
-    //
-    // ESTRATEGIA:
-    // 1. Los 3 modelos se lanzan casi simultáneamente (delays mínimos para priorizar)
-    // 2. Promise.race retorna el PRIMERO que responda exitosamente
-    // 3. Las otras promesas se descartan automáticamente (no se esperan)
-    // 4. Timeouts más generosos para móvil/conexiones lentas
-    //
-    // COSTO vs BENEFICIO:
-    // - ✅ UX: 45-60s → 10-15s (mejora 70%)
-    // - ⚠️ API calls: Potencialmente 3x llamadas, PERO:
-    //   * Solo la primera que responde se usa
-    //   * Timeouts cancelan las lentas
-    //   * Delays escalonados dan ventaja al modelo preferido
-    //   * ROI positivo: menos abandonos = más conversiones
-
-    console.log('🚀 Ejecutando modelos en paralelo (Promise.race optimizado)...');
-    const startTime = Date.now();
-
-    const promises = [
-      // Gemini 2.5 Pro - sin delay (máxima prioridad)
-      (async () => {
-        const modelStart = Date.now();
-        try {
-          console.log('🤖 [0ms] Gemini 2.5 Pro iniciado');
-          const {output} = await withTimeout(
-            mainSearchPrompt(input),
-            35000, // 35s timeout (aumentado para móvil/conexiones lentas)
-            'Gemini 2.5 Pro'
-          );
-          console.log(`✅ Gemini 2.5 Pro respondió en ${Date.now() - modelStart}ms`);
-          return { output: output!, model: 'Gemini 2.5 Pro', time: Date.now() - startTime };
-        } catch (e) {
-          const errorMsg = e instanceof Error ? e.message : 'Error desconocido';
-          console.error(`❌ Gemini 2.5 Pro falló después de ${Date.now() - modelStart}ms:`, errorMsg);
-          throw e;
-        }
-      })(),
-
-      // Gemini 2.5 Flash - delay mínimo de 800ms (prioridad media)
-      (async () => {
-        await new Promise(resolve => setTimeout(resolve, 800));
-        const modelStart = Date.now();
-        try {
-          console.log('⚡ [800ms] Gemini 2.5 Flash iniciado');
-          const {output} = await withTimeout(
-            fallbackSearchPrompt(input),
-            30000, // 30s timeout (aumentado para móvil/conexiones lentas)
-            'Gemini 2.5 Flash'
-          );
-          console.log(`✅ Gemini 2.5 Flash respondió en ${Date.now() - modelStart}ms`);
-          return { output: output!, model: 'Gemini 2.5 Flash', time: Date.now() - startTime };
-        } catch (e) {
-          const errorMsg = e instanceof Error ? e.message : 'Error desconocido';
-          console.error(`❌ Gemini 2.5 Flash falló después de ${Date.now() - modelStart}ms:`, errorMsg);
-          throw e;
-        }
-      })(),
-
-      // OpenAI GPT-4o-mini - delay de 1500ms (prioridad baja)
-      (async () => {
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        const modelStart = Date.now();
-        try {
-          console.log('🤖 [1500ms] OpenAI GPT-4o-mini iniciado');
-          const {output} = await withTimeout(
-            openAIFallbackSearchPrompt(input),
-            30000, // 30s timeout (aumentado para móvil/conexiones lentas)
-            'OpenAI GPT-4o-mini'
-          );
-          console.log(`✅ OpenAI respondió en ${Date.now() - modelStart}ms`);
-          return { output: output!, model: 'OpenAI GPT-4o-mini', time: Date.now() - startTime };
-        } catch (e) {
-          const errorMsg = e instanceof Error ? e.message : 'Error desconocido';
-          console.error(`❌ OpenAI falló después de ${Date.now() - modelStart}ms:`, errorMsg);
-          throw e;
-        }
-      })()
-    ];
-
     try {
-      // Promise.race: retorna el PRIMER resultado exitoso
-      const result = await Promise.race(promises);
-      console.log(`🎯 Ganador: ${result.model} en ${result.time}ms total`);
-
-      // Normalizar tags para corregir inconsistencias de la AI
-      const normalizedOutput = result.output.map(normalizeProductRecommendation);
-      return normalizedOutput;
-    } catch (firstError) {
-      // Si Promise.race falla, usamos Promise.any como último recurso
-      console.warn("⚠️ Promise.race falló, intentando con Promise.any...");
+      console.log('🤖 Usando Gemini 2.5 Pro para generar recomendaciones...');
+      const {output} = await mainSearchPrompt(input);
+      console.log('✅ Gemini 2.5 Pro respondió correctamente');
+      return output!;
+    } catch (e) {
+      console.error("❌ Error en Gemini 2.5 Pro, activando fallback a Gemini Flash...", e);
       try {
-        const result = await Promise.any(promises);
-        console.log(`🎯 Fallback ganador: ${result.model} en ${result.time}ms total`);
-
-        // Normalizar tags para corregir inconsistencias de la AI
-        const normalizedOutput = result.output.map(normalizeProductRecommendation);
-        return normalizedOutput;
-      } catch (allErrors) {
-        const totalTime = Date.now() - startTime;
-        console.error(`❌ Error fatal después de ${totalTime}ms: ningún modelo pudo generar recomendaciones`);
-
-        // Analizar qué tipo de errores ocurrieron
-        if (allErrors instanceof AggregateError) {
-          const hasTimeoutError = allErrors.errors.some(e =>
-            e instanceof Error && e.message.includes('Timeout')
-          );
-
-          if (hasTimeoutError) {
-            throw new Error('Timeout: Los servidores están tardando más de lo normal');
-          }
+        console.log('⚡️ Usando Gemini 2.5 Flash como fallback...');
+        const {output} = await fallbackSearchPrompt(input);
+        console.log('✅ Gemini 2.5 Flash respondió correctamente');
+        return output!;
+      } catch (e2) {
+        console.error("❌ Error en el fallback a Gemini 2.5 Flash, activando fallback a OpenAI...", e2);
+        try {
+            console.log('⚡️ Usando OpenAI GPT-4o-mini como fallback final...');
+            const {output} = await openAIFallbackSearchPrompt(input);
+            console.log('✅ OpenAI respondió correctamente');
+            return output!;
+        } catch (e3) {
+            console.error("❌ Error en el fallback final a OpenAI.", e3);
+            throw e3;
         }
-
-        throw new Error("No se pudieron generar recomendaciones. Por favor, intentá de nuevo en unos segundos.");
       }
     }
   }
@@ -300,36 +198,12 @@ const intelligentSearchAgentFlow = ai.defineFlow(
 export async function intelligentSearchAgent(input: IntelligentSearchAgentInput): Promise<IntelligentSearchAgentOutput> {
   const filteredCatalog = preFilterCatalog(input.userProfileData);
 
-  // Retry logic: 2 intentos con delays incrementales
-  const maxRetries = 2;
-  let lastError: Error | null = null;
+  const result = await intelligentSearchAgentFlow({
+    userProfileData: input.userProfileData,
+    catalog: filteredCatalog
+  });
 
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      console.log(`🔄 Intento ${attempt}/${maxRetries}...`);
-
-      const result = await intelligentSearchAgentFlow({
-        userProfileData: input.userProfileData,
-        catalog: filteredCatalog
-      });
-
-      console.log(`✅ Éxito en intento ${attempt}`);
-      return result;
-    } catch (error) {
-      lastError = error instanceof Error ? error : new Error('Error desconocido');
-      console.error(`❌ Intento ${attempt} falló:`, lastError.message);
-
-      // Si no es el último intento, esperar antes de reintentar
-      if (attempt < maxRetries) {
-        const delay = attempt * 2000; // 2s, 4s
-        console.log(`⏳ Esperando ${delay}ms antes de reintentar...`);
-        await new Promise(resolve => setTimeout(resolve, delay));
-      }
-    }
-  }
-
-  // Si todos los intentos fallaron, lanzar el último error
-  throw lastError || new Error('No se pudieron generar recomendaciones después de múltiples intentos');
+  return result.map(normalizeProductRecommendation);
 }
 
 
