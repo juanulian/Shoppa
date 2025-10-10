@@ -27,18 +27,29 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
 
     const userData = searchData || currentUserData;
 
-    // Generate all 3 recommendations at once (faster)
-    const allRecommendations = await intelligentSearchAgent({
-      userProfileData: userData,
-    });
+    try {
+      // Generate all 3 recommendations at once (faster)
+      const allRecommendations = await intelligentSearchAgent({
+        userProfileData: userData,
+      });
 
-    // Show them progressively with small delays for better UX
-    for (let i = 0; i < allRecommendations.length; i++) {
-      await new Promise(resolve => setTimeout(resolve, i * 500)); // 0.5s delay between cards
-      setResults(prev => [...prev, allRecommendations[i]]);
+      // Show them progressively with small delays for better UX
+      for (let i = 0; i < allRecommendations.length; i++) {
+        await new Promise(resolve => setTimeout(resolve, i * 500)); // 0.5s delay between cards
+        setResults(prev => [...prev, allRecommendations[i]]);
+      }
+      
+      setIsGenerating(false);
+    } catch (error) {
+      console.error('La búsqueda falló:', error);
+      toast({
+        title: 'Error en la búsqueda',
+        description:
+          'Parece que hay mucha demanda, por favor volvé a intentar en algunos minutos',
+        variant: 'destructive',
+      });
+      setIsGenerating(false); // Detener el estado de carga
     }
-    
-    setIsGenerating(false);
   };
 
   const handleAddMoreDetails = (additionalDetails: string, selectedTags: string[]) => {
@@ -58,10 +69,6 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
 
     // Realizar nueva búsqueda con los datos combinados
     handleSearch(combinedData);
-  };
-
-  const handleOpenForm = () => {
-    window.open('https://forms.gle/CVdyFmBcASjXRKww7', '_blank');
   };
 
   useEffect(() => {
