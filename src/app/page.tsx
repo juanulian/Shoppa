@@ -152,7 +152,7 @@ export default function BuyerLandingPage() {
                         'p-6 sm:p-8 transition-all duration-300 border-2',
                         disabled
                           ? 'opacity-50 cursor-not-allowed bg-slate-100/90 dark:bg-slate-900/90 backdrop-blur-md'
-                          : 'cursor-pointer hover:border-primary hover:shadow-lg hover:scale-105 bg-gradient-to-br from-primary/10 to-transparent bg-white/90 dark:bg-slate-950/90 backdrop-blur-md',
+                          : 'cursor-pointer hover:border-primary hover:shadow-lg hover:scale-105 bg-gradient-to-br from-primary/10 to-transparent bg-white/70 dark:bg-slate-950/70 backdrop-blur-md',
                       ].join(' ')}
                       onClick={() => handleCategoryClick(category.active)}
                       onKeyDown={(e) => {
