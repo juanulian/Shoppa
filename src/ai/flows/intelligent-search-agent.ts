@@ -292,6 +292,8 @@ function createGenerateSingleRecommendationFlow(filteredCatalog: typeof smartpho
   const prompt = createSingleRecommendationPrompt(catalogTool);
   const fallbackPrompt = createSingleRecommendationPrompt(catalogTool);
   fallbackPrompt.model = 'googleai/gemini-2.5-flash';
+  const secondFallbackPrompt = createSingleRecommendationPrompt(catalogTool);
+  secondFallbackPrompt.model = 'googleai/gemini-1.5-flash-latest';
 
   return ai.defineFlow(
     {
@@ -303,12 +305,20 @@ function createGenerateSingleRecommendationFlow(filteredCatalog: typeof smartpho
       console.log(`🤖 Generando recomendación #${input.recommendationNumber}...`);
       try {
         const {output} = await prompt(input);
-        console.log(`✅ Recomendación #${input.recommendationNumber} lista`);
+        console.log(`✅ Recomendación #${input.recommendationNumber} lista con Pro`);
         return output!;
       } catch (e) {
-          console.error("Fallback a Gemini Flash por error en Pro", e);
+        console.error("Fallback a 2.5 Flash por error en Pro", e);
+        try {
           const {output} = await fallbackPrompt(input);
+          console.log(`✅ Recomendación #${input.recommendationNumber} lista con 2.5 Flash`);
           return output!;
+        } catch (e2) {
+          console.error("Fallback a 1.5 Flash por error en 2.5 Flash", e2);
+          const {output} = await secondFallbackPrompt(input);
+          console.log(`✅ Recomendación #${input.recommendationNumber} lista con 1.5 Flash`);
+          return output!;
+        }
       }
     }
   );
@@ -326,6 +336,8 @@ function createIntelligentSearchFlow(catalog: typeof smartphonesDatabase.devices
     const prompt = createIntelligentSearchPrompt(catalogTool);
     const fallbackPrompt = createIntelligentSearchPrompt(catalogTool);
     fallbackPrompt.model = 'googleai/gemini-2.5-flash';
+    const secondFallbackPrompt = createIntelligentSearchPrompt(catalogTool);
+    secondFallbackPrompt.model = 'googleai/gemini-1.5-flash-latest';
 
     return ai.defineFlow(
       {
@@ -341,8 +353,18 @@ function createIntelligentSearchFlow(catalog: typeof smartphonesDatabase.devices
             return output!;
         } catch (e) {
             console.error("Fallback a Gemini Flash por error en Pro", e);
-            const {output} = await fallbackPrompt(input);
-            return output!;
+            try {
+              console.log('⚡️ Usando Gemini 2.5 Flash como primer fallback...');
+              const {output} = await fallbackPrompt(input);
+              console.log('✅ Gemini 2.5 Flash respondió correctamente');
+              return output!;
+            } catch (e2) {
+              console.error("Fallback a Gemini 1.5 Flash por error en 2.5 Flash", e2);
+              console.log('⚡️ Usando Gemini 1.5 Flash como segundo fallback...');
+              const {output} = await secondFallbackPrompt(input);
+              console.log('✅ Gemini 1.5 Flash respondió correctamente');
+              return output!;
+            }
         }
       }
     );
