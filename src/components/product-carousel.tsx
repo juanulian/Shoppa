@@ -292,6 +292,12 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
 
   const deviceInfo = useDeviceType();
   const { isMobile, isTablet, isTouchDevice } = deviceInfo;
+  
+  const MAX_PRODUCTS = 3;
+  const productsToShow = products.slice(0, MAX_PRODUCTS);
+  const skeletonsNeeded = isGenerating ? Math.max(0, MAX_PRODUCTS - products.length) : 0;
+  const hasAddMoreCard = !isGenerating;
+  const totalItems = productsToShow.length + skeletonsNeeded + (hasAddMoreCard ? 1 : 0);
 
   useEffect(() => {
     try {
@@ -314,12 +320,6 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
       }
     }
   };
-  // Create array with real products + skeleton cards (total 3 cards always)
-  const displayItems = [...products];
-  const skeletonsNeeded = isGenerating ? Math.max(0, 3 - products.length) : 0;
-
-  // Include the "add more details" card as the last item (only when not generating)
-  const totalItems = products.length + skeletonsNeeded + (isGenerating ? 0 : 1);
 
   const handlePrevious = () => {
     setCurrentIndex(prev => Math.max(0, prev - 1));
@@ -327,7 +327,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
   };
 
   const handleNext = () => {
-    setCurrentIndex(prev => Math.min(totalItems - 1, prev + 1));
+    setCurrentIndex(prev => Math.min(totalItems - 1, prev - 1));
     dismissInstructions();
   };
 
@@ -411,7 +411,8 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
     setIsDragging(false);
   };
 
-  const isAddMoreDetailsCard = currentIndex >= products.length + skeletonsNeeded;
+  const isAddMoreDetailsCard = hasAddMoreCard && currentIndex >= productsToShow.length + skeletonsNeeded;
+  const numProductsAvailable = productsToShow.length + skeletonsNeeded;
 
   return (
     <div className={`w-full mx-auto ${
@@ -473,7 +474,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
             }}
           >
             {/* Product Cards */}
-            {products.map((product, index) => (
+            {productsToShow.map((product, index) => (
               <div key={`product-${index}`} className={`w-full flex-shrink-0 ${
                 isMobile ? 'p-2' : isTablet ? 'p-3' : 'p-4'
               }`}>
@@ -497,7 +498,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
             ))}
 
             {/* Add More Details Card (only when not generating) */}
-            {!isGenerating && (
+            {hasAddMoreCard && (
               <div className={`w-full flex-shrink-0 ${
                 isMobile ? 'p-2' : isTablet ? 'p-3' : 'p-4'
               }`}>
@@ -541,7 +542,7 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
             ? "Más detalles para mejores resultados"
             : "Agrega más detalles para mejores recomendaciones"
         ) : (
-          `Producto ${currentIndex + 1} de ${products.length}`
+          `Producto ${currentIndex + 1} de ${numProductsAvailable}`
         )}
       </div>
 
