@@ -13,9 +13,9 @@ const loadingStates = [
   { text: "Identificando prioridades...", duration: 5000 },
   { text: "Filtrando el catálogo de productos...", duration: 8000 },
   { text: "Comparando las mejores opciones...", duration: 8000 },
-  { text: "Generando la primera recomendación...", duration: 7000 },
-  { text: "Creando la segunda alternativa...", duration: 6000 },
-  { text: "Finalizando la última opción...", duration: 6000 },
+  { text: "Generando Recomendaciones 1/3", duration: 7000 },
+  { text: "Generando Recomendaciones 2/3", duration: 6000 },
+  { text: "Generando Recomendaciones 3/3", duration: 6000 },
 ];
 
 const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
