@@ -75,7 +75,7 @@ export const ProductRecommendationSchema = z.object({
   justification: z.string().describe('Justificación persuasiva que conecta características específicas del producto con las necesidades declaradas del usuario. Debe generar confianza y reducir dudas de compra.'),
   imageUrl: z.string().describe('Una URL a una imagen del producto.'),
   productUrl: z.string().describe('URL de búsqueda en Google para explorar el producto y encontrar opciones de compra.'),
-  matchPercentage: z.number().min(65).max(98).describe('Porcentaje de compatibilidad del producto con las necesidades del usuario (65-98%).'),
+  matchPercentage: z.number().min(65).max(98).describe('Porcentaje de compatibilidad del producto con las necesidades del usuario (65-98%). Debe reflejar HONESTAMENTE qué tan bien el producto cumple con los requisitos.'),
   matchTags: z.array(z.object({
     tag: z.enum([
       // Cámara
