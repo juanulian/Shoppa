@@ -61,7 +61,7 @@ const SingleRecommendationInputSchema = z.object({
 
 
 // Helper to create prompts
-function createIntelligentSearchPrompt(model: 'googleai/gemini-2.5-pro' | 'googleai/gemini-2.5-flash') {
+function createIntelligentSearchPrompt(model: 'googleai/gemini-2.5-pro' | 'googleai/gemini-2.5-flash' | 'openai/gpt-4o-mini') {
   return ai.definePrompt({
     name: `intelligentSearchAgentPrompt_${model.replace(/[^a-zA-Z0-9]/g, '_')}`,
     input: {schema: IntelligentSearchAgentInputSchema},
@@ -135,6 +135,7 @@ Analiza el perfil para identificar: presupuesto máximo, casos de uso principale
 // Define prompts outside the flow
 const mainSearchPrompt = createIntelligentSearchPrompt('googleai/gemini-2.5-pro');
 const fallbackSearchPrompt = createIntelligentSearchPrompt('googleai/gemini-2.5-flash');
+const openAIFallbackSearchPrompt = createIntelligentSearchPrompt('openai/gpt-4o-mini');
 
 const intelligentSearchAgentFlow = ai.defineFlow(
   {
@@ -149,15 +150,23 @@ const intelligentSearchAgentFlow = ai.defineFlow(
         console.log('✅ Gemini 2.5 Pro respondió correctamente');
         return output!;
     } catch (e) {
-        console.error("❌ Error en Gemini 2.5 Pro, activando fallback...", e);
+        console.error("❌ Error en Gemini 2.5 Pro, activando fallback a Gemini Flash...", e);
         try {
           console.log('⚡️ Usando Gemini 2.5 Flash como fallback...');
           const {output} = await fallbackSearchPrompt(input);
           console.log('✅ Gemini 2.5 Flash respondió correctamente');
           return output!;
         } catch (e2) {
-          console.error("❌ Error en el fallback a Gemini 2.5 Flash.", e2);
-          throw e2; // Re-throw the error if fallback also fails
+          console.error("❌ Error en fallback a Gemini 2.5 Flash, activando fallback a OpenAI...", e2);
+          try {
+            console.log('⚡️ Usando OpenAI GPT-4o-mini como fallback final...');
+            const {output} = await openAIFallbackSearchPrompt(input);
+            console.log('✅ OpenAI respondió correctamente');
+            return output!;
+          } catch(e3) {
+            console.error("❌ Error en el fallback final a OpenAI.", e3);
+            throw e3;
+          }
         }
     }
   }
@@ -173,7 +182,8 @@ export async function intelligentSearchAgent(input: IntelligentSearchAgentInput)
   (smartphonesDatabase as any).devices = filteredCatalog;
 
   try {
-    return await intelligentSearchAgentFlow(input);
+    const result = await intelligentSearchAgentFlow(input);
+    return result;
   } finally {
     // IMPORTANT: Restore the original database to avoid side effects.
     (smartphonesDatabase as any).devices = originalDevices;
@@ -181,7 +191,7 @@ export async function intelligentSearchAgent(input: IntelligentSearchAgentInput)
 }
 
 
-function createSingleRecommendationPrompt(model: 'googleai/gemini-2.5-pro' | 'googleai/gemini-2.5-flash') {
+function createSingleRecommendationPrompt(model: 'googleai/gemini-2.5-pro' | 'googleai/gemini-2.5-flash' | 'openai/gpt-4o-mini') {
   return ai.definePrompt({
     name: `singleRecommendationPrompt_${model.replace(/[^a-zA-Z0-9]/g, '_')}`,
     input: {schema: SingleRecommendationInputSchema},
@@ -236,6 +246,8 @@ Genera la recomendación #{{{recommendationNumber}}} para este usuario. Recuerda
 // Define single recommendation prompts outside the flow
 const mainSingleRecPrompt = createSingleRecommendationPrompt('googleai/gemini-2.5-pro');
 const fallbackSingleRecPrompt = createSingleRecommendationPrompt('googleai/gemini-2.5-flash');
+const openAIFallbackSingleRecPrompt = createSingleRecommendationPrompt('openai/gpt-4o-mini');
+
 
 const generateSingleRecommendationFlow = ai.defineFlow(
   {
@@ -250,14 +262,22 @@ const generateSingleRecommendationFlow = ai.defineFlow(
       console.log(`✅ Recomendación #${input.recommendationNumber} lista con Pro`);
       return output!;
     } catch (e) {
-      console.error(`❌ Error en Pro para rec #${input.recommendationNumber}, activando fallback...`, e);
+      console.error(`❌ Error en Pro para rec #${input.recommendationNumber}, activando fallback a Flash...`, e);
       try {
         const {output} = await fallbackSingleRecPrompt(input);
         console.log(`✅ Recomendación #${input.recommendationNumber} lista con Flash`);
         return output!;
       } catch (e2) {
-        console.error(`❌ Error en fallback para rec #${input.recommendationNumber}`, e2);
-        throw e2;
+        console.error(`❌ Error en fallback a Flash para rec #${input.recommendationNumber}, activando fallback a OpenAI...`, e2);
+        try {
+            console.log(`⚡️ Usando OpenAI GPT-4o-mini como fallback final para rec #${input.recommendationNumber}...`);
+            const {output} = await openAIFallbackSingleRecPrompt(input);
+            console.log(`✅ Recomendación #${input.recommendationNumber} lista con OpenAI`);
+            return output!;
+        } catch(e3) {
+            console.error(`❌ Error en el fallback final a OpenAI para rec #${input.recommendationNumber}`, e3);
+            throw e3;
+        }
       }
     }
   }

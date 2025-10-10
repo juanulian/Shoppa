@@ -203,6 +203,69 @@ Ejemplo de buena pregunta: *"Entendido! Y en cuanto a la camara, que valoras mas
 `,
 });
 
+const openAIFallbackPrompt = ai.definePrompt({
+  name: 'generateFollowUpQuestionsOpenAIPrompt',
+  input: {schema: GenerateFollowUpQuestionsInputSchema},
+  output: {schema: GenerateFollowUpQuestionsOutputSchema},
+  model: 'openai/gpt-4o-mini',
+  prompt: `Eres un vendedor experto estilo Steve Jobs. Tu objetivo: entender QUÉ PROBLEMA quiere resolver el usuario en MÁXIMO 3 preguntas EMOCIONALES Y SIMPLES.
+
+**FILOSOFÍA JOBS:**
+"La gente no sabe lo que quiere hasta que se lo mostrás."
+- NO preguntes especificaciones técnicas JAMÁS
+- NO preguntes presupuestos numéricos JAMÁS (la gente no sabe cuánto cuestan las cosas)
+- Preguntá sobre FRUSTRACIONES, DESEOS y USO REAL
+- Formato: "Pregunta corta\nTips: ejemplos visuales y emocionales"
+
+**PREGUNTAS PROHIBIDAS (NUNCA HACER):**
+❌ "¿Cuánto querés gastar?" o "¿Cuál es tu presupuesto?"
+❌ "¿Cuántos GB necesitás?"
+❌ "¿Qué procesador preferís?"
+❌ Cualquier cosa con números, specs técnicas o términos que tu abuela no entienda
+
+**TU ESTRATEGIA (máximo 3 preguntas):**
+
+**Primera pregunta - Descubrí el PROBLEMA:**
+✅ "¿Qué te molesta de tu celular actual?\nTips: se queda sin batería, fotos borrosas, se traba, nada en particular"
+✅ "¿Para qué lo vas a usar más?\nTips: fotos de mis hijos, trabajar todo el día, juegos, redes sociales"
+✅ "¿Qué necesitás que resuelva?\nTips: mejor cámara, que dure más, que no se trabe, solo WhatsApp"
+
+**Segunda pregunta - Entendé PRIORIDADES:**
+✅ "¿Qué no te puede fallar?\nTips: la batería, la cámara, que sea rápido, que sea simple"
+✅ "¿Preferís lo último o algo más accesible?\nTips: lo más nuevo, algo confiable, lo más barato"
+✅ "¿Nuevo o te sirve reacondicionado?\nTips: nuevo en caja, reacondicionado certificado, usado está bien"
+
+**Tercera pregunta - Definí RANGO (SIN números):**
+✅ "¿Qué tipo de inversión estás pensando?\nTips: algo económico, gama media, lo mejor sin mirar precio"
+✅ "¿Buscás algo accesible o premium?\nTips: lo más barato, equilibrio precio-calidad, lo mejor del mercado"
+
+**Validación de Respuestas:**
+Antes de generar nuevas preguntas, debes evaluar la última respuesta del usuario.
+- **Respuesta Relevante:** La respuesta tiene sentido en el contexto de la pregunta. Contiene información útil sobre preferencias, usos o características de un celular.
+- **Respuesta Irrelevante:** La respuesta es un galimatías (ej: "asdfghjk"), evasiva (ej: "no sé", "dime tú"), o completamente fuera de tema (ej: "me gusta el fútbol cuando me preguntan por la batería").
+
+**Historial de la Conversación:**
+*Pregunta Inicial:* "¿Qué tipo de celular estás buscando hoy?"
+*Respuesta Inicial:* {{{initialAnswer}}}
+
+{{#if priorQuestionsAndAnswers}}
+*Preguntas y Respuestas de Seguimiento:*
+{{#each priorQuestionsAndAnswers}}
+P: {{{this.question}}}
+R: {{{this.answer}}}
+{{/each}}
+{{/if}}
+
+**Tu Tarea:**
+1.  **Analiza la última respuesta del usuario.** Determina si es relevante o no. Asigna 'true' o 'false' al campo \`isAnswerRelevant\`. Si la respuesta no es relevante, no generes nuevas preguntas; devuelve un array vacío.
+2.  **Si la respuesta es relevante**, genera 1-3 preguntas nuevas, sin repetir y conversacionales, basadas en la estrategia anterior.
+3.  **No pidas información ya proporcionada**.
+4.  **Formula las preguntas usando solo caracteres ASCII estándar**. Usa "que", "mas", "como", "telefono" en lugar de "qué", "más", "cómo", "teléfono".
+5.  Formula las preguntas en un tono amigable y natural en español.
+`,
+});
+
+
 const generateFollowUpQuestionsFlow = ai.defineFlow(
   {
     name: 'generateFollowUpQuestionsFlow',
@@ -216,15 +279,23 @@ const generateFollowUpQuestionsFlow = ai.defineFlow(
       console.log('✅ Gemini 2.5 Pro respondió correctamente');
       return output!;
     } catch (e) {
-      console.error("❌ Error en Gemini 2.5 Pro, activando fallback...", e);
+      console.error("❌ Error en Gemini 2.5 Pro, activando fallback a Gemini Flash...", e);
       try {
         console.log('⚡️ Usando Gemini 2.5 Flash como fallback...');
         const {output} = await fallbackPrompt(input);
         console.log('✅ Gemini 2.5 Flash respondió correctamente');
         return output!;
       } catch (e2) {
-        console.error("❌ Error en el fallback a Gemini 2.5 Flash.", e2);
-        throw e2; // Re-throw the error if fallback also fails
+        console.error("❌ Error en el fallback a Gemini 2.5 Flash, activando fallback a OpenAI...", e2);
+        try {
+            console.log('⚡️ Usando OpenAI GPT-4o-mini como fallback final...');
+            const {output} = await openAIFallbackPrompt(input);
+            console.log('✅ OpenAI respondió correctamente');
+            return output!;
+        } catch (e3) {
+            console.error("❌ Error en el fallback final a OpenAI.", e3);
+            throw e3;
+        }
       }
     }
   }
