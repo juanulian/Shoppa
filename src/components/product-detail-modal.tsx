@@ -79,34 +79,34 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClos
       />
 
       {/* Modal */}
-      <div className={`relative w-full overflow-y-auto modal-scroll bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-white/20 dark:border-gray-800/50 shadow-2xl ${
+      <div className={`relative w-full flex flex-col bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-white/20 dark:border-gray-800/50 shadow-2xl ${
         isMobile
-          ? 'max-h-[95vh] rounded-t-3xl max-w-none'
+          ? 'max-h-[92vh] rounded-t-3xl max-w-none'
           : isTablet
-          ? 'max-h-[90vh] max-w-lg rounded-3xl'
-          : 'max-h-[90vh] max-w-2xl rounded-3xl'
+          ? 'max-h-[85vh] max-w-lg rounded-3xl'
+          : 'max-h-[85vh] max-w-2xl rounded-3xl'
       }`}>
-        {/* Close Button */}
+        {/* Close Button - Fixed position */}
         <Button
           variant="ghost"
           size="icon"
-          className={`absolute z-10 rounded-full glassmorphism touch-manipulation ${
+          className={`fixed z-20 rounded-full glassmorphism-strong shadow-lg touch-manipulation ${
             isMobile
-              ? 'top-2 right-2 w-8 h-8'
-              : 'top-4 right-4 w-10 h-10'
+              ? 'top-3 right-3 w-10 h-10'
+              : 'top-6 right-6 w-10 h-10'
           }`}
           onClick={onClose}
         >
-          <X className={isMobile ? 'h-4 w-4' : 'h-5 w-5'} />
+          <X className="h-5 w-5" />
         </Button>
 
-        {/* Product Image */}
-        <div className={`relative overflow-hidden rounded-t-3xl ${
+        {/* Product Image - Flex shrink to prevent overflow */}
+        <div className={`relative overflow-hidden rounded-t-3xl flex-shrink-0 ${
           isMobile
-            ? 'h-48'
+            ? 'h-40'
             : isTablet
-            ? 'h-60'
-            : 'h-80'
+            ? 'h-48'
+            : 'h-64'
         }`}>
           <SmartProductImage
             src={product.imageUrl}
@@ -119,34 +119,34 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClos
           {/* Match Percentage Overlay */}
           <div className={`absolute bg-primary text-primary-foreground rounded-full font-bold shadow-lg ${
             isMobile
-              ? 'top-2 left-2 px-2 py-1 text-sm'
-              : 'top-4 left-4 px-4 py-2 text-xl'
+              ? 'top-2 left-2 px-2 py-1 text-xs'
+              : 'top-4 left-4 px-3 py-1.5 text-base'
           }`}>
             {product.matchPercentage}% Match
           </div>
         </div>
 
-        {/* Content */}
-        <div className={`space-y-4 ${
-          isMobile ? 'p-4' : isTablet ? 'p-5' : 'p-6'
+        {/* Content - Scrollable area */}
+        <div className={`overflow-y-auto modal-scroll flex-1 space-y-4 ${
+          isMobile ? 'p-4 pb-6' : isTablet ? 'p-5 pb-6' : 'p-6 pb-8'
         }`}>
           {/* Product Title and Price */}
           <div>
-            <h2 className={`font-headline font-bold mb-3 leading-tight ${
-              isMobile ? 'text-lg' : isTablet ? 'text-xl' : 'text-2xl'
+            <h2 className={`font-headline font-bold mb-2 leading-tight ${
+              isMobile ? 'text-base' : isTablet ? 'text-lg' : 'text-2xl'
             }`}>{product.productName}</h2>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3">
               <Badge variant="secondary" className={`font-bold ${
                 isMobile
-                  ? 'text-sm py-1 px-2'
+                  ? 'text-sm py-0.5 px-2'
                   : isTablet
                   ? 'text-base py-1 px-3'
                   : 'text-xl py-2 px-4'
               }`}>
                 {product.price}
               </Badge>
-              <Badge variant="outline" className={`flex items-center gap-2 ${
-                isMobile ? 'text-xs px-2 py-1' : 'text-sm px-3 py-1'
+              <Badge variant="outline" className={`flex items-center gap-1.5 ${
+                isMobile ? 'text-xs px-2 py-0.5' : 'text-sm px-3 py-1'
               } border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950`}>
                 <Heart className={`fill-red-500 text-red-500 ${
                   isMobile ? 'w-3 h-3' : 'w-4 h-4'
@@ -160,18 +160,18 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClos
 
           {/* Match Tags */}
           <div>
-            <h3 className={`font-semibold mb-3 text-primary ${
-              isMobile ? 'text-sm' : 'text-base'
+            <h3 className={`font-semibold mb-2 text-primary ${
+              isMobile ? 'text-xs' : 'text-sm'
             }`}>¿Por qué coincide contigo?</h3>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5">
               {product.matchTags.map((matchTag, index) => {
                 const Icon = iconMap[matchTag.icon] || Smartphone;
                 return(
                   <Badge
                     key={index}
-                    className={cn('border font-medium flex items-center gap-1.5', getTagColor(matchTag.level), isMobile ? 'text-xs px-2 py-1' : 'text-sm px-3 py-1.5')}
+                    className={cn('border font-medium flex items-center gap-1', getTagColor(matchTag.level), isMobile ? 'text-xs px-1.5 py-0.5' : 'text-sm px-2.5 py-1')}
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className={isMobile ? 'w-3 h-3' : 'w-4 h-4'} />
                     {matchTag.tag}
                   </Badge>
                 )
@@ -181,31 +181,31 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClos
 
           {/* Product Description */}
           <div>
-            <h3 className="font-semibold mb-3">Descripción</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <h3 className={`font-semibold mb-2 ${isMobile ? 'text-xs' : 'text-sm'}`}>Descripción</h3>
+            <p className={`text-muted-foreground leading-relaxed ${isMobile ? 'text-xs' : 'text-sm'}`}>
                 <HighlightedText text={product.productDescription} />
             </p>
-            <div className="flex items-center gap-2 mt-3">
-              <CheckCircle className="w-5 h-5 text-green-500" />
-              <span className="text-sm font-medium">{product.availability}</span>
+            <div className="flex items-center gap-2 mt-2">
+              <CheckCircle className={`text-green-500 ${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
+              <span className={`font-medium ${isMobile ? 'text-xs' : 'text-sm'}`}>{product.availability}</span>
             </div>
           </div>
 
           {/* Justification */}
-          <div className="pt-4 border-t border-white/20">
-            <div className="flex items-center gap-2 font-semibold mb-3 text-primary">
-              <HelpCircle className="w-5 h-5"/>
+          <div className={`border-t border-white/20 ${isMobile ? 'pt-3' : 'pt-4'}`}>
+            <div className={`flex items-center gap-2 font-semibold mb-2 text-primary ${isMobile ? 'text-xs' : 'text-sm'}`}>
+              <HelpCircle className={isMobile ? 'w-4 h-4' : 'w-5 h-5'}/>
               <span>¿Por qué es ideal para ti?</span>
             </div>
-            <div className="glassmorphism rounded-xl p-4 shadow-inner">
-              <p className="text-sm text-foreground/90 leading-relaxed">
+            <div className={`glassmorphism rounded-xl shadow-inner ${isMobile ? 'p-3' : 'p-4'}`}>
+              <p className={`text-foreground/90 leading-relaxed ${isMobile ? 'text-xs' : 'text-sm'}`}>
                 <HighlightedText text={product.justification} />
               </p>
             </div>
           </div>
 
           {/* Action Button */}
-          <div className="pt-4">
+          <div className={isMobile ? 'pt-3' : 'pt-4'}>
             <VerifiedProductLink
               className="w-full"
               productId={product.productName}

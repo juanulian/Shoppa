@@ -194,7 +194,7 @@ const intelligentSearchAgentFlow = ai.defineFlow(
           console.log('🤖 [0ms] Gemini 2.5 Pro iniciado');
           const {output} = await withTimeout(
             mainSearchPrompt(input),
-            25000, // 25s timeout (aumentado para móvil)
+            35000, // 35s timeout (aumentado para móvil/conexiones lentas)
             'Gemini 2.5 Pro'
           );
           console.log(`✅ Gemini 2.5 Pro respondió en ${Date.now() - modelStart}ms`);
@@ -214,7 +214,7 @@ const intelligentSearchAgentFlow = ai.defineFlow(
           console.log('⚡ [800ms] Gemini 2.5 Flash iniciado');
           const {output} = await withTimeout(
             fallbackSearchPrompt(input),
-            20000, // 20s timeout (aumentado para móvil)
+            30000, // 30s timeout (aumentado para móvil/conexiones lentas)
             'Gemini 2.5 Flash'
           );
           console.log(`✅ Gemini 2.5 Flash respondió en ${Date.now() - modelStart}ms`);
@@ -234,7 +234,7 @@ const intelligentSearchAgentFlow = ai.defineFlow(
           console.log('🤖 [1500ms] OpenAI GPT-4o-mini iniciado');
           const {output} = await withTimeout(
             openAIFallbackSearchPrompt(input),
-            20000, // 20s timeout (aumentado para móvil)
+            30000, // 30s timeout (aumentado para móvil/conexiones lentas)
             'OpenAI GPT-4o-mini'
           );
           console.log(`✅ OpenAI respondió en ${Date.now() - modelStart}ms`);
@@ -283,12 +283,37 @@ const intelligentSearchAgentFlow = ai.defineFlow(
 
 export async function intelligentSearchAgent(input: IntelligentSearchAgentInput): Promise<IntelligentSearchAgentOutput> {
   const filteredCatalog = preFilterCatalog(input.userProfileData);
-  
-  const result = await intelligentSearchAgentFlow({
-    userProfileData: input.userProfileData,
-    catalog: filteredCatalog
-  });
-  return result;
+
+  // Retry logic: 2 intentos con delays incrementales
+  const maxRetries = 2;
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`🔄 Intento ${attempt}/${maxRetries}...`);
+
+      const result = await intelligentSearchAgentFlow({
+        userProfileData: input.userProfileData,
+        catalog: filteredCatalog
+      });
+
+      console.log(`✅ Éxito en intento ${attempt}`);
+      return result;
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error('Error desconocido');
+      console.error(`❌ Intento ${attempt} falló:`, lastError.message);
+
+      // Si no es el último intento, esperar antes de reintentar
+      if (attempt < maxRetries) {
+        const delay = attempt * 2000; // 2s, 4s
+        console.log(`⏳ Esperando ${delay}ms antes de reintentar...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+
+  // Si todos los intentos fallaron, lanzar el último error
+  throw lastError || new Error('No se pudieron generar recomendaciones después de múltiples intentos');
 }
 
 

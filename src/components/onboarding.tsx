@@ -339,34 +339,56 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
           </div>
 
           <form onSubmit={handleAnswerSubmit} className="space-y-4">
-            <div className="flex gap-2">
-              <Button type="button" size="icon" variant="outline" onClick={handleBack} disabled={isLoading || qaPairs.length === 0} className="rounded-full h-10 w-10 md:h-12 md:w-12 flex-shrink-0 glassmorphism transition-all duration-300 hover:scale-110 touch-manipulation" suppressHydrationWarning>
-                <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
-                <span className="sr-only">Atrás</span>
-              </Button>
-              <Input
-                value={currentAnswer}
-                onChange={(e) => setCurrentAnswer(e.target.value)}
-                placeholder="Ej: 'Fotos para Instagram' o 'Apps de trabajo'"
-                className="h-10 md:h-12 text-sm md:text-base rounded-full px-4 md:px-6 glassmorphism focus-visible:ring-accent flex-grow transition-all duration-300"
-                disabled={isLoading}
-                suppressHydrationWarning
-              />
-              <Button type="submit" disabled={!currentAnswer.trim() || isLoading} className={`rounded-full h-10 w-10 md:h-12 md:w-12 flex-shrink-0 glassmorphism-strong transition-all duration-300 hover:scale-110 touch-manipulation ${
-                preloadedQuestions.length > 0 ? 'ring-2 ring-green-400' : ''
-              }`} suppressHydrationWarning>
-                {isLoading ? (
-                  <Loader2 className="animate-spin h-4 w-4 sm:h-5 sm:w-5" />
-                ) : preloadedQuestions.length > 0 ? (
-                  <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
-                ) : (
-                  <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
-                )}
-                <span className="sr-only">Siguiente</span>
-              </Button>
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-2">
+              <div className="flex gap-2 w-full">
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="outline"
+                  onClick={handleBack}
+                  disabled={isLoading || qaPairs.length === 0}
+                  className="rounded-full h-12 w-12 flex-shrink-0 glassmorphism transition-all duration-300 hover:scale-110 touch-manipulation"
+                  suppressHydrationWarning
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                  <span className="sr-only">Atrás</span>
+                </Button>
+                <Input
+                  value={currentAnswer}
+                  onChange={(e) => setCurrentAnswer(e.target.value)}
+                  placeholder="Ej: 'Fotos para Instagram'"
+                  className="h-12 text-base rounded-full px-4 sm:px-6 glassmorphism focus-visible:ring-accent flex-grow transition-all duration-300 w-full"
+                  disabled={isLoading}
+                  suppressHydrationWarning
+                />
+                <Button
+                  type="submit"
+                  disabled={!currentAnswer.trim() || isLoading}
+                  className={`rounded-full h-12 w-12 flex-shrink-0 glassmorphism-strong transition-all duration-300 hover:scale-110 touch-manipulation ${
+                    preloadedQuestions.length > 0 ? 'ring-2 ring-green-400' : ''
+                  }`}
+                  suppressHydrationWarning
+                >
+                  {isLoading ? (
+                    <Loader2 className="animate-spin h-5 w-5" />
+                  ) : preloadedQuestions.length > 0 ? (
+                    <ArrowRight className="h-5 w-5 text-green-600" />
+                  ) : (
+                    <ArrowRight className="h-5 w-5" />
+                  )}
+                  <span className="sr-only">Siguiente</span>
+                </Button>
+              </div>
             </div>
-            <div className="flex justify-center items-center gap-4 pt-4">
-                <Button onClick={() => handleFinish()} size="lg" variant="ghost" className="rounded-full font-bold glassmorphism transition-all duration-300 hover:scale-105 hover:glassmorphism-strong text-sm sm:text-base touch-manipulation" disabled={isLoading || qaPairs.length === 0} suppressHydrationWarning>
+            <div className="flex justify-center items-center gap-4 pt-2 sm:pt-4">
+                <Button
+                  onClick={() => handleFinish()}
+                  size="lg"
+                  variant="ghost"
+                  className="rounded-full font-bold glassmorphism transition-all duration-300 hover:scale-105 hover:glassmorphism-strong text-base w-full sm:w-auto touch-manipulation"
+                  disabled={isLoading || qaPairs.length === 0}
+                  suppressHydrationWarning
+                >
                     Finalizar y Ver Celulares
                 </Button>
             </div>

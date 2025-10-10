@@ -69,14 +69,14 @@ export default function BuyerLandingPage() {
     <div className="min-h-screen">
       <header className="bg-[url('/background/header_footer.png')] bg-cover bg-center border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
         <div className="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md">
-          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2" aria-label="Shoppa! - Inicio">
+          <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-2">
+            <Link href="/" className="flex items-center gap-2 flex-shrink-0" aria-label="Shoppa! - Inicio">
               <Logo />
             </Link>
 
             <Link
               href="/sellers"
-              className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-primary transition-colors"
+              className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-primary transition-colors whitespace-nowrap"
             >
               Para vendedores
             </Link>
@@ -84,16 +84,16 @@ export default function BuyerLandingPage() {
         </div>
       </header>
 
-      <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center py-20 sm:py-28 transition-all duration-700">
-        <div className="container mx-auto px-4 text-center">
+      <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center py-12 sm:py-20 md:py-28 transition-all duration-700">
+        <div className="container mx-auto px-4 sm:px-6 text-center">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-7xl font-bold font-headline tracking-tight mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 text-slate-900 dark:text-slate-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
+            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold font-headline tracking-tight mb-6 sm:mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 text-slate-900 dark:text-slate-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)]">
               Lo que buscás.
               <br />
               <span className="text-primary">En 3 minutos.</span>
             </h1>
 
-            <p className="text-2xl md:text-3xl text-slate-700 dark:text-slate-300 mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)] font-light">
+            <p className="text-lg sm:text-2xl md:text-3xl text-slate-700 dark:text-slate-300 mb-8 sm:mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 [text-shadow:0_1px_2px_rgba(0,0,0,0.1)] font-light">
               3 preguntas. 3 opciones perfectas.
             </p>
 
@@ -101,29 +101,29 @@ export default function BuyerLandingPage() {
               onSubmit={handleSearch}
               className="max-w-2xl mx-auto mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200"
             >
-              <div className="flex flex-row gap-3">
-                <div className="relative flex-1">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="relative flex-1 w-full">
                   <Search
                     aria-hidden="true"
-                    className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none"
                   />
                   <Input
                     type="text"
                     inputMode="search"
-                    placeholder='Ej: "celular para fotos", "iPhone bajo presupuesto"…'
+                    placeholder='Ej: "celular para fotos"'
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-14 pl-12 pr-4 text-lg rounded-full border-2 focus-visible:ring-primary"
+                    className="h-14 pl-12 pr-4 text-base sm:text-lg rounded-full border-2 focus-visible:ring-primary w-full"
                     aria-label="Buscar productos"
                   />
                 </div>
                 <Button
                   type="submit"
-                  size="icon"
-                  className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all flex-shrink-0"
+                  className="h-14 sm:w-14 rounded-full shadow-lg hover:shadow-xl transition-all w-full sm:w-auto sm:flex-shrink-0"
                   aria-label="Buscar"
                 >
-                  <ArrowRight className="h-6 w-6" />
+                  <span className="sm:hidden font-semibold">Buscar</span>
+                  <ArrowRight className="h-6 w-6 hidden sm:block" />
                 </Button>
               </div>
             </form>
@@ -138,7 +138,7 @@ export default function BuyerLandingPage() {
             </div>
 
             {/* Categorías en la misma sección */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-400">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-400">
                 {categories.map((category) => {
                   const Icon = category.icon;
                   const disabled = !category.active;
@@ -191,14 +191,14 @@ export default function BuyerLandingPage() {
       </section>
 
       {/* Cómo funciona - Estilo Apple minimalista */}
-      <section className="py-32 bg-white dark:bg-slate-950">
-        <div className="container mx-auto px-4 max-w-5xl">
-            <div className="text-center mb-24">
-              <h2 className="text-5xl md:text-7xl font-light mb-6 text-slate-900 dark:text-slate-100 tracking-tight">Cómo funciona</h2>
-              <p className="text-2xl md:text-3xl text-slate-600 dark:text-slate-400 font-light">En 3 pasos.</p>
+      <section className="py-16 sm:py-24 md:py-32 bg-white dark:bg-slate-950">
+        <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
+            <div className="text-center mb-12 sm:mb-16 md:mb-24">
+              <h2 className="text-3xl sm:text-5xl md:text-7xl font-light mb-4 sm:mb-6 text-slate-900 dark:text-slate-100 tracking-tight">Cómo funciona</h2>
+              <p className="text-xl sm:text-2xl md:text-3xl text-slate-600 dark:text-slate-400 font-light">En 3 pasos.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-20" role="list">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 sm:gap-16 md:gap-20" role="list">
               {[
                 { step: 1, title: 'Respondé 3 preguntas', desc: 'Contanos qué necesitás' },
                 {
@@ -214,9 +214,9 @@ export default function BuyerLandingPage() {
                   role="listitem"
                   aria-label={`Paso ${step}: ${title}`}
                 >
-                  <div className="text-7xl md:text-8xl font-light text-primary mb-8">{step}</div>
-                  <h3 className="text-2xl font-light mb-3 text-slate-900 dark:text-slate-100">{title}</h3>
-                  <p className="text-lg text-slate-600 dark:text-slate-400 font-light">{desc}</p>
+                  <div className="text-6xl sm:text-7xl md:text-8xl font-light text-primary mb-6 sm:mb-8">{step}</div>
+                  <h3 className="text-xl sm:text-2xl font-light mb-2 sm:mb-3 text-slate-900 dark:text-slate-100">{title}</h3>
+                  <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 font-light">{desc}</p>
                 </div>
               ))}
             </div>
@@ -224,20 +224,20 @@ export default function BuyerLandingPage() {
         </div>
       </section>
 
-      <section className="relative bg-[url('/background/header_footer.png')] bg-cover bg-center py-20 transition-all duration-700">
+      <section className="relative bg-[url('/background/header_footer.png')] bg-cover bg-center py-12 sm:py-16 md:py-20 transition-all duration-700">
         <div className="absolute inset-0 bg-primary/90"></div>
-        <div className="relative container mx-auto px-4 text-center py-16">
-          <h2 className="text-4xl md:text-6xl font-bold mb-6 text-primary-foreground">
+        <div className="relative container mx-auto px-4 sm:px-6 text-center py-8 sm:py-12 md:py-16">
+          <h2 className="text-2xl sm:text-4xl md:text-6xl font-bold mb-4 sm:mb-6 text-primary-foreground">
             Encontrá lo que buscás.
           </h2>
-          <p className="text-xl md:text-2xl mb-12 text-primary-foreground/90 font-light">
+          <p className="text-lg sm:text-xl md:text-2xl mb-8 sm:mb-12 text-primary-foreground/90 font-light">
             Gratis. En 3 minutos.
           </p>
 
-          <Button asChild size="lg" variant="secondary" className="rounded-full px-16 h-16 text-xl shadow-2xl hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] transition-all font-semibold">
-            <Link href="/demo">
+          <Button asChild size="lg" variant="secondary" className="rounded-full px-8 sm:px-12 md:px-16 h-12 sm:h-14 md:h-16 text-base sm:text-lg md:text-xl shadow-2xl hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] transition-all font-semibold w-full sm:w-auto max-w-xs sm:max-w-none">
+            <Link href="/demo" className="flex items-center justify-center">
               Empezar
-              <ArrowRight className="ml-2 h-6 w-6" />
+              <ArrowRight className="ml-2 h-5 w-5 sm:h-6 sm:w-6" />
             </Link>
           </Button>
         </div>
