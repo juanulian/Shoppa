@@ -9,9 +9,13 @@ interface RecommendationsLoadingProps {
 }
 
 const loadingStates = [
-  { text: "Analizando tu perfil...", duration: 15000 },
-  { text: "Buscando en el catálogo...", duration: 15000 },
-  { text: "Generando tus recomendaciones...", duration: 15000 },
+  { text: "Analizando tus respuestas...", duration: 5000 },
+  { text: "Identificando prioridades...", duration: 5000 },
+  { text: "Filtrando el catálogo de productos...", duration: 8000 },
+  { text: "Comparando las mejores opciones...", duration: 8000 },
+  { text: "Generando la primera recomendación...", duration: 7000 },
+  { text: "Creando la segunda alternativa...", duration: 6000 },
+  { text: "Finalizando la última opción...", duration: 6000 },
 ];
 
 const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
@@ -48,11 +52,11 @@ const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
         
         {/* Animated Dots Indicator */}
         <div className="flex justify-center items-center gap-4 mb-10">
-          {loadingStates.map((_, index) => (
+          {Array.from({ length: loadingStates.length }).map((_, index) => (
             <div
               key={index}
               className={cn(
-                "h-3 w-3 rounded-full bg-muted transition-all duration-500",
+                "h-2 w-2 rounded-full bg-muted transition-all duration-500",
                 stage >= index ? "bg-primary scale-110" : ""
               )}
             />
