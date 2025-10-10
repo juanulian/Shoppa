@@ -130,7 +130,16 @@ function createIntelligentSearchPrompt(model: 'googleai/gemini-2.5-pro' | 'googl
 - productDescription: Resumen compelling centrado en beneficios
 - justification: Conexión personalizada entre características y necesidades del usuario
 - matchPercentage: Porcentaje de compatibilidad 65-98% basado en coincidencia con necesidades del usuario
-- matchTags: Array de 2-4 tags. IMPORTANTE: Para el campo 'icon', debes elegir uno de los valores permitidos en el schema. NO inventes iconos.
+- matchTags: Array de 2-4 tags PREDEFINIDOS del listado. REGLAS CRÍTICAS:
+  * Elegir tags que reflejen HONESTAMENTE qué tan bien el producto cumple cada aspecto
+  * "Máxima Velocidad" / "Súper Rápido" = SIEMPRE high (verde) - solo para flagships con procesadores top
+  * "Buen Rendimiento" = medium (amarillo) - gama media
+  * "Rendimiento Básico" = low (rojo) - gama baja
+  * "Cámara Pro" / "Fotos Excelentes" = SIEMPRE high (verde) - solo para celulares con cámaras excepcionales
+  * "Excelente Precio" = high (verde) - producto barato con buenas specs
+  * "Precio Elevado" = low (rojo) - producto caro (puede ser justificado si es premium)
+  * El nivel (color) debe COINCIDIR con el tag: no poner "Máxima Velocidad" en amarillo/rojo
+  * Usar el icono correcto automáticamente según el tag elegido
 `,
     prompt: `**Perfil del Usuario:**
 {{{userProfileData}}}
@@ -369,7 +378,11 @@ Genera UNA SOLA recomendación de celular basándote en el perfil del usuario y 
    - productDescription: Beneficios, no specs
    - justification: Por qué este para ESTE usuario
    - matchPercentage: 65-98%
-   - matchTags: Array de 2-4 tags. IMPORTANTE: Para el campo 'icon', debes elegir uno de los valores permitidos en el schema. NO inventes iconos.`,
+   - matchTags: Array de 2-4 tags PREDEFINIDOS. REGLAS:
+     * "Máxima Velocidad"/"Súper Rápido" = SIEMPRE high (verde) - solo flagships
+     * "Cámara Pro"/"Fotos Excelentes" = SIEMPRE high (verde) - solo cámaras top
+     * El nivel debe coincidir con el tag: no "Máxima Velocidad" en amarillo
+     * Icono automático según tag`,
   prompt: `**Perfil del Usuario:**
 {{{userProfileData}}}
 

@@ -54,11 +54,11 @@ const iconMap: Record<string, LucideIcon> = {
 const getTagColor = (level: 'high' | 'medium' | 'low') => {
   switch (level) {
     case 'high':
-      return 'bg-green-500/20 text-green-700 border-green-500/30 dark:bg-green-500/30 dark:text-green-200 dark:border-green-500/50';
+      return 'bg-green-500/20 text-green-700 border-green-500/30 dark:bg-green-500/30 dark:text-green-200 dark:border-green-500/50 hover:bg-green-700 hover:text-white hover:border-green-700 dark:hover:bg-green-700 dark:hover:text-white dark:hover:border-green-700 transition-colors cursor-pointer';
     case 'medium':
-      return 'bg-yellow-500/20 text-yellow-700 border-yellow-500/30 dark:bg-yellow-500/30 dark:text-yellow-200 dark:border-yellow-500/50';
+      return 'bg-yellow-500/20 text-yellow-700 border-yellow-500/30 dark:bg-yellow-500/30 dark:text-yellow-200 dark:border-yellow-500/50 hover:bg-yellow-600 hover:text-white hover:border-yellow-600 dark:hover:bg-yellow-600 dark:hover:text-white dark:hover:border-yellow-600 transition-colors cursor-pointer';
     case 'low':
-      return 'bg-red-500/20 text-red-700 border-red-500/30 dark:bg-red-500/30 dark:text-red-200 dark:border-red-500/50';
+      return 'bg-red-500/20 text-red-700 border-red-500/30 dark:bg-red-500/30 dark:text-red-200 dark:border-red-500/50 hover:bg-red-600 hover:text-white hover:border-red-600 dark:hover:bg-red-600 dark:hover:text-white dark:hover:border-red-600 transition-colors cursor-pointer';
   }
 };
 
