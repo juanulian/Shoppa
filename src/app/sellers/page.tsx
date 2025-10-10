@@ -11,9 +11,9 @@ import { Label } from '@/components/ui/label';
 import { Calculator, ArrowRight, Zap, ShoppingCart } from 'lucide-react';
 import Logo from '@/components/icons/logo';
 import { Footer } from '@/components/landing/footer';
-import InteractiveTimelineCurved from '@/components/landing/interactive-timeline-curved';
+// import InteractiveTimelineCurved from '@/components/landing/interactive-timeline-curved';
 
-// Timeline component will be redesigned
+// Timeline component will be redesigned - temporarily disabled
 
 const ROICalculator: React.FC = () => {
     const [monthlyRevenue, setMonthlyRevenue] = React.useState<number | ''>(10000000);
@@ -171,7 +171,7 @@ export default function SellersLandingPage() {
                     </div>
                 </section>
 
-                <InteractiveTimelineCurved />
+                {/* <InteractiveTimelineCurved /> */}
 
                 <section className="bg-[url('/background/cards_2.png')] bg-cover bg-center py-20 sm:py-28 transition-all duration-700">
                     <div className="container mx-auto px-4 max-w-3xl">
