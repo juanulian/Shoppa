@@ -1,42 +1,46 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Progress } from '@/components/ui/progress';
 
 interface RecommendationsLoadingProps {
   userProfileData?: string;
 }
 
 const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
-  userProfileData
+  userProfileData,
 }) => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-
-  const steps = [
-    "Analizando tu perfil",
-    "Buscando en el catálogo",
-    "Evaluando opciones",
-    "Preparando tus 3 opciones"
-  ];
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentStep((prev) => {
-        const nextStep = prev + 1;
-        if (nextStep < steps.length) {
-          setCompletedSteps((completed) => [...completed, prev]);
-          return nextStep;
-        }
-        return prev;
-      });
-    }, 2500);
+    // Reset progress when user data changes (new search)
+    setProgress(0);
 
-    return () => clearInterval(timer);
-  }, []);
+    const totalDuration = 8000; // Simulate an 8-second loading process
+    let startTime: number;
 
-  useEffect(() => {
-    setCurrentStep(0);
-    setCompletedSteps([]);
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+    const animate = (time: number) => {
+      if (!startTime) startTime = time;
+      const elapsedTime = time - startTime;
+      const progressFraction = Math.min(elapsedTime / totalDuration, 1);
+      
+      // Apply easing and ensure it doesn't quite hit 100% until the end
+      const easedProgress = easeOutCubic(progressFraction);
+      const displayProgress = Math.min(Math.floor(easedProgress * 100), 99);
+
+      setProgress(displayProgress);
+
+      if (progressFraction < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    const animationFrameId = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(animationFrameId);
   }, [userProfileData]);
 
   return (
@@ -49,31 +53,18 @@ const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
           </h1>
         </div>
 
-        {/* Loading text with fade transition */}
-        <div className="mb-8 h-12">
-          <p
-            key={currentStep}
-            className="text-xl md:text-2xl font-light text-slate-700 dark:text-slate-300 animate-in fade-in duration-700"
-          >
-            {steps[currentStep]}
+        {/* Loading text and percentage */}
+        <div className="mb-8 h-12 flex flex-col items-center justify-center">
+          <p className="text-xl md:text-2xl font-light text-slate-700 dark:text-slate-300 mb-2">
+            Preparando tus 3 opciones...
+          </p>
+          <p className="text-lg font-mono font-bold text-primary">
+            {progress}%
           </p>
         </div>
 
-        {/* Progress indicator - completa hacia adelante */}
-        <div className="flex justify-center gap-2">
-          {steps.map((_, index) => (
-            <div
-              key={index}
-              className={`h-1.5 w-14 rounded-full transition-all duration-700 ${
-                completedSteps.includes(index)
-                  ? 'bg-primary opacity-100'
-                  : index === currentStep
-                  ? 'bg-primary opacity-100 animate-pulse'
-                  : 'bg-slate-300 dark:bg-slate-700 opacity-30'
-              }`}
-            />
-          ))}
-        </div>
+        {/* Progress bar */}
+        <Progress value={progress} className="w-full h-2" />
       </div>
     </div>
   );
