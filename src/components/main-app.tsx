@@ -51,22 +51,9 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
       setIsGenerating(false);
     } catch (error) {
       console.error('La búsqueda falló:', error);
-
-      // Error messages específicos según el tipo de error
-      let errorTitle = 'No se pudo completar la búsqueda';
-      let errorDescription = 'Hubo un problema al generar las recomendaciones. Por favor, intentá de nuevo.';
-
-      if (error instanceof Error) {
-        // Error de timeout de los modelos AI
-        if (error.message.includes('timeout')) {
-          errorTitle = 'Tiempo de espera agotado';
-          errorDescription = 'Parece que hay mucha demanda, por favor volvé a intentar en algunos minutos.';
-        }
-      }
-
       toast({
-        title: errorTitle,
-        description: errorDescription,
+        title: 'No se pudo completar la búsqueda',
+        description: 'Hubo un problema al generar las recomendaciones. Por favor, intentá de nuevo.',
         variant: 'destructive',
       });
       setIsGenerating(false);
@@ -104,10 +91,10 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
         {results.length > 0 && !isGenerating && (
            <div className="w-full animate-in fade-in duration-500">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-headline tracking-tight">
-              Pensadas para vos.
+              Tus 3 Recomendaciones
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground mt-2">
-              Rápido. Simple.
+              Pensadas para vos. Rápido. Simple.
             </p>
           </div>
         )}
