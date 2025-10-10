@@ -43,7 +43,7 @@ const prompt = ai.definePrompt({
   name: 'generateFollowUpQuestionsPrompt',
   input: {schema: GenerateFollowUpQuestionsInputSchema},
   output: {schema: GenerateFollowUpQuestionsOutputSchema},
-  model: 'googleai/gemini-2.5-flash',
+  model: 'googleai/gemini-2.5-pro',
   prompt: `Eres un vendedor experto estilo Steve Jobs. Tu objetivo: entender QUÉ PROBLEMA quiere resolver el usuario en MÁXIMO 3 preguntas EMOCIONALES Y SIMPLES.
 
 **FILOSOFÍA JOBS:**
@@ -121,7 +121,7 @@ Ejemplo de buena pregunta: *"Entendido! Y en cuanto a la camara, que valoras mas
 `,
 });
 
-const promptWithFallback = ai.definePrompt({
+const fallbackPrompt = ai.definePrompt({
   name: 'generateFollowUpQuestionsPromptFallback',
   input: {schema: GenerateFollowUpQuestionsInputSchema},
   output: {schema: GenerateFollowUpQuestionsOutputSchema},
@@ -203,6 +203,7 @@ Ejemplo de buena pregunta: *"Entendido! Y en cuanto a la camara, que valoras mas
 `,
 });
 
+
 const generateFollowUpQuestionsFlow = ai.defineFlow(
   {
     name: 'generateFollowUpQuestionsFlow',
@@ -210,9 +211,16 @@ const generateFollowUpQuestionsFlow = ai.defineFlow(
     outputSchema: GenerateFollowUpQuestionsOutputSchema,
   },
   async input => {
-    console.log('🤖 Usando Gemini 2.5 Flash para generar preguntas...');
-    const {output} = await prompt(input);
-    console.log('✅ Gemini 2.5 Flash respondió correctamente');
-    return output!;
+    try {
+      console.log('🤖 Usando Gemini 2.5 Pro para generar preguntas...');
+      const {output} = await prompt(input);
+      console.log('✅ Gemini 2.5 Pro respondió correctamente');
+      return output!;
+    } catch (e) {
+      console.error("Fallback a Gemini Flash por error en Pro", e);
+      const {output} = await fallbackPrompt(input);
+      console.log('✅ Gemini 2.5 Flash respondió correctamente');
+      return output!;
+    }
   }
 );

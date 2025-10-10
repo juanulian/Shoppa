@@ -104,7 +104,7 @@ function createSingleRecommendationPrompt(catalogTool: ReturnType<typeof createG
     input: {schema: SingleRecommendationInputSchema},
     output: {schema: ProductRecommendationSchema},
     tools: [catalogTool],
-    model: 'openai/gpt-5-nano-2025-08-07',
+    model: 'googleai/gemini-2.5-pro',
   system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros.
 
 **TU TAREA:**
@@ -156,7 +156,7 @@ function createIntelligentSearchPrompt(catalogTool: ReturnType<typeof createGetS
     input: {schema: IntelligentSearchAgentInputSchema},
     output: {schema: IntelligentSearchAgentOutputSchema},
     tools: [catalogTool],
-    model: 'openai/gpt-5-nano-2025-08-07',
+    model: 'googleai/gemini-2.5-pro',
   system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros. Tu misión es reducir el abandono de carrito (actualmente 75% en LATAM) presentando exactamente 3 opciones optimizadas que aceleran la decisión de compra.
 
 ## METODOLOGÍA ANTI-ABANDONO DE CARRITO ##
@@ -304,9 +304,9 @@ function createGenerateSingleRecommendationFlow(filteredCatalog: typeof smartpho
         console.log(`✅ Recomendación #${input.recommendationNumber} lista`);
         return output!;
       } catch (e) {
-          console.error("Fallback a Gemini por error en OpenAI", e);
+          console.error("Fallback a Gemini Flash por error en Pro", e);
           const fallbackPrompt = createSingleRecommendationPrompt(catalogTool);
-          fallbackPrompt.model = 'googleai/gemini-2.5-pro';
+          fallbackPrompt.model = 'googleai/gemini-2.5-flash';
           const {output} = await fallbackPrompt(input);
           return output!;
       }
@@ -332,15 +332,15 @@ function createIntelligentSearchFlow(catalog: typeof smartphonesDatabase.devices
         outputSchema: IntelligentSearchAgentOutputSchema,
       },
       async input => {
-        console.log('🤖 Usando OpenAI para recomendaciones...');
         try {
+            console.log('🤖 Usando Gemini 2.5 Pro para recomendaciones...');
             const {output} = await prompt(input);
-            console.log('✅ OpenAI respondió correctamente');
+            console.log('✅ Gemini 2.5 Pro respondió correctamente');
             return output!;
         } catch (e) {
-            console.error("Fallback a Gemini por error en OpenAI", e);
+            console.error("Fallback a Gemini Flash por error en Pro", e);
             const fallbackPrompt = createIntelligentSearchPrompt(catalogTool);
-            fallbackPrompt.model = 'googleai/gemini-2.5-pro';
+            fallbackPrompt.model = 'googleai/gemini-2.5-flash';
             const {output} = await fallbackPrompt(input);
             return output!;
         }
