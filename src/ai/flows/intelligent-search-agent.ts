@@ -17,7 +17,8 @@ import {
 import { smartphonesDatabase } from '@/lib/smartphones-database';
 
 
-const getSmartphoneCatalog = ai.defineTool(
+function createGetSmartphoneCatalogTool(catalog: typeof smartphonesDatabase.devices) {
+  return ai.defineTool(
     {
       name: 'getSmartphoneCatalog',
       description: 'Recupera la lista COMPLETA de celulares disponibles. Debes llamar a esta herramienta SIEMPRE para poder responder a la solicitud del usuario.',
@@ -37,9 +38,10 @@ const getSmartphoneCatalog = ai.defineTool(
       })),
     },
     async () => {
-      return smartphonesDatabase.devices;
+      return catalog;
     }
-  )
+  );
+}
 
 const IntelligentSearchAgentInputSchema = z.object({
   userProfileData: z.string().describe('Datos del perfil de usuario recopilados de las preguntas de incorporación.'),
@@ -92,12 +94,13 @@ export async function* intelligentSearchAgentStreaming(input: IntelligentSearchA
 }
 
 // Prompt for single recommendation (for streaming)
-const singleRecommendationPrompt = ai.definePrompt({
-  name: 'singleRecommendationPrompt',
-  input: {schema: SingleRecommendationInputSchema},
-  output: {schema: ProductRecommendationSchema},
-  tools: [getSmartphoneCatalog],
-  model: 'googleai/gemini-2.5-flash',
+function createSingleRecommendationPrompt(catalogTool: ReturnType<typeof createGetSmartphoneCatalogTool>) {
+  return ai.definePrompt({
+    name: 'singleRecommendationPrompt',
+    input: {schema: SingleRecommendationInputSchema},
+    output: {schema: ProductRecommendationSchema},
+    tools: [catalogTool],
+    model: 'googleai/gemini-2.5-flash',
   system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros.
 
 **TU TAREA:**
@@ -140,14 +143,16 @@ Genera UNA SOLA recomendación de celular basándote en el perfil del usuario y 
 **Número de Recomendación:** {{{recommendationNumber}}}
 
 Genera la recomendación #{{{recommendationNumber}}} para este usuario. Recuerda: lenguaje simple, enfocado en experiencias, respetando presupuesto.`,
-});
+  });
+}
 
-const prompt = ai.definePrompt({
-  name: 'intelligentSearchAgentPrompt',
-  input: {schema: IntelligentSearchAgentInputSchema},
-  output: {schema: IntelligentSearchAgentOutputSchema},
-  tools: [getSmartphoneCatalog],
-  model: 'googleai/gemini-2.5-flash',
+function createIntelligentSearchPrompt(catalogTool: ReturnType<typeof createGetSmartphoneCatalogTool>) {
+  return ai.definePrompt({
+    name: 'intelligentSearchAgentPrompt',
+    input: {schema: IntelligentSearchAgentInputSchema},
+    output: {schema: IntelligentSearchAgentOutputSchema},
+    tools: [catalogTool],
+    model: 'googleai/gemini-2.5-flash',
   system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros. Tu misión es reducir el abandono de carrito (actualmente 75% en LATAM) presentando exactamente 3 opciones optimizadas que aceleran la decisión de compra.
 
 ## METODOLOGÍA ANTI-ABANDONO DE CARRITO ##
@@ -217,12 +222,13 @@ Analiza el perfil para identificar: presupuesto máximo, casos de uso principale
 `,
 });
 
-const promptWithFallback = ai.definePrompt({
-  name: 'intelligentSearchAgentPromptFallback',
-  input: {schema: IntelligentSearchAgentInputSchema},
-  output: {schema: IntelligentSearchAgentOutputSchema},
-  tools: [getSmartphoneCatalog],
-  model: 'googleai/gemini-2.5-flash',
+function createIntelligentSearchPromptWithFallback(catalogTool: ReturnType<typeof createGetSmartphoneCatalogTool>) {
+  return ai.definePrompt({
+    name: 'intelligentSearchAgentPromptFallback',
+    input: {schema: IntelligentSearchAgentInputSchema},
+    output: {schema: IntelligentSearchAgentOutputSchema},
+    tools: [catalogTool],
+    model: 'googleai/gemini-2.5-flash',
   system: `Eres el motor de recomendaciones de Shoppa!, diseñado para transformar clientes confundidos en compradores seguros. Tu misión es reducir el abandono de carrito (actualmente 75% en LATAM) presentando exactamente 3 opciones optimizadas que aceleran la decisión de compra.
 
 ## METODOLOGÍA ANTI-ABANDONO DE CARRITO ##
@@ -352,37 +358,30 @@ function preFilterCatalog(userProfile: string, fullCatalog: typeof smartphonesDa
 }
 
 // Flow for generating a single recommendation
-const generateSingleRecommendationFlow = ai.defineFlow(
-  {
-    name: 'generateSingleRecommendationFlow',
-    inputSchema: SingleRecommendationInputSchema,
-    outputSchema: ProductRecommendationSchema,
-  },
-  async input => {
-    console.log(`🤖 Generando recomendación #${input.recommendationNumber}...`);
+function createGenerateSingleRecommendationFlow(filteredCatalog: typeof smartphonesDatabase.devices) {
+  const catalogTool = createGetSmartphoneCatalogTool(filteredCatalog);
+  const prompt = createSingleRecommendationPrompt(catalogTool);
 
-    // Pre-filter catalog to reduce input size
-    const fullCatalog = smartphonesDatabase.devices;
-    const filteredCatalog = preFilterCatalog(input.userProfileData, fullCatalog);
-
-    // Temporarily override getSmartphoneCatalog to return filtered catalog
-    const originalCatalog = smartphonesDatabase.devices;
-    (smartphonesDatabase as any).devices = filteredCatalog;
-
-    try {
-      const {output} = await singleRecommendationPrompt(input);
+  return ai.defineFlow(
+    {
+      name: 'generateSingleRecommendationFlow',
+      inputSchema: SingleRecommendationInputSchema,
+      outputSchema: ProductRecommendationSchema,
+    },
+    async input => {
+      console.log(`🤖 Generando recomendación #${input.recommendationNumber}...`);
+      const {output} = await prompt(input);
       console.log(`✅ Recomendación #${input.recommendationNumber} lista`);
       return output!;
-    } finally {
-      // Restore original catalog
-      (smartphonesDatabase as any).devices = originalCatalog;
     }
-  }
-);
+  );
+}
 
 // Helper function for streaming
 async function generateSingleRecommendation(input: z.infer<typeof SingleRecommendationInputSchema>): Promise<ProductRecommendation> {
-  return generateSingleRecommendationFlow(input);
+  const filteredCatalog = preFilterCatalog(input.userProfileData, smartphonesDatabase.devices);
+  const flow = createGenerateSingleRecommendationFlow(filteredCatalog);
+  return flow(input);
 }
 
 const intelligentSearchAgentFlow = ai.defineFlow(
@@ -395,20 +394,14 @@ const intelligentSearchAgentFlow = ai.defineFlow(
     console.log('🤖 Usando Gemini 2.5 Flash para recomendaciones...');
 
     // Pre-filter catalog to reduce input size
-    const fullCatalog = smartphonesDatabase.devices;
-    const filteredCatalog = preFilterCatalog(input.userProfileData, fullCatalog);
+    const filteredCatalog = preFilterCatalog(input.userProfileData, smartphonesDatabase.devices);
 
-    // Temporarily override getSmartphoneCatalog to return filtered catalog
-    const originalCatalog = smartphonesDatabase.devices;
-    (smartphonesDatabase as any).devices = filteredCatalog;
+    // Create tools and prompts with filtered catalog
+    const catalogTool = createGetSmartphoneCatalogTool(filteredCatalog);
+    const prompt = createIntelligentSearchPrompt(catalogTool);
 
-    try {
-      const {output} = await prompt(input);
-      console.log('✅ Gemini 2.5 Flash respondió correctamente');
-      return output!;
-    } finally {
-      // Restore original catalog
-      (smartphonesDatabase as any).devices = originalCatalog;
-    }
+    const {output} = await prompt(input);
+    console.log('✅ Gemini 2.5 Flash respondió correctamente');
+    return output!;
   }
 );

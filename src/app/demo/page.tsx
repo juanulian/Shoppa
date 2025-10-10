@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, Suspense, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import OnboardingNew from '@/components/onboarding-new';
 import MainApp from '@/components/main-app';
 import Logo from '@/components/icons/logo';
@@ -14,6 +14,7 @@ export type AppState = 'analyzing' | 'onboarding' | 'search';
 
 function DemoPageContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const query = searchParams.get('q') || '';
 
   const [appState, setAppState] = useState<AppState>(query ? 'analyzing' : 'onboarding');
@@ -48,7 +49,7 @@ function DemoPageContent() {
     } else if (!query) {
         setAppState('onboarding');
     }
-  }, [query, appState]);
+  }, [query]);
 
   const handleOnboardingComplete = (profileData: string) => {
     setUserProfile(profileData);
@@ -57,7 +58,7 @@ function DemoPageContent() {
 
   const handleNewSearch = () => {
     // Navigate to home to allow for a new search from the input
-    window.location.href = '/';
+    router.push('/');
   }
 
   return (
