@@ -28,13 +28,11 @@ const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
   const timeouts = useRef<NodeJS.Timeout[]>([]);
 
   useEffect(() => {
-    // If the process is already finished when the component mounts, jump to the end.
     if (isFinished) {
       setStage(loadingStates.length);
       return;
     }
 
-    // Clear any existing timeouts when starting a new loading sequence.
     timeouts.current.forEach(clearTimeout);
     timeouts.current = [];
     setStage(0);
@@ -51,17 +49,14 @@ const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
     return () => {
       timeouts.current.forEach(clearTimeout);
     };
-  }, [userProfileData, isFinished]); // Rerun effect if userProfileData changes (new search) or isFinished status changes.
+  }, [userProfileData, isFinished]);
 
   useEffect(() => {
-    // If `isFinished` becomes true while the animation is running, jump to the end.
     if (isFinished) {
-      timeouts.current.forEach(clearTimeout); // Stop any scheduled state changes.
+      timeouts.current.forEach(clearTimeout);
       setStage(loadingStates.length);
     }
   }, [isFinished]);
-
-  const progressPercentage = (stage / loadingStates.length) * 100;
 
   return (
     <div className="w-full flex items-center justify-center px-4 py-8">
@@ -70,19 +65,21 @@ const RecommendationsLoading: React.FC<RecommendationsLoadingProps> = ({
             <Logo />
         </div>
 
-        {/* Loading text */}
         <div className="h-12 flex flex-col items-center justify-center mb-8">
           <p className="text-xl md:text-2xl font-light text-foreground/90 animate-pulse">
             {loadingStates[Math.min(stage, loadingStates.length - 1)]?.text || "Preparando..."}
           </p>
         </div>
         
-        {/* Animated Lines Indicator */}
-        <div className="relative w-full h-2 bg-muted rounded-full overflow-hidden">
-            <div 
-                className="absolute top-0 left-0 h-full bg-primary rounded-full transition-all duration-1000 ease-in-out"
-                style={{ width: `${progressPercentage}%` }}
-            />
+        <div className="flex w-full gap-2 h-2">
+            {Array(7).fill(0).map((_, i) => (
+                <div key={i} className="flex-1 rounded-full bg-muted overflow-hidden">
+                    <div className={cn(
+                        'h-full rounded-full transition-all duration-500',
+                        stage > i ? 'bg-primary' : 'bg-transparent'
+                    )} />
+                </div>
+            ))}
         </div>
       </div>
     </div>
