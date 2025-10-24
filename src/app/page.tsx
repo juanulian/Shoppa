@@ -57,12 +57,12 @@ export default function BuyerLandingPage() {
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const q = searchQuery.trim();
-    const url = q ? `/demo?q=${encodeURIComponent(q)}` : '/demo';
+    const url = q ? `/onboard?q=${encodeURIComponent(q)}` : '/onboard';
     router.push(url);
   };
 
   const handleCategoryClick = (active: boolean) => {
-    if (active) router.push('/demo');
+    if (active) router.push('/onboard');
   };
 
   return (
@@ -235,7 +235,7 @@ export default function BuyerLandingPage() {
           </p>
 
           <Button asChild size="lg" variant="secondary" className="rounded-full px-8 sm:px-12 md:px-16 h-12 sm:h-14 md:h-16 text-base sm:text-lg md:text-xl shadow-2xl hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] transition-all font-semibold w-full sm:w-auto max-w-xs sm:max-w-none">
-            <Link href="/demo" className="flex items-center justify-center">
+            <Link href="/onboard" className="flex items-center justify-center">
               Empezar
               <ArrowRight className="ml-2 h-5 w-5 sm:h-6 sm:w-6" />
             </Link>

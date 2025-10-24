@@ -36,13 +36,24 @@ enum SellerTier {
 model User {
   id            String    @id @default(cuid())
   email         String    @unique
+  username      String?   @unique
   phone         String?
   passwordHash  String
   role          UserRole  @default(BUYER)
 
   firstName     String?
   lastName      String?
+  dateOfBirth   DateTime?
+  gender        String?   // "male", "female", "other", "prefer_not_to_say"
   avatarUrl     String?
+
+  // Tier system
+  tier          UserTier  @default(FREE)
+  tierExpiresAt DateTime? // null = lifetime (for referral PRO)
+
+  // Referral system
+  referralCode  String?   @unique // Auto-generated: SHOPPA-XXXX
+  referredBy    String?   // userId who referred this user
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -52,9 +63,20 @@ model User {
   buyerProfile  BuyerProfile?
   sellerProfile SellerProfile?
   sessions      Session[]
+  referrals     Referral[] @relation("Referrer")
+  referredByUser User?     @relation("ReferredUsers", fields: [referredBy], references: [id], onDelete: SetNull)
+  referredUsers  User[]    @relation("ReferredUsers")
 
   @@index([email])
+  @@index([username])
+  @@index([referralCode])
   @@map("users")
+}
+
+enum UserTier {
+  FREE
+  PRO
+  ULTIMATE
 }
 
 model Session {
