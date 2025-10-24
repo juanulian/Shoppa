@@ -30,143 +30,33 @@ export default function SimulatedCheckout({ product, onSuccess }: SimulatedCheck
     buyerEmail: '',
     buyerPhone: '',
     buyerAddress: '',
-
-    // Payment info (simulado)
-    cardNumber: '',
-    cardExpiry: '',
-    cardCvv: '',
-    cardName: '',
+    buyerCity: '',
+    buyerProvince: '',
+    buyerPostalCode: '',
+    buyerNotes: '',
   });
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  // Format card number with spaces
-  const formatCardNumber = (value: string) => {
-    const cleaned = value.replace(/\s/g, '');
-    const groups = cleaned.match(/.{1,4}/g);
-    return groups ? groups.join(' ') : cleaned;
-  };
-
-  // Format expiry MM/YY
-  const formatExpiry = (value: string) => {
-    const cleaned = value.replace(/\D/g, '');
-    if (cleaned.length >= 2) {
-      return `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}`;
-    }
-    return cleaned;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
 
-    try {
-      // Validar campos básicos
-      if (!formData.buyerName || !formData.buyerEmail || !formData.buyerPhone || !formData.buyerAddress) {
-        throw new Error('Por favor completá todos los datos personales');
-      }
-
-      if (!formData.cardNumber || !formData.cardExpiry || !formData.cardCvv || !formData.cardName) {
-        throw new Error('Por favor completá todos los datos de la tarjeta');
-      }
-
-      // Validar número de tarjeta (16 dígitos)
-      const cleanCardNumber = formData.cardNumber.replace(/\s/g, '');
-      if (cleanCardNumber.length !== 16 || !/^\d+$/.test(cleanCardNumber)) {
-        throw new Error('Número de tarjeta inválido');
-      }
-
-      // Validar CVV
-      if (formData.cardCvv.length < 3 || !/^\d+$/.test(formData.cardCvv)) {
-        throw new Error('CVV inválido');
-      }
-
-      // Generar número de orden
-      const generatedOrderNumber = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-      const platformFee = product.price * 0.05;
-      const sellerReceives = product.price - platformFee;
-
-      // Construir email para el vendedor
-      const emailSubject = `🎉 Nueva venta en Shoppa! - Orden ${generatedOrderNumber}`;
-      const emailBody = `
-NUEVA VENTA EN SHOPPA!
-Orden: ${generatedOrderNumber}
-
-═══════════════════════════════════
-📦 PRODUCTO VENDIDO
-═══════════════════════════════════
-${product.name}
-Precio: $${product.price.toLocaleString('es-AR')}
-
-═══════════════════════════════════
-👤 DATOS DEL COMPRADOR
-═══════════════════════════════════
-Nombre: ${formData.buyerName}
-Email: ${formData.buyerEmail}
-Teléfono: ${formData.buyerPhone}
-Dirección: ${formData.buyerAddress}
-
-═══════════════════════════════════
-💰 RESUMEN FINANCIERO
-═══════════════════════════════════
-Precio del Producto: $${product.price.toLocaleString('es-AR')}
-Comisión Shoppa! (5%): -$${platformFee.toLocaleString('es-AR')}
-──────────────────────
-RECIBIRÁS: $${sellerReceives.toLocaleString('es-AR')}
-
-* Transferencia cada 15 días
-
-═══════════════════════════════════
-⚠️ ACCIÓN REQUERIDA
-═══════════════════════════════════
-1. Contactá al comprador por WhatsApp/Email
-2. EMITÍ LA FACTURA a nombre de: ${formData.buyerName}
-3. Coordiná entrega/envío
-4. Marcá como "Enviado" en tu panel
-
-═══════════════════════════════════
-💳 PAGO SIMULADO CON
-═══════════════════════════════════
-Tarjeta: **** **** **** ${cleanCardNumber.slice(-4)}
-Vencimiento: ${formData.cardExpiry}
-Titular: ${formData.cardName}
-
-Nota: Este es un pago simulado para demo.
-En producción usaremos Stripe/MercadoPago.
-
-═══════════════════════════════════
-Shoppa! - El marketplace sin vueltas
-Si tenés dudas, respondé este email.
-      `.trim();
-
-      // Abrir cliente de email del usuario
-      window.location.href = `mailto:juanulian@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-
-      // Esperar un momento para que se abra el email
-      setTimeout(() => {
-        setOrderNumber(generatedOrderNumber);
-        setOrderCompleted(true);
-
-        toast({
-          title: '¡Compra exitosa! 🎉',
-          description: `Orden ${generatedOrderNumber} procesada. Se abrió tu cliente de email para notificar al vendedor.`,
-        });
-
-        onSuccess?.(generatedOrderNumber);
-        setIsLoading(false);
-      }, 1000);
-
-    } catch (error: any) {
-      console.error('Checkout error:', error);
+    // Validar campos básicos
+    if (!formData.buyerName || !formData.buyerEmail || !formData.buyerPhone || !formData.buyerAddress || !formData.buyerCity || !formData.buyerProvince || !formData.buyerPostalCode) {
       toast({
         title: 'Error',
-        description: error.message || 'No pudimos procesar tu compra',
+        description: 'Por favor completá todos los campos obligatorios',
         variant: 'destructive',
       });
-      setIsLoading(false);
+      return;
     }
+
+    // TODO: Guardar datos de envío en la base de datos antes de ir a pagar
+
+    // Redirigir a Mercado Pago
+    window.location.href = 'https://mpago.la/1XSvNBm';
   };
 
   if (orderCompleted) {
@@ -213,7 +103,7 @@ Si tenés dudas, respondé este email.
       <CardHeader>
         <CardTitle className="text-2xl">Finalizar Compra</CardTitle>
         <CardDescription>
-          Checkout simulado - En producción usaríamos Stripe/MercadoPago
+          Completá tus datos de envío para continuar con el pago
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -290,119 +180,71 @@ Si tenés dudas, respondé este email.
               <h3 className="font-semibold text-lg">Dirección de Envío</h3>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="buyerAddress">Dirección Completa *</Label>
-              <Input
-                id="buyerAddress"
-                placeholder="Av. Corrientes 1234, Piso 5, Depto B, CABA"
-                value={formData.buyerAddress}
-                onChange={(e) => handleInputChange('buyerAddress', e.target.value)}
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                Incluí calle, número, piso/depto, localidad y código postal
-              </p>
-            </div>
-          </div>
-
-          {/* Datos de Tarjeta (Simulado) */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 mb-4">
-              <CreditCard className="h-5 w-5 text-primary" />
-              <h3 className="font-semibold text-lg">Datos de Pago (Simulado)</h3>
-            </div>
-
-            <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 text-sm">
-              <p><strong>💡 Tarjetas de prueba:</strong></p>
-              <ul className="mt-2 space-y-1">
-                <li>• Número: 4242 4242 4242 4242</li>
-                <li>• Vencimiento: cualquier fecha futura (12/25)</li>
-                <li>• CVV: cualquier 3 dígitos (123)</li>
-              </ul>
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="cardNumber">Número de Tarjeta *</Label>
+                <Label htmlFor="buyerAddress">Calle y Número *</Label>
                 <Input
-                  id="cardNumber"
-                  placeholder="1234 5678 9012 3456"
-                  value={formatCardNumber(formData.cardNumber)}
-                  onChange={(e) => {
-                    const cleaned = e.target.value.replace(/\s/g, '');
-                    if (cleaned.length <= 16 && /^\d*$/.test(cleaned)) {
-                      handleInputChange('cardNumber', cleaned);
-                    }
-                  }}
-                  maxLength={19}
+                  id="buyerAddress"
+                  placeholder="Av. Corrientes 1234, Piso 5, Depto B"
+                  value={formData.buyerAddress}
+                  onChange={(e) => handleInputChange('buyerAddress', e.target.value)}
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="cardExpiry">Vencimiento *</Label>
+                <Label htmlFor="buyerCity">Ciudad *</Label>
                 <Input
-                  id="cardExpiry"
-                  placeholder="MM/AA"
-                  value={formData.cardExpiry}
-                  onChange={(e) => {
-                    const formatted = formatExpiry(e.target.value);
-                    if (formatted.replace('/', '').length <= 4) {
-                      handleInputChange('cardExpiry', formatted);
-                    }
-                  }}
-                  maxLength={5}
+                  id="buyerCity"
+                  placeholder="Buenos Aires"
+                  value={formData.buyerCity}
+                  onChange={(e) => handleInputChange('buyerCity', e.target.value)}
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="cardCvv">CVV *</Label>
+                <Label htmlFor="buyerProvince">Provincia *</Label>
                 <Input
-                  id="cardCvv"
-                  placeholder="123"
-                  value={formData.cardCvv}
-                  onChange={(e) => {
-                    if (e.target.value.length <= 4 && /^\d*$/.test(e.target.value)) {
-                      handleInputChange('cardCvv', e.target.value);
-                    }
-                  }}
-                  maxLength={4}
+                  id="buyerProvince"
+                  placeholder="CABA"
+                  value={formData.buyerProvince}
+                  onChange={(e) => handleInputChange('buyerProvince', e.target.value)}
                   required
                 />
               </div>
 
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="cardName">Nombre en la Tarjeta *</Label>
+                <Label htmlFor="buyerPostalCode">Código Postal *</Label>
                 <Input
-                  id="cardName"
-                  placeholder="JUAN PEREZ"
-                  value={formData.cardName}
-                  onChange={(e) => handleInputChange('cardName', e.target.value.toUpperCase())}
+                  id="buyerPostalCode"
+                  placeholder="C1043"
+                  value={formData.buyerPostalCode}
+                  onChange={(e) => handleInputChange('buyerPostalCode', e.target.value)}
                   required
+                />
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="buyerNotes">Notas adicionales (opcional)</Label>
+                <Input
+                  id="buyerNotes"
+                  placeholder="Ej: Timbre no funciona, llamar por tel"
+                  value={formData.buyerNotes}
+                  onChange={(e) => handleInputChange('buyerNotes', e.target.value)}
                 />
               </div>
             </div>
           </div>
 
           {/* Submit */}
-          <Button type="submit" size="lg" className="w-full" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Procesando Compra...
-              </>
-            ) : (
-              <>
-                Confirmar Compra - ${product.price.toLocaleString('es-AR')}
-              </>
-            )}
+          <Button type="submit" size="lg" className="w-full">
+            <CreditCard className="mr-2 h-5 w-5" />
+            Ir a Pagar - ${product.price.toLocaleString('es-AR')}
           </Button>
 
           <p className="text-xs text-center text-muted-foreground">
-            Al confirmar, aceptás nuestros términos y condiciones.
-            <br />
-            Este es un checkout simulado. En producción usaríamos Stripe/MercadoPago.
+            Al continuar, serás redirigido a Mercado Pago para completar tu compra de forma segura.
           </p>
         </form>
       </CardContent>

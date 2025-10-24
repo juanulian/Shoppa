@@ -17,29 +17,29 @@ export default function VerifiedProductLink({
   productId,
   productName,
   productPrice,
-  productImage
+  productImage,
 }: VerifiedProductLinkProps) {
   const router = useRouter()
 
   const handleClick = () => {
-    // Si no hay datos del producto, ir a la encuesta (legacy)
-    if (!productId || !productName || !productPrice) {
-      window.open('https://forms.gle/CVdyFmBcASjXRKww7', '_blank')
-      return
-    }
-
     // Track product click
-    analytics.productClicked(productId, undefined, {
+    analytics.productClicked(productId || 'unknown', undefined, {
       productName,
       productPrice,
       source: 'buy_button'
     });
 
     // Track start checkout
-    analytics.startCheckout(productId, undefined, {
+    analytics.startCheckout(productId || 'unknown', undefined, {
       productName,
       productPrice
     });
+
+    // Si no hay datos del producto, ir a la encuesta (legacy)
+    if (!productId || !productName || !productPrice) {
+      window.open('https://forms.gle/CVdyFmBcASjXRKww7', '_blank')
+      return
+    }
 
     // Extraer precio numérico (eliminar ARS, $, puntos, espacios)
     const priceClean = productPrice.replace(/[^\d]/g, '')
