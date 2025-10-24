@@ -38,9 +38,19 @@ function LoginForm() {
         return;
       }
 
-      // Redirect based on callback or default to home
-      const callbackUrl = searchParams.get('callbackUrl') || '/';
-      router.push(callbackUrl);
+      // Get session to check user role
+      const response = await fetch('/api/auth/session');
+      const session = await response.json();
+
+      // Redirect based on role and callback
+      let redirectUrl = searchParams.get('callbackUrl');
+
+      if (!redirectUrl) {
+        // If no callback, redirect admin users to analytics, others to home
+        redirectUrl = session?.user?.role === 'ADMIN' ? '/admin/analytics' : '/';
+      }
+
+      router.push(redirectUrl);
       router.refresh();
     } catch (error) {
       setError('Ocurrió un error al iniciar sesión');
