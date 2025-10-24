@@ -198,12 +198,57 @@ const intelligentSearchAgentFlow = ai.defineFlow(
 export async function intelligentSearchAgent(input: IntelligentSearchAgentInput): Promise<IntelligentSearchAgentOutput> {
   const filteredCatalog = preFilterCatalog(input.userProfileData);
 
-  const result = await intelligentSearchAgentFlow({
-    userProfileData: input.userProfileData,
-    catalog: filteredCatalog
-  });
+  // 🚀 OPTIMIZACIÓN: 3 modelos en paralelo, 1 recomendación cada uno
+  console.log('🚀 Generando 3 recomendaciones en paralelo...');
 
-  return result.map(normalizeProductRecommendation);
+  const models: Array<'googleai/gemini-2.5-pro' | 'googleai/gemini-2.5-flash' | 'openai/gpt-4o-mini'> = [
+    'googleai/gemini-2.5-pro',
+    'googleai/gemini-2.5-flash',
+    'openai/gpt-4o-mini',
+  ];
+
+  const modelNames = ['Gemini Pro', 'Gemini Flash', 'OpenAI'];
+
+  // Función para generar 1 recomendación con fallback
+  const generateWithFallback = async (primaryModel: typeof models[number], fallbackModels: typeof models[number][], index: number) => {
+    const allModels = [primaryModel, ...fallbackModels];
+
+    for (let i = 0; i < allModels.length; i++) {
+      const model = allModels[i];
+      const modelName = model.includes('pro') ? 'Gemini Pro' : model.includes('flash') ? 'Gemini Flash' : 'OpenAI';
+
+      try {
+        console.log(`  → ${modelName} generando recomendación ${index + 1}...`);
+        const prompt = createSingleRecommendationPrompt(model);
+        const { output } = await prompt({
+          userProfileData: input.userProfileData,
+          catalog: filteredCatalog,
+        });
+
+        console.log(`  ✅ ${modelName} completó recomendación ${index + 1}`);
+        return output;
+      } catch (error: any) {
+        console.error(`  ❌ ${modelName} falló para recomendación ${index + 1}:`, error.message);
+
+        if (i === allModels.length - 1) {
+          throw new Error(`Todos los modelos fallaron para recomendación ${index + 1}`);
+        }
+        console.log(`  ⚡ Intentando fallback...`);
+      }
+    }
+  };
+
+  // Distribuir modelos para 3 recomendaciones con fallbacks
+  const promises = [
+    generateWithFallback(models[0], [models[1], models[2]], 1), // Pro → Flash → OpenAI
+    generateWithFallback(models[1], [models[2], models[0]], 2), // Flash → OpenAI → Pro
+    generateWithFallback(models[2], [models[1], models[0]], 3), // OpenAI → Flash → Pro
+  ];
+
+  // Ejecutar en paralelo
+  const results = await Promise.all(promises);
+
+  return results.map(normalizeProductRecommendation);
 }
 
 
