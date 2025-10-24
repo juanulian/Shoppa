@@ -5,9 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RefreshCw, TrendingUp, Users, ShoppingCart, Eye, MousePointerClick, Package } from 'lucide-react';
+import { RefreshCw, TrendingUp, Users, ShoppingCart, Eye, MousePointerClick, Package, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import Logo from '@/components/icons/logo';
+import { auth, signOut } from '@/auth';
 
 interface FunnelData {
   totalPageViews: number;
@@ -87,7 +88,7 @@ interface Vendor {
   eventCount: number;
 }
 
-export default function AnalyticsPage() {
+function AnalyticsContent({ userEmail }: { userEmail: string }) {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [productData, setProductData] = useState<ProductAnalytics | null>(null);
   const [vendors, setVendors] = useState<Vendor[]>([]);
@@ -97,6 +98,10 @@ export default function AnalyticsPage() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [selectedVendor, setSelectedVendor] = useState<string>('');
+
+  const handleSignOut = async () => {
+    await signOut({ redirectTo: '/' });
+  };
 
   const fetchAnalytics = async () => {
     setLoading(true);
@@ -189,14 +194,29 @@ export default function AnalyticsPage() {
             <Link href="/" className="flex items-center gap-2">
               <Logo />
             </Link>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={fetchAnalytics}
-              disabled={loading}
-            >
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            </Button>
+            <div className="flex items-center gap-4">
+              <div className="text-sm text-muted-foreground hidden sm:block">
+                {userEmail}
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={fetchAnalytics}
+                disabled={loading}
+                title="Refrescar datos"
+              >
+                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSignOut}
+                className="gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">Salir</span>
+              </Button>
+            </div>
           </div>
 
           {/* Date Filters */}
@@ -674,4 +694,11 @@ function FunnelStep({ label, count, percentage, color }: { label: string; count:
       </div>
     </div>
   );
+}
+
+export default async function AnalyticsPage() {
+  const session = await auth();
+  const userEmail = session?.user?.email || 'Admin';
+
+  return <AnalyticsContent userEmail={userEmail} />;
 }

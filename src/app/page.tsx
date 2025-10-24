@@ -89,12 +89,20 @@ export default function BuyerLandingPage() {
               <Logo />
             </Link>
 
-            <Link
-              href="/sellers"
-              className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-primary transition-colors whitespace-nowrap"
-            >
-              Para vendedores
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/sellers"
+                className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-primary transition-colors whitespace-nowrap"
+              >
+                Para vendedores
+              </Link>
+              <Link
+                href="/login"
+                className="text-xs sm:text-sm font-medium text-primary hover:underline whitespace-nowrap"
+              >
+                Iniciar sesión
+              </Link>
+            </div>
           </div>
         </div>
       </header>
