@@ -63,9 +63,10 @@ model User {
   buyerProfile  BuyerProfile?
   sellerProfile SellerProfile?
   sessions      Session[]
-  referrals     Referral[] @relation("Referrer")
-  referredByUser User?     @relation("ReferredUsers", fields: [referredBy], references: [id], onDelete: SetNull)
-  referredUsers  User[]    @relation("ReferredUsers")
+  // TODO: Agregar sistema de referidos después de validación
+  // referrals     Referral[] @relation("Referrer")
+  // referredByUser User?     @relation("ReferredUsers", fields: [referredBy], references: [id], onDelete: SetNull)
+  // referredUsers  User[]    @relation("ReferredUsers")
 
   @@index([email])
   @@index([username])

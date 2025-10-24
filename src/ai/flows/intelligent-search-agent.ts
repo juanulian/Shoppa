@@ -218,24 +218,37 @@ export async function intelligentSearchAgent(input: IntelligentSearchAgentInput)
       const modelName = model.includes('pro') ? 'Gemini Pro' : model.includes('flash') ? 'Gemini Flash' : 'OpenAI';
 
       try {
-        console.log(`  → ${modelName} generando recomendación ${index + 1}...`);
+        console.log(`  → ${modelName} generando recomendación #${index}...`);
         const prompt = createSingleRecommendationPrompt(model);
-        const { output } = await prompt({
+
+        // Timeout de 30 segundos por modelo
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Timeout de 30s')), 30000)
+        );
+
+        const resultPromise = prompt({
           userProfileData: input.userProfileData,
-          catalog: filteredCatalog,
+          recommendationNumber: index,
         });
 
-        console.log(`  ✅ ${modelName} completó recomendación ${index + 1}`);
+        const { output } = await Promise.race([resultPromise, timeoutPromise]) as any;
+
+        console.log(`  ✅ ${modelName} completó recomendación #${index}`);
         return output;
       } catch (error: any) {
-        console.error(`  ❌ ${modelName} falló para recomendación ${index + 1}:`, error.message);
+        const errorMsg = error.message || 'Error desconocido';
+        console.error(`  ❌ ${modelName} falló para recomendación #${index}:`, errorMsg);
 
         if (i === allModels.length - 1) {
-          throw new Error(`Todos los modelos fallaron para recomendación ${index + 1}`);
+          // Último modelo falló, lanzar error detallado
+          throw new Error(`Todos los modelos fallaron para recomendación #${index}. Último error: ${errorMsg}`);
         }
-        console.log(`  ⚡ Intentando fallback...`);
+        console.log(`  ⚡ Intentando fallback con siguiente modelo...`);
       }
     }
+
+    // Nunca debería llegar aquí, pero TypeScript lo requiere
+    throw new Error(`Error inesperado en recomendación #${index}`);
   };
 
   // Distribuir modelos para 3 recomendaciones con fallbacks
@@ -248,7 +261,10 @@ export async function intelligentSearchAgent(input: IntelligentSearchAgentInput)
   // Ejecutar en paralelo
   const results = await Promise.all(promises);
 
-  return results.map(normalizeProductRecommendation);
+  // Filtrar nulls/undefined y normalizar
+  return results
+    .filter((result): result is NonNullable<typeof result> => result != null)
+    .map(normalizeProductRecommendation);
 }
 
 
