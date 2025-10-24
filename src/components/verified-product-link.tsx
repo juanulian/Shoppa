@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
+import { analytics } from '@/lib/analytics'
 
 interface VerifiedProductLinkProps {
   className?: string
@@ -26,6 +27,19 @@ export default function VerifiedProductLink({
       window.open('https://forms.gle/CVdyFmBcASjXRKww7', '_blank')
       return
     }
+
+    // Track product click
+    analytics.productClicked(productId, undefined, {
+      productName,
+      productPrice,
+      source: 'buy_button'
+    });
+
+    // Track start checkout
+    analytics.startCheckout(productId, undefined, {
+      productName,
+      productPrice
+    });
 
     // Extraer precio numérico (eliminar ARS, $, puntos, espacios)
     const priceClean = productPrice.replace(/[^\d]/g, '')

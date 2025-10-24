@@ -8,6 +8,7 @@ import AddDetailsModal from '@/components/add-details-modal';
 import RecommendationsLoading from '@/components/recommendations-loading';
 import { RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { analytics } from '@/lib/analytics';
 
 interface MainAppProps {
   userProfileData: string;
@@ -26,6 +27,7 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
     setResults([]);
 
     const userData = searchData || currentUserData;
+    const startTime = Date.now();
 
     try {
       console.log('🔍 Iniciando búsqueda...');
@@ -40,10 +42,24 @@ const MainApp: React.FC<MainAppProps> = ({ userProfileData, onNewSearch }) => {
         throw new Error('No se recibieron recomendaciones');
       }
 
-      console.log(`✅ Recibidas ${allRecommendations.length} recomendaciones`);
+      const generationTime = Math.floor((Date.now() - startTime) / 1000); // seconds
+      console.log(`✅ Recibidas ${allRecommendations.length} recomendaciones en ${generationTime}s`);
 
       setResults(allRecommendations);
       setIsGenerating(false);
+
+      // Track recommendations viewed
+      allRecommendations.forEach((rec, index) => {
+        analytics.recommendationViewed(
+          rec.id || `rec-${index}`,
+          rec.vendorId,
+          {
+            position: index + 1,
+            generationTime,
+            totalRecommendations: allRecommendations.length,
+          }
+        );
+      });
     } catch (error) {
       console.error('La búsqueda falló:', error);
       toast({

@@ -11,6 +11,7 @@ import VerifiedProductLink from "./verified-product-link";
 import { useDeviceType } from '@/hooks/use-device-type';
 import SwipeInstructionOverlay from './swipe-instruction-overlay';
 import { cn } from '@/lib/utils';
+import { analytics } from '@/lib/analytics';
 
 const iconMap: Record<string, LucideIcon> = {
   camera: Camera,
@@ -100,6 +101,21 @@ const ProductCard: React.FC<{
   onDismissInstructions?: () => void;
 }> = ({ product, onShowDetails, deviceType, showInstructions, onDismissInstructions }) => {
   const { isMobile, isTablet } = deviceType;
+
+  const handleShowDetails = () => {
+    // Track product details view
+    analytics.productDetailsViewed(
+      product.id || product.productName,
+      product.vendorId,
+      {
+        productName: product.productName,
+        matchPercentage: product.matchPercentage,
+        price: product.price,
+        source: 'details_button'
+      }
+    );
+    onShowDetails();
+  };
 
   return (
     <div className={`glassmorphism-card rounded-3xl soft-border overflow-hidden shadow-lg ${
@@ -194,7 +210,7 @@ const ProductCard: React.FC<{
           isMobile ? 'space-y-1' : 'space-y-2'
         }`}>
           <Button
-            onClick={onShowDetails}
+            onClick={handleShowDetails}
             variant="outline"
             className="w-full rounded-full"
             size={isMobile ? "sm" : "default"}

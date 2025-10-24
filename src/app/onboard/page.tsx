@@ -9,6 +9,7 @@ import Logo from '@/components/icons/logo';
 import Link from 'next/link';
 import { analyzeQuery, type QueryAnalysisOutput } from '@/ai/flows/query-analysis';
 import { Loader2 } from 'lucide-react';
+import { analytics } from '@/lib/analytics';
 
 export type AppState = 'analyzing' | 'onboarding' | 'search';
 
@@ -20,6 +21,11 @@ function OnboardPageContent() {
   const [appState, setAppState] = useState<AppState>(query ? 'analyzing' : 'onboarding');
   const [userProfile, setUserProfile] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<QueryAnalysisOutput | undefined>(undefined);
+
+  // Track page view
+  useEffect(() => {
+    analytics.pageView('onboard', { hasQuery: !!query });
+  }, [query]);
 
   useEffect(() => {
     if (query && appState === 'analyzing') {
@@ -37,22 +43,42 @@ function OnboardPageContent() {
             if (special) profileData += `Especial: ${special}\n`;
 
             setUserProfile(profileData);
+
+            // Track that onboarding was skipped (auto-completed from query analysis)
+            analytics.onboardingCompleted({
+              skipped: true,
+              source: 'query_analysis',
+              query
+            });
+
             setAppState('search');
           } else {
+            // Track onboarding started
+            analytics.onboardingStarted({ source: 'incomplete_query', query });
             setAppState('onboarding');
           }
         })
         .catch((error) => {
           console.error('Error analyzing query:', error);
+          analytics.onboardingStarted({ source: 'query_error', query });
           setAppState('onboarding');
         });
     } else if (!query) {
+        // Track onboarding started without query
+        analytics.onboardingStarted({ source: 'direct' });
         setAppState('onboarding');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
   const handleOnboardingComplete = (profileData: string) => {
+    // Track onboarding completion
+    analytics.onboardingCompleted({
+      skipped: false,
+      source: 'manual_completion',
+      hasInitialQuery: !!query
+    });
+
     setUserProfile(profileData);
     setAppState('search');
   };

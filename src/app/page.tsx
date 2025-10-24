@@ -16,6 +16,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { analytics } from '@/lib/analytics';
 
 
 type Category = {
@@ -54,15 +55,29 @@ export default function BuyerLandingPage() {
   const [searchQuery, setSearchQuery] = React.useState('');
   const router = useRouter();
 
+  // Track landing page view
+  React.useEffect(() => {
+    analytics.pageView('landing');
+  }, []);
+
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const q = searchQuery.trim();
+
+    // Track search event
+    if (q) {
+      analytics.searchStarted(q, { source: 'landing_search' });
+    }
+
     const url = q ? `/onboard?q=${encodeURIComponent(q)}` : '/onboard';
     router.push(url);
   };
 
   const handleCategoryClick = (active: boolean) => {
-    if (active) router.push('/onboard');
+    if (active) {
+      analytics.pageView('onboard', { source: 'category_click', category: 'smartphones' });
+      router.push('/onboard');
+    }
   };
 
   return (
