@@ -1,14 +1,14 @@
 import { PrismaClient } from '@prisma/client';
-import { hash } from 'bcryptjs';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌱 Seeding database...');
 
-  // Create admin user
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@shoppa.com';
-  const adminPassword = process.env.ADMIN_PASSWORD || 'changeme123';
+  // Create admin user (juan.ulian@shoppa.ar)
+  const adminEmail = 'juan.ulian@shoppa.ar';
+  const adminPassword = 'shoppa123';  // TODO: Change in production
 
   const existingAdmin = await prisma.user.findUnique({
     where: { email: adminEmail },
@@ -17,14 +17,15 @@ async function main() {
   if (existingAdmin) {
     console.log('⏭️  Admin user already exists, skipping...');
   } else {
-    const passwordHash = await hash(adminPassword, 12);
+    const passwordHash = await bcrypt.hash(adminPassword, 12);
 
     const admin = await prisma.user.create({
       data: {
         email: adminEmail,
+        username: 'juanulian',
         passwordHash,
-        firstName: 'Admin',
-        lastName: 'Shoppa',
+        firstName: 'Juan',
+        lastName: 'Ulian',
         role: 'ADMIN',
       },
     });
@@ -42,7 +43,7 @@ async function main() {
   });
 
   if (!existingBuyer) {
-    const passwordHash = await hash('demo123', 12);
+    const passwordHash = await bcrypt.hash('demo123', 12);
 
     const buyer = await prisma.user.create({
       data: {
@@ -62,40 +63,42 @@ async function main() {
     console.log(`   Password: demo123`);
   }
 
-  // Create demo seller
-  const sellerEmail = 'seller@example.com';
+  // Create Shoppa! Test seller
+  const sellerEmail = 'test@shoppa.ar';
   const existingSeller = await prisma.user.findUnique({
     where: { email: sellerEmail },
   });
 
   if (!existingSeller) {
-    const passwordHash = await hash('demo123', 12);
+    const passwordHash = await bcrypt.hash('test123', 12);
 
     const seller = await prisma.user.create({
       data: {
         email: sellerEmail,
+        username: 'shoppa_test',
         passwordHash,
-        firstName: 'María',
-        lastName: 'Vendedora',
+        firstName: 'Shoppa',
+        lastName: 'Test',
         role: 'SELLER',
         sellerProfile: {
           create: {
-            businessName: 'TechStore Demo',
+            businessName: 'Shoppa! Test',
             businessType: 'individual',
-            taxId: '20123456789',
+            taxId: '20999999999',
             businessAddress: 'Av. Corrientes 1234, CABA',
             businessPhone: '+54 11 1234-5678',
-            businessEmail: 'info@techstoredemo.com',
+            businessEmail: 'test@shoppa.ar',
             status: 'VERIFIED',
             tier: 'BASIC',
+            verifiedAt: new Date(),
           },
         },
       },
     });
 
-    console.log('✅ Demo seller created:');
+    console.log('✅ Shoppa! Test seller created:');
     console.log(`   Email: ${seller.email}`);
-    console.log(`   Password: demo123`);
+    console.log(`   Password: test123`);
   }
 
   console.log('🎉 Seeding completed!');

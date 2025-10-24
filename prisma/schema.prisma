@@ -685,6 +685,7 @@ model AnalyticsEvent {
 
   // Context
   productId     String?
+  sellerId      String?  // ID del vendedor
   orderId       String?
 
   // Metadata
@@ -700,6 +701,7 @@ model AnalyticsEvent {
   @@index([eventType])
   @@index([userId])
   @@index([productId])
+  @@index([sellerId])
   @@index([createdAt])
   @@map("analytics_events")
 }

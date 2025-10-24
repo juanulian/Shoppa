@@ -33,11 +33,11 @@ export async function POST(request: NextRequest) {
 
     // Obtener información adicional del request
     const userAgent = request.headers.get('user-agent') || '';
-    const referer = request.headers.get('referer') || '';
+    const referrer = request.headers.get('referer') || '';
 
     // IP address (considerar usar real IP en producción con headers de proxy)
     const forwardedFor = request.headers.get('x-forwarded-for');
-    const ipAddress = forwardedFor ? forwardedFor.split(',')[0] : request.ip || 'unknown';
+    const ipAddress = forwardedFor ? forwardedFor.split(',')[0] : 'unknown';
 
     // Crear evento
     const event = await prisma.analyticsEvent.create({
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
         metadata: validatedData.metadata || {},
         userAgent,
         ipAddress,
-        referer,
+        referrer,
       },
     });
 
