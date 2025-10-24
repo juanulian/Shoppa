@@ -12,8 +12,8 @@ export const authConfig = {
       if (isOnAdminPanel) {
         if (!isLoggedIn) return false
         // Check if user is admin
-        if (auth.user.role !== 'ADMIN') {
-          return Response.redirect(new URL('/', nextUrl))
+        if (auth.user?.role !== 'ADMIN') {
+          return false // This will redirect to login page
         }
         return true
       }
