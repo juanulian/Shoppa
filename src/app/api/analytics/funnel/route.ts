@@ -9,19 +9,39 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const days = parseInt(searchParams.get('days') || '7');
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
+    const sellerId = searchParams.get('sellerId'); // Filtro por vendedor
 
-    // Calcular fecha desde
-    const since = new Date();
-    since.setDate(since.getDate() - days);
+    // Determinar rango de fechas
+    let since: Date;
+    let until: Date = new Date();
+
+    if (startDate && endDate) {
+      since = new Date(startDate);
+      until = new Date(endDate);
+      until.setHours(23, 59, 59, 999); // Incluir todo el día final
+    } else {
+      since = new Date();
+      since.setDate(since.getDate() - days);
+    }
+
+    // Construir where clause con filtro opcional de vendor
+    const whereClause: any = {
+      createdAt: {
+        gte: since,
+        lte: until,
+      },
+    };
+
+    if (sellerId) {
+      whereClause.sellerId = sellerId;
+    }
 
     // Obtener conteos por tipo de evento
     const eventCounts = await prisma.analyticsEvent.groupBy({
       by: ['eventType'],
-      where: {
-        createdAt: {
-          gte: since,
-        },
-      },
+      where: whereClause,
       _count: {
         id: true,
       },
@@ -54,11 +74,7 @@ export async function GET(request: NextRequest) {
 
     // Obtener datos de sesiones únicas
     const uniqueSessions = await prisma.analyticsEvent.findMany({
-      where: {
-        createdAt: {
-          gte: since,
-        },
-      },
+      where: whereClause,
       select: {
         sessionId: true,
       },
@@ -68,9 +84,7 @@ export async function GET(request: NextRequest) {
     // Tiempo promedio de sesión (calculado desde eventos con timeSpent en metadata)
     const sessionTimeEvents = await prisma.analyticsEvent.findMany({
       where: {
-        createdAt: {
-          gte: since,
-        },
+        ...whereClause,
         eventType: 'page_view',
       },
       select: {
@@ -91,16 +105,30 @@ export async function GET(request: NextRequest) {
 
     const avgSessionTime = timeSpentCount > 0 ? Math.floor(totalTimeSpent / timeSpentCount) : 0;
 
-    // Timeline de eventos (últimos 7 días, agrupados por día)
-    const dailyEvents = await prisma.$queryRaw<Array<{date: Date, count: bigint}>>`
-      SELECT
-        DATE(created_at) as date,
-        COUNT(*) as count
-      FROM analytics_events
-      WHERE created_at >= ${since}
-      GROUP BY DATE(created_at)
-      ORDER BY date ASC
-    `;
+    // Timeline de eventos (agrupados por día)
+    let dailyEvents: Array<{date: Date, count: bigint}>;
+
+    if (sellerId) {
+      dailyEvents = await prisma.$queryRaw`
+        SELECT
+          DATE(created_at) as date,
+          COUNT(*) as count
+        FROM analytics_events
+        WHERE created_at >= ${since} AND created_at <= ${until} AND seller_id = ${sellerId}
+        GROUP BY DATE(created_at)
+        ORDER BY date ASC
+      `;
+    } else {
+      dailyEvents = await prisma.$queryRaw`
+        SELECT
+          DATE(created_at) as date,
+          COUNT(*) as count
+        FROM analytics_events
+        WHERE created_at >= ${since} AND created_at <= ${until}
+        GROUP BY DATE(created_at)
+        ORDER BY date ASC
+      `;
+    }
 
     return NextResponse.json({
       success: true,
