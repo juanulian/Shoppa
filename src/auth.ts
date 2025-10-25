@@ -14,11 +14,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
       async authorize(credentials) {
+        console.log('[AUTH] Authorize called for:', credentials?.email)
+
         const parsedCredentials = z
           .object({ email: z.string().email(), password: z.string().min(6) })
           .safeParse(credentials)
 
-        if (!parsedCredentials.success) return null
+        if (!parsedCredentials.success) {
+          console.log('[AUTH] Credentials validation failed')
+          return null
+        }
 
         const { email, password } = parsedCredentials.data
 
@@ -27,18 +32,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           where: { email },
         })
 
-        if (!user) return null
+        if (!user) {
+          console.log('[AUTH] User not found:', email)
+          return null
+        }
+
+        console.log('[AUTH] User found, checking password...')
 
         // Verify password
         const passwordsMatch = await bcrypt.compare(password, user.passwordHash)
 
-        if (!passwordsMatch) return null
+        if (!passwordsMatch) {
+          console.log('[AUTH] Password mismatch')
+          return null
+        }
+
+        console.log('[AUTH] Password OK, updating last login...')
 
         // Update last login
         await prisma.user.update({
           where: { id: user.id },
           data: { lastLoginAt: new Date() },
         })
+
+        console.log('[AUTH] Returning user with role:', user.role)
 
         return {
           id: user.id,
@@ -49,23 +66,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        console.log('[AUTH] JWT callback - Adding user to token:', user.email)
-        token.id = user.id
-        token.role = user.role
-      }
-      return token
-    },
-    async session({ session, token }) {
-      console.log('[AUTH] Session callback - Building session for:', token.email)
-      if (session.user) {
-        session.user.id = token.id as string
-        session.user.role = token.role as string
-      }
-      console.log('[AUTH] Session user role:', session.user?.role)
-      return session
-    },
-  },
 })
