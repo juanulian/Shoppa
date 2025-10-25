@@ -24,18 +24,53 @@ function LoginForm() {
     setError('');
     setIsLoading(true);
 
-    // Use NextAuth's built-in redirect - let it handle everything
-    const callbackUrl = searchParams.get('callbackUrl') || '/admin/analytics';
+    try {
+      console.log('[LOGIN] Starting login...');
+      console.log('[LOGIN] Email:', email);
 
-    const result = await signIn('credentials', {
-      email,
-      password,
-      callbackUrl, // NextAuth handles the redirect automatically
-    });
+      // Get callback URL
+      const rawCallbackUrl = searchParams.get('callbackUrl');
+      console.log('[LOGIN] Raw callbackUrl:', rawCallbackUrl);
 
-    // If we reach here, login failed (NextAuth would have redirected on success)
-    if (result?.error || !result?.ok) {
-      setError('Email o contraseña incorrectos');
+      // Extract pathname if it's a full URL
+      let callbackUrl = '/admin/analytics'; // default
+      if (rawCallbackUrl) {
+        if (rawCallbackUrl.startsWith('http')) {
+          const url = new URL(rawCallbackUrl);
+          callbackUrl = url.pathname;
+          console.log('[LOGIN] Extracted pathname:', callbackUrl);
+        } else {
+          callbackUrl = rawCallbackUrl;
+          console.log('[LOGIN] Using relative path:', callbackUrl);
+        }
+      }
+
+      console.log('[LOGIN] Final callbackUrl for signIn:', callbackUrl);
+
+      // Use NextAuth's built-in redirect
+      const result = await signIn('credentials', {
+        email,
+        password,
+        callbackUrl,
+      });
+
+      console.log('[LOGIN] signIn result:', result);
+
+      // If we reach here, login might have failed
+      if (result?.error) {
+        console.error('[LOGIN] Error:', result.error);
+        setError('Email o contraseña incorrectos');
+        setIsLoading(false);
+      } else if (!result?.ok) {
+        console.error('[LOGIN] Not ok but no error');
+        setError('Ocurrió un error al iniciar sesión');
+        setIsLoading(false);
+      } else {
+        console.log('[LOGIN] Success! Should redirect automatically...');
+      }
+    } catch (error) {
+      console.error('[LOGIN] Exception:', error);
+      setError('Ocurrió un error al iniciar sesión');
       setIsLoading(false);
     }
   };
