@@ -685,6 +685,42 @@ model Notification {
 }
 
 // ============================================
+// CHECKOUT DATA
+// ============================================
+
+model CheckoutData {
+  id              String   @id @default(cuid())
+
+  // Product info
+  productId       String
+  productName     String
+  productPrice    Int
+  productImage    String?
+
+  // Buyer/Shipping info
+  buyerName       String
+  buyerEmail      String
+  buyerPhone      String
+  buyerAddress    String
+  buyerCity       String
+  buyerProvince   String
+  buyerPostalCode String
+  buyerNotes      String?
+
+  // Payment
+  paymentStatus   String?  // "pending", "approved", "rejected"
+  paymentId       String?  // Mercado Pago payment ID
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([buyerEmail])
+  @@index([productId])
+  @@index([createdAt])
+  @@map("checkout_data")
+}
+
+// ============================================
 // ANALYTICS & METRICS
 // ============================================
 

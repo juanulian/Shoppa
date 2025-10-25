@@ -53,10 +53,44 @@ export default function SimulatedCheckout({ product, onSuccess }: SimulatedCheck
       return;
     }
 
-    // TODO: Guardar datos de envío en la base de datos antes de ir a pagar
+    setIsLoading(true);
 
-    // Redirigir a Mercado Pago
-    window.location.href = 'https://mpago.la/1XSvNBm';
+    try {
+      // Guardar datos de envío en la base de datos antes de ir a pagar
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId: product.id,
+          productName: product.name,
+          productPrice: product.price,
+          productImage: product.imageUrl,
+          ...formData,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al guardar los datos');
+      }
+
+      const data = await response.json();
+
+      // Redirigir a Mercado Pago con el ID de checkout
+      const mpUrl = new URL('https://mpago.la/1XSvNBm');
+      mpUrl.searchParams.set('external_reference', data.checkoutId);
+
+      window.location.href = mpUrl.toString();
+    } catch (error) {
+      console.error('Error saving checkout data:', error);
+      toast({
+        title: 'Error',
+        description: 'Hubo un error al procesar tu pedido. Por favor intentá de nuevo.',
+        variant: 'destructive',
+      });
+      setIsLoading(false);
+    }
   };
 
   if (orderCompleted) {
