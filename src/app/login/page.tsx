@@ -47,26 +47,28 @@ function LoginForm() {
 
       console.log('[LOGIN] Final callbackUrl for signIn:', callbackUrl);
 
-      // Use NextAuth's built-in redirect
+      // signIn with redirect: false to handle errors manually
       const result = await signIn('credentials', {
         email,
         password,
-        callbackUrl,
+        redirect: false,
       });
 
       console.log('[LOGIN] signIn result:', result);
 
-      // If we reach here, login might have failed
+      // Handle the result
       if (result?.error) {
         console.error('[LOGIN] Error:', result.error);
         setError('Email o contraseña incorrectos');
         setIsLoading(false);
-      } else if (!result?.ok) {
-        console.error('[LOGIN] Not ok but no error');
+      } else if (result?.ok) {
+        console.log('[LOGIN] Success! Redirecting to:', callbackUrl);
+        // Manually redirect on success
+        window.location.href = callbackUrl;
+      } else {
+        console.error('[LOGIN] Unexpected result');
         setError('Ocurrió un error al iniciar sesión');
         setIsLoading(false);
-      } else {
-        console.log('[LOGIN] Success! Should redirect automatically...');
       }
     } catch (error) {
       console.error('[LOGIN] Exception:', error);
