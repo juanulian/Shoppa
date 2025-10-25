@@ -91,7 +91,7 @@ function LoginForm() {
           <div className="text-center">
             <CardTitle className="text-2xl">Iniciar Sesión</CardTitle>
             <CardDescription>
-              Ingresá con tu cuenta de Shoppa!
+              Ingresá con tu cuenta de Shoppa! v2.1
             </CardDescription>
           </div>
         </CardHeader>
