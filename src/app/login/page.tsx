@@ -121,15 +121,6 @@ function LoginForm() {
                 'Iniciar Sesión'
               )}
             </Button>
-
-            <div className="text-center text-sm text-muted-foreground">
-              <p>
-                ¿No tenés cuenta?{' '}
-                <Link href="/register" className="text-primary hover:underline">
-                  Registrate
-                </Link>
-              </p>
-            </div>
           </form>
 
           <div className="mt-6 pt-6 border-t text-center">
