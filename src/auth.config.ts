@@ -1,6 +1,7 @@
 import type { NextAuthConfig } from "next-auth"
 
 export const authConfig = {
+  trustHost: true, // Fix CSRF issues in development/preview environments
   pages: {
     signIn: "/login",
     error: "/login", // Redirect errors to login page
