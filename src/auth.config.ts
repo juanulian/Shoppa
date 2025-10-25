@@ -13,7 +13,7 @@ export const authConfig = {
 
       console.log('[MIDDLEWARE] Checking auth for:', nextUrl.pathname)
       console.log('[MIDDLEWARE] isLoggedIn:', isLoggedIn)
-      console.log('[MIDDLEWARE] User:', auth?.user)
+      console.log('[MIDDLEWARE] Auth object:', JSON.stringify(auth))
 
       if (isOnAdminPanel) {
         if (!isLoggedIn) {
@@ -21,8 +21,13 @@ export const authConfig = {
           return false
         }
 
-        if (auth.user?.role !== 'ADMIN') {
-          console.log('[MIDDLEWARE] Not admin, role:', auth.user?.role)
+        // In middleware with JWT strategy, we need to check the role from the token
+        // @ts-ignore - token exists but TS doesn't know about it
+        const userRole = auth.user?.role || auth?.token?.role
+        console.log('[MIDDLEWARE] User role:', userRole)
+
+        if (userRole !== 'ADMIN') {
+          console.log('[MIDDLEWARE] Not admin, role:', userRole)
           return false
         }
 
