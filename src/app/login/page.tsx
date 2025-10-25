@@ -38,20 +38,17 @@ function LoginForm() {
         return;
       }
 
-      // Get session to check user role
-      const response = await fetch('/api/auth/session');
-      const session = await response.json();
+      // Redirect based on callback URL
+      const callbackUrl = searchParams.get('callbackUrl');
 
-      // Redirect based on role and callback
-      let redirectUrl = searchParams.get('callbackUrl');
-
-      if (!redirectUrl) {
-        // If no callback, redirect admin users to analytics, others to home
-        redirectUrl = session?.user?.role === 'ADMIN' ? '/admin/analytics' : '/';
+      if (callbackUrl) {
+        // If there's a callback, use it
+        window.location.href = callbackUrl;
+      } else {
+        // Default: redirect admin to analytics (check email for admin)
+        const isAdmin = email === 'juan.ulian@shoppa.ar';
+        window.location.href = isAdmin ? '/admin/analytics' : '/';
       }
-
-      router.push(redirectUrl);
-      router.refresh();
     } catch (error) {
       setError('Ocurrió un error al iniciar sesión');
       setIsLoading(false);
