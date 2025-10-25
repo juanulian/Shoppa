@@ -25,31 +25,24 @@ function LoginForm() {
     setIsLoading(true);
 
     try {
-      const result = await signIn('credentials', {
+      // Get callback URL before signIn
+      const callbackUrl = searchParams.get('callbackUrl');
+      let redirectUrl = callbackUrl;
+
+      // If no callback, set default based on email
+      if (!redirectUrl) {
+        const isAdmin = email === 'juan.ulian@shoppa.ar';
+        redirectUrl = isAdmin ? '/admin/analytics' : '/';
+      }
+
+      // Sign in with redirect (let NextAuth handle the redirect)
+      await signIn('credentials', {
         email,
         password,
-        redirect: false,
+        redirectTo: redirectUrl,
       });
-
-      if (result?.error) {
-        setError('Email o contraseña incorrectos');
-        setIsLoading(false);
-        return;
-      }
-
-      // Redirect based on callback URL
-      const callbackUrl = searchParams.get('callbackUrl');
-
-      if (callbackUrl) {
-        // If there's a callback, use it
-        window.location.href = callbackUrl;
-      } else {
-        // Default: redirect admin to analytics (check email for admin)
-        const isAdmin = email === 'juan.ulian@shoppa.ar';
-        window.location.href = isAdmin ? '/admin/analytics' : '/';
-      }
     } catch (error) {
-      setError('Ocurrió un error al iniciar sesión');
+      setError('Email o contraseña incorrectos');
       setIsLoading(false);
     }
   };
