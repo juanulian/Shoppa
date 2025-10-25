@@ -41,13 +41,13 @@ export default function CategoriesPage() {
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      // TODO: Implement API endpoint
-      // const response = await fetch('/api/admin/categories');
-      // const data = await response.json();
-      // setCategories(data);
-      setCategories([]);
+      const response = await fetch('/api/admin/categories');
+      if (!response.ok) throw new Error('Error fetching categories');
+      const data = await response.json();
+      setCategories(data);
     } catch (error) {
       console.error('Error fetching categories:', error);
+      alert('Error al cargar categorías');
     } finally {
       setLoading(false);
     }
@@ -106,25 +106,27 @@ export default function CategoriesPage() {
 
   const handleSave = async () => {
     try {
-      // TODO: Implement API endpoint
-      // const url = editingCategory
-      //   ? `/api/admin/categories/${editingCategory.id}`
-      //   : '/api/admin/categories';
-      // const method = editingCategory ? 'PUT' : 'POST';
+      const url = editingCategory
+        ? `/api/admin/categories/${editingCategory.id}`
+        : '/api/admin/categories';
+      const method = editingCategory ? 'PUT' : 'POST';
 
-      // const response = await fetch(url, {
-      //   method,
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(formData),
-      // });
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
 
-      // if (!response.ok) throw new Error('Error saving category');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error saving category');
+      }
 
       handleCloseDialog();
       fetchCategories();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving category:', error);
-      alert('Error al guardar la categoría');
+      alert(error.message || 'Error al guardar la categoría');
     }
   };
 
@@ -132,12 +134,11 @@ export default function CategoriesPage() {
     if (!confirm('¿Estás seguro de eliminar esta categoría? Los productos asociados quedarán sin categoría.')) return;
 
     try {
-      // TODO: Implement API endpoint
-      // const response = await fetch(`/api/admin/categories/${id}`, {
-      //   method: 'DELETE',
-      // });
+      const response = await fetch(`/api/admin/categories/${id}`, {
+        method: 'DELETE',
+      });
 
-      // if (!response.ok) throw new Error('Error deleting category');
+      if (!response.ok) throw new Error('Error deleting category');
 
       fetchCategories();
     } catch (error) {
