@@ -11,34 +11,27 @@ export const authConfig = {
       const isLoggedIn = !!auth?.user
       const isOnAdminPanel = nextUrl.pathname.startsWith('/admin')
 
-      console.log('[MIDDLEWARE] ===== AUTH CHECK =====')
-      console.log('[MIDDLEWARE] Checking auth for:', nextUrl.pathname)
-      console.log('[MIDDLEWARE] isLoggedIn:', isLoggedIn)
-      console.log('[MIDDLEWARE] auth.user:', auth?.user)
-      console.log('[MIDDLEWARE] Full auth keys:', auth ? Object.keys(auth) : 'null')
-
-      // @ts-ignore - accessing token for debugging
-      if (auth?.token) {
-        // @ts-ignore
-        console.log('[MIDDLEWARE] auth.token:', auth.token)
-      }
+      console.log('[MW-V3] ===== AUTH CHECK V3 =====')
+      console.log('[MW-V3] Path:', nextUrl.pathname)
+      console.log('[MW-V3] Logged in:', isLoggedIn)
+      console.log('[MW-V3] User:', JSON.stringify(auth?.user))
+      console.log('[MW-V3] Auth keys:', auth ? Object.keys(auth) : 'null')
 
       if (isOnAdminPanel) {
         if (!isLoggedIn) {
-          console.log('[MIDDLEWARE] Not logged in, redirecting to login')
+          console.log('[MW-V3] ❌ Not logged in')
           return false
         }
 
-        // Check role from user object
         const userRole = auth.user?.role
-        console.log('[MIDDLEWARE] User role from auth.user:', userRole)
+        console.log('[MW-V3] Role:', userRole)
 
         if (userRole !== 'ADMIN') {
-          console.log('[MIDDLEWARE] ❌ Access denied - role:', userRole)
+          console.log('[MW-V3] ❌ Not admin')
           return false
         }
 
-        console.log('[MIDDLEWARE] ✅ Admin access granted')
+        console.log('[MW-V3] ✅ Admin OK')
         return true
       }
 
