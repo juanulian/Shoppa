@@ -29,23 +29,12 @@ export const authConfig = {
 
       if (isOnAdminPanel) {
         const isLoggedIn = !!auth?.user
+        if (!isLoggedIn) return false
 
-        if (!isLoggedIn) {
-          console.log('[MW-V5] Not logged in')
-          return false
-        }
-
-        // Now auth.user should have role from session callback
+        // Check if user is admin
         const userRole = auth.user?.role
+        if (userRole !== 'ADMIN') return false
 
-        console.log('[MW-V5] User role:', userRole)
-
-        if (userRole !== 'ADMIN') {
-          console.log('[MW-V5] ❌ Not admin, role:', userRole)
-          return false
-        }
-
-        console.log('[MW-V5] ✅ Admin OK')
         return true
       }
 

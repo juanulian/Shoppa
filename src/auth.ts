@@ -14,16 +14,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
       async authorize(credentials) {
-        console.log('[AUTH] Authorize called for:', credentials?.email)
-
         const parsedCredentials = z
           .object({ email: z.string().email(), password: z.string().min(6) })
           .safeParse(credentials)
 
-        if (!parsedCredentials.success) {
-          console.log('[AUTH] Credentials validation failed')
-          return null
-        }
+        if (!parsedCredentials.success) return null
 
         const { email, password } = parsedCredentials.data
 
@@ -32,30 +27,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           where: { email },
         })
 
-        if (!user) {
-          console.log('[AUTH] User not found:', email)
-          return null
-        }
-
-        console.log('[AUTH] User found, checking password...')
+        if (!user) return null
 
         // Verify password
         const passwordsMatch = await bcrypt.compare(password, user.passwordHash)
 
-        if (!passwordsMatch) {
-          console.log('[AUTH] Password mismatch')
-          return null
-        }
-
-        console.log('[AUTH] Password OK, updating last login...')
+        if (!passwordsMatch) return null
 
         // Update last login
         await prisma.user.update({
           where: { id: user.id },
           data: { lastLoginAt: new Date() },
         })
-
-        console.log('[AUTH] Returning user with role:', user.role)
 
         return {
           id: user.id,

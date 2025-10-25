@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { RefreshCw, TrendingUp, Users, ShoppingCart, Eye, MousePointerClick, Package, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import Logo from '@/components/icons/logo';
-import { auth, signOut } from '@/auth';
+import { signOut, useSession } from 'next-auth/react';
 
 interface FunnelData {
   totalPageViews: number;
@@ -88,7 +88,10 @@ interface Vendor {
   eventCount: number;
 }
 
-function AnalyticsContent({ userEmail }: { userEmail: string }) {
+export default function AnalyticsPage() {
+  const { data: session } = useSession();
+  const userEmail = session?.user?.email || 'Admin';
+
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [productData, setProductData] = useState<ProductAnalytics | null>(null);
   const [vendors, setVendors] = useState<Vendor[]>([]);
@@ -100,7 +103,7 @@ function AnalyticsContent({ userEmail }: { userEmail: string }) {
   const [selectedVendor, setSelectedVendor] = useState<string>('');
 
   const handleSignOut = async () => {
-    await signOut({ redirectTo: '/' });
+    await signOut({ callbackUrl: '/' });
   };
 
   const fetchAnalytics = async () => {
@@ -694,11 +697,4 @@ function FunnelStep({ label, count, percentage, color }: { label: string; count:
       </div>
     </div>
   );
-}
-
-export default async function AnalyticsPage() {
-  const session = await auth();
-  const userEmail = session?.user?.email || 'Admin';
-
-  return <AnalyticsContent userEmail={userEmail} />;
 }
