@@ -186,7 +186,7 @@ function AnalyticsContent({ userEmail }: { userEmail: string }) {
   const metrics = data?.metrics;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen bg-[url('/background/cards.png')] bg-cover bg-center">
       {/* Header */}
       <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">

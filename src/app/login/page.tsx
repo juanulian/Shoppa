@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,7 +13,6 @@ import { Loader2, AlertCircle } from 'lucide-react';
 import { Suspense } from 'react';
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -119,14 +118,6 @@ function LoginForm() {
               )}
             </Button>
           </form>
-
-          <div className="mt-6 pt-6 border-t text-center">
-            <p className="text-xs text-muted-foreground">
-              <strong>Admin:</strong> juan.ulian@shoppa.ar / shoppa123
-              <br />
-              <strong>Test:</strong> buyer@example.com / demo123
-            </p>
-          </div>
         </CardContent>
       </Card>
     </div>
