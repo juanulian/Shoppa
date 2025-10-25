@@ -1,5 +1,6 @@
 import type { NextAuthConfig } from "next-auth"
 
+// Fix for CSRF in preview/development environments
 export const authConfig = {
   trustHost: true, // Fix CSRF issues in development/preview environments
   pages: {
