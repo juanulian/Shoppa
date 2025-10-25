@@ -11,17 +11,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
-  cookies: {
-    sessionToken: {
-      name: `authjs.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-      },
-    },
-  },
   providers: [
     Credentials({
       async authorize(credentials) {
@@ -63,16 +52,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        console.log('[AUTH] JWT callback - Adding user to token:', user.email)
         token.id = user.id
         token.role = user.role
       }
       return token
     },
     async session({ session, token }) {
+      console.log('[AUTH] Session callback - Building session for:', token.email)
       if (session.user) {
         session.user.id = token.id as string
         session.user.role = token.role as string
       }
+      console.log('[AUTH] Session user role:', session.user?.role)
       return session
     },
   },

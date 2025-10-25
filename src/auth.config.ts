@@ -1,28 +1,37 @@
 import type { NextAuthConfig } from "next-auth"
 
-// Fix for CSRF in preview/development environments
 export const authConfig = {
-  trustHost: true, // Fix CSRF issues in development/preview environments
+  trustHost: true,
   pages: {
     signIn: "/login",
-    error: "/login", // Redirect errors to login page
+    error: "/login",
   },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user
       const isOnAdminPanel = nextUrl.pathname.startsWith('/admin')
 
+      console.log('[MIDDLEWARE] Checking auth for:', nextUrl.pathname)
+      console.log('[MIDDLEWARE] isLoggedIn:', isLoggedIn)
+      console.log('[MIDDLEWARE] User:', auth?.user)
+
       if (isOnAdminPanel) {
-        if (!isLoggedIn) return false
-        // Check if user is admin
-        if (auth.user?.role !== 'ADMIN') {
-          return false // This will redirect to login page
+        if (!isLoggedIn) {
+          console.log('[MIDDLEWARE] Not logged in, redirecting to login')
+          return false
         }
+
+        if (auth.user?.role !== 'ADMIN') {
+          console.log('[MIDDLEWARE] Not admin, role:', auth.user?.role)
+          return false
+        }
+
+        console.log('[MIDDLEWARE] Admin access granted')
         return true
       }
 
       return true
     },
   },
-  providers: [], // Providers added in auth.ts
+  providers: [],
 } satisfies NextAuthConfig
