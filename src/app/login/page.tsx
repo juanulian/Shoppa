@@ -24,68 +24,18 @@ function LoginForm() {
     setError('');
     setIsLoading(true);
 
-    try {
-      console.log('[LOGIN] Starting login process...');
-      console.log('[LOGIN] Email:', email);
+    // Use NextAuth's built-in redirect - let it handle everything
+    const callbackUrl = searchParams.get('callbackUrl') || '/admin/analytics';
 
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      });
+    const result = await signIn('credentials', {
+      email,
+      password,
+      callbackUrl, // NextAuth handles the redirect automatically
+    });
 
-      console.log('[LOGIN] signIn result:', result);
-
-      if (result?.error) {
-        console.error('[LOGIN] Error from signIn:', result.error);
-        setError('Email o contraseña incorrectos');
-        setIsLoading(false);
-        return;
-      }
-
-      if (!result?.ok) {
-        console.error('[LOGIN] signIn not ok');
-        setError('Ocurrió un error al iniciar sesión');
-        setIsLoading(false);
-        return;
-      }
-
-      console.log('[LOGIN] Sign in successful, verifying session...');
-
-      // Wait and verify session cookie is set
-      let sessionVerified = false;
-      for (let i = 0; i < 10; i++) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        // Check if session cookie exists
-        const hasSessionCookie = document.cookie.includes('authjs.session-token') ||
-                                  document.cookie.includes('next-auth.session-token');
-
-        console.log(`[LOGIN] Attempt ${i + 1}: Session cookie present:`, hasSessionCookie);
-        console.log(`[LOGIN] Cookies:`, document.cookie);
-
-        if (hasSessionCookie) {
-          sessionVerified = true;
-          console.log('[LOGIN] Session cookie verified!');
-          break;
-        }
-      }
-
-      if (!sessionVerified) {
-        console.warn('[LOGIN] Session cookie not found after 1 second, proceeding anyway...');
-      }
-
-      // Get callback URL
-      const callbackUrl = searchParams.get('callbackUrl');
-      let redirectUrl = callbackUrl || (email === 'juan.ulian@shoppa.ar' ? '/admin/analytics' : '/');
-
-      console.log('[LOGIN] Redirecting to:', redirectUrl);
-
-      // Full page reload to ensure session is loaded
-      window.location.href = redirectUrl;
-    } catch (error) {
-      console.error('[LOGIN] Exception during login:', error);
-      setError('Ocurrió un error al iniciar sesión');
+    // If we reach here, login failed (NextAuth would have redirected on success)
+    if (result?.error || !result?.ok) {
+      setError('Email o contraseña incorrectos');
       setIsLoading(false);
     }
   };
