@@ -11,9 +11,17 @@ export const authConfig = {
       const isLoggedIn = !!auth?.user
       const isOnAdminPanel = nextUrl.pathname.startsWith('/admin')
 
+      console.log('[MIDDLEWARE] ===== AUTH CHECK =====')
       console.log('[MIDDLEWARE] Checking auth for:', nextUrl.pathname)
       console.log('[MIDDLEWARE] isLoggedIn:', isLoggedIn)
-      console.log('[MIDDLEWARE] Auth object:', JSON.stringify(auth))
+      console.log('[MIDDLEWARE] auth.user:', auth?.user)
+      console.log('[MIDDLEWARE] Full auth keys:', auth ? Object.keys(auth) : 'null')
+
+      // @ts-ignore - accessing token for debugging
+      if (auth?.token) {
+        // @ts-ignore
+        console.log('[MIDDLEWARE] auth.token:', auth.token)
+      }
 
       if (isOnAdminPanel) {
         if (!isLoggedIn) {
@@ -21,17 +29,16 @@ export const authConfig = {
           return false
         }
 
-        // In middleware with JWT strategy, we need to check the role from the token
-        // @ts-ignore - token exists but TS doesn't know about it
-        const userRole = auth.user?.role || auth?.token?.role
-        console.log('[MIDDLEWARE] User role:', userRole)
+        // Check role from user object
+        const userRole = auth.user?.role
+        console.log('[MIDDLEWARE] User role from auth.user:', userRole)
 
         if (userRole !== 'ADMIN') {
-          console.log('[MIDDLEWARE] Not admin, role:', userRole)
+          console.log('[MIDDLEWARE] ❌ Access denied - role:', userRole)
           return false
         }
 
-        console.log('[MIDDLEWARE] Admin access granted')
+        console.log('[MIDDLEWARE] ✅ Admin access granted')
         return true
       }
 
