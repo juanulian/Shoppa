@@ -47,13 +47,13 @@ export default function ProductsPage() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      // TODO: Implement API endpoint
-      // const response = await fetch('/api/admin/products');
-      // const data = await response.json();
-      // setProducts(data);
-      setProducts([]);
+      const response = await fetch('/api/admin/products');
+      if (!response.ok) throw new Error('Error fetching products');
+      const data = await response.json();
+      setProducts(data);
     } catch (error) {
       console.error('Error fetching products:', error);
+      alert('Error al cargar productos');
     } finally {
       setLoading(false);
     }
@@ -103,23 +103,22 @@ export default function ProductsPage() {
 
   const handleSave = async () => {
     try {
-      // TODO: Implement API endpoint
-      // const url = editingProduct
-      //   ? `/api/admin/products/${editingProduct.id}`
-      //   : '/api/admin/products';
-      // const method = editingProduct ? 'PUT' : 'POST';
+      const url = editingProduct
+        ? `/api/admin/products/${editingProduct.id}`
+        : '/api/admin/products';
+      const method = editingProduct ? 'PUT' : 'POST';
 
-      // const response = await fetch(url, {
-      //   method,
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     ...formData,
-      //     price: parseFloat(formData.price),
-      //     stock: parseInt(formData.stock),
-      //   }),
-      // });
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          price: parseFloat(formData.price),
+          stock: parseInt(formData.stock),
+        }),
+      });
 
-      // if (!response.ok) throw new Error('Error saving product');
+      if (!response.ok) throw new Error('Error saving product');
 
       handleCloseDialog();
       fetchProducts();
@@ -133,12 +132,11 @@ export default function ProductsPage() {
     if (!confirm('¿Estás seguro de eliminar este producto?')) return;
 
     try {
-      // TODO: Implement API endpoint
-      // const response = await fetch(`/api/admin/products/${id}`, {
-      //   method: 'DELETE',
-      // });
+      const response = await fetch(`/api/admin/products/${id}`, {
+        method: 'DELETE',
+      });
 
-      // if (!response.ok) throw new Error('Error deleting product');
+      if (!response.ok) throw new Error('Error deleting product');
 
       fetchProducts();
     } catch (error) {
