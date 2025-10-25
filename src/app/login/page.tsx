@@ -25,24 +25,47 @@ function LoginForm() {
     setIsLoading(true);
 
     try {
-      // Get callback URL before signIn
-      const callbackUrl = searchParams.get('callbackUrl');
-      let redirectUrl = callbackUrl;
+      console.log('[LOGIN] Starting login process...');
+      console.log('[LOGIN] Email:', email);
 
-      // If no callback, set default based on email
-      if (!redirectUrl) {
-        const isAdmin = email === 'juan.ulian@shoppa.ar';
-        redirectUrl = isAdmin ? '/admin/analytics' : '/';
-      }
-
-      // Sign in with redirect (let NextAuth handle the redirect)
-      await signIn('credentials', {
+      const result = await signIn('credentials', {
         email,
         password,
-        redirectTo: redirectUrl,
+        redirect: false,
       });
+
+      console.log('[LOGIN] signIn result:', result);
+
+      if (result?.error) {
+        console.error('[LOGIN] Error from signIn:', result.error);
+        setError('Email o contraseña incorrectos');
+        setIsLoading(false);
+        return;
+      }
+
+      if (!result?.ok) {
+        console.error('[LOGIN] signIn not ok');
+        setError('Ocurrió un error al iniciar sesión');
+        setIsLoading(false);
+        return;
+      }
+
+      console.log('[LOGIN] Sign in successful, waiting for cookie...');
+
+      // Wait for session cookie to be set
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+      // Get callback URL
+      const callbackUrl = searchParams.get('callbackUrl');
+      let redirectUrl = callbackUrl || (email === 'juan.ulian@shoppa.ar' ? '/admin/analytics' : '/');
+
+      console.log('[LOGIN] Redirecting to:', redirectUrl);
+
+      // Full page reload to ensure session is loaded
+      window.location.href = redirectUrl;
     } catch (error) {
-      setError('Email o contraseña incorrectos');
+      console.error('[LOGIN] Exception during login:', error);
+      setError('Ocurrió un error al iniciar sesión');
       setIsLoading(false);
     }
   };
