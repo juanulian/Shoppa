@@ -106,29 +106,23 @@ export async function GET(request: NextRequest) {
     const avgSessionTime = timeSpentCount > 0 ? Math.floor(totalTimeSpent / timeSpentCount) : 0;
 
     // Timeline de eventos (agrupados por día)
-    let dailyEvents: Array<{date: Date, count: bigint}>;
+    const allEvents = await prisma.analyticsEvent.findMany({
+      where: whereClause,
+      select: {
+        createdAt: true,
+      },
+    });
 
-    if (sellerId) {
-      dailyEvents = await prisma.$queryRaw`
-        SELECT
-          DATE(created_at) as date,
-          COUNT(*) as count
-        FROM analytics_events
-        WHERE created_at >= ${since} AND created_at <= ${until} AND seller_id = ${sellerId}
-        GROUP BY DATE(created_at)
-        ORDER BY date ASC
-      `;
-    } else {
-      dailyEvents = await prisma.$queryRaw`
-        SELECT
-          DATE(created_at) as date,
-          COUNT(*) as count
-        FROM analytics_events
-        WHERE created_at >= ${since} AND created_at <= ${until}
-        GROUP BY DATE(created_at)
-        ORDER BY date ASC
-      `;
-    }
+    // Agrupar por día manualmente
+    const dailyEventsMap = new Map<string, number>();
+    allEvents.forEach((event) => {
+      const date = event.createdAt.toISOString().split('T')[0];
+      dailyEventsMap.set(date, (dailyEventsMap.get(date) || 0) + 1);
+    });
+
+    const dailyEvents = Array.from(dailyEventsMap.entries())
+      .map(([date, count]) => ({ date: new Date(date), count }))
+      .sort((a, b) => a.date.getTime() - b.date.getTime());
 
     return NextResponse.json({
       success: true,
