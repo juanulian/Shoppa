@@ -50,10 +50,30 @@ function LoginForm() {
         return;
       }
 
-      console.log('[LOGIN] Sign in successful, waiting for cookie...');
+      console.log('[LOGIN] Sign in successful, verifying session...');
 
-      // Wait for session cookie to be set
-      await new Promise(resolve => setTimeout(resolve, 200));
+      // Wait and verify session cookie is set
+      let sessionVerified = false;
+      for (let i = 0; i < 10; i++) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        // Check if session cookie exists
+        const hasSessionCookie = document.cookie.includes('authjs.session-token') ||
+                                  document.cookie.includes('next-auth.session-token');
+
+        console.log(`[LOGIN] Attempt ${i + 1}: Session cookie present:`, hasSessionCookie);
+        console.log(`[LOGIN] Cookies:`, document.cookie);
+
+        if (hasSessionCookie) {
+          sessionVerified = true;
+          console.log('[LOGIN] Session cookie verified!');
+          break;
+        }
+      }
+
+      if (!sessionVerified) {
+        console.warn('[LOGIN] Session cookie not found after 1 second, proceeding anyway...');
+      }
 
       // Get callback URL
       const callbackUrl = searchParams.get('callbackUrl');
